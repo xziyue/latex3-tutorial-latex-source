@@ -1,0 +1,388 @@
+\documentclass{ltugboat}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{metalogo}
+\usepackage{tcolorbox}
+\usepackage{microtype}
+\usepackage{expl3}
+\usepackage{etoolbox}
+\usepackage{supertabular}
+\usepackage{makecell}
+\usepackage{tikz}
+\usepackage{ragged2e}
+\usepackage{float}
+\usepackage{array}
+\usepackage{xcolor}
+%\usepackage[breaklinks,hidelinks,pdfa]{hyperref}
+\usepackage{hyperref}
+
+\tcbuselibrary{listings, minted, skins, breakable}
+
+\newcommand*{\liii}{\LaTeX3}
+
+% line number style
+\renewcommand{\theFancyVerbLine}{
+\ttfamily
+\textcolor[rgb]{0.5,0.5,0.5}{\scriptsize
+{\arabic{FancyVerbLine}}}}
+
+\newcommand*{\liiilexer}{tex_lexer.py:Tex3Lexer -x}
+\newmintinline[inltex]{\liiilexer}{}
+\newmintinline[inlpy]{python}{}
+
+\tcbset{
+  codesample/.style={
+    enhanced,
+    breakable,
+    listing engine=minted,
+    minted language=\liiilexer,
+    minted options={
+      fontsize=\scriptsize,
+      autogobble,
+      breaklines,
+      obeytabs,
+      tabsize=2,
+      linenos,
+      numbersep=2mm,
+      xleftmargin=4mm
+    },
+    colback=gray!5,
+    left=1mm,
+    right=1mm,
+    top=0.5mm,
+    bottom=0.5mm
+  }
+}
+
+
+\ExplSyntaxOn
+\int_new:N \g_latex_sample_counter_int
+\int_set:Nn \g_latex_sample_counter_int {0}
+\seq_new:N \g_latex_sample_seq
+
+\cs_set:Nn \latex_sample_anchor_name: {
+  latex@sample@\int_to_alph:n {\g_latex_sample_counter_int}
+}
+
+\cs_set_eq:NN \hypertarget:nn \hypertarget
+\cs_generate_variant:Nn \hypertarget:nn {xn}
+
+\cs_set:Npn \add_latex_sample:n #1 {
+  % add tabular line
+  \seq_gput_right:Nx \g_latex_sample_seq {
+    \int_use:N \g_latex_sample_counter_int &
+    \exp_not:N\hyperlink {\latex_sample_anchor_name:}{#1} &
+    \exp_not:N\pageref* {\latex_sample_anchor_name:}
+  }
+  \int_use:N \g_latex_sample_counter_int
+}
+
+\AtEndDocument{
+  \iow_open:Nn \g_tmpa_iow {\jobname-latex-examples.tabular}
+  \iow_now:Nx \g_tmpa_iow {\c_left_brace_str}
+  \iow_now:Nn \g_tmpa_iow {\setlength{\tabcolsep}{0.02\linewidth}}
+  \iow_now:Nn \g_tmpa_iow {\begin{supertabular}{@{}p{0.06\linewidth}
+                          p{0.8\linewidth}p{0.06\linewidth}@{}}}
+  \seq_map_variable:NNn \g_latex_sample_seq \l_tmpa_tl {
+    \exp_args:NNV \iow_now:Nn \g_tmpa_iow \l_tmpa_tl
+    \iow_now:Nn \g_tmpa_iow {\tabularnewline}
+  }
+  \iow_now:Nn \g_tmpa_iow {\end{supertabular}}
+  \iow_now:Nx \g_tmpa_iow {\c_right_brace_str}
+  \iow_close:N \g_tmpa_iow
+}
+
+\newcommand{\listoflatexsamples}{
+  \section*{List~of~Examples}
+  \IfFileExists{\jobname-latex-examples.tabular}{
+    \input{\jobname-latex-examples.tabular}
+  }{}
+}
+
+\newtcblisting{latexsample}[1]{
+  codesample,
+  title={
+    \int_gincr:N \g_latex_sample_counter_int
+    \exp_args:Nx \label {\latex_sample_anchor_name:}
+    \hypertarget:xn {\latex_sample_anchor_name:}{
+    \small\textbf{Example~\add_latex_sample:n {#1}}:~#1}
+  }
+}
+
+\ExplSyntaxOff
+
+% anonymous example
+\newtcblisting{latexsample*}{
+  codesample
+}
+
+% listing only example
+\newtcblisting{latexsample**}{
+  codesample,
+  listing only
+}
+
+% listing of any language
+\newtcblisting{codesample}[1]{
+  codesample,
+  listing only,
+  minted language=#1
+}
+
+
+\title{\liii: Programming in \LaTeX\ with Ease}
+\author{Ziyue ``Alan'' Xiang}
+\address{Purdue University}
+\netaddress{ziyue.alan.xiang (at) gmail (dot) com}
+\personalURL{https://www.alanshawn.com}
+\ORCID{0000-0001-6054-5801}
+
+
+\begin{document}
+
+\begin{abstract}
+
+\end{abstract}
+
+\maketitle
+
+\tableofcontents
+\listoflatexsamples
+
+\section{Introduction}
+
+Many people view \LaTeX\ as a typesetting language and overlook
+the importance of programming in document generation process. 
+In reality, many large and structural documents can benefit from
+a programming backend, which enhances layout standardization, symbol
+coherence, editing speed and many other aspects. Despite the fact the
+standard \LaTeX\ (\LaTeXe) is already Turing complete, which means
+it is capable of solving any programming task, the design of numerous
+programming interfaces is highly inconsistent due to the long history
+of \LaTeX. This makes programming with \LaTeXe\ extremely daunting, 
+even for seasoned computer programmers.
+
+To make programming in \LaTeX\ easier, the \liii\ programming interface
+is introduced, which aims to provide modern-programming-language-like
+syntax and library for \LaTeX\ programmers. Unfortunately, learning
+materials for this wonderful language is scarce. One of the few resource
+available for new users is \emph{The \liii\ Interfaces} \cite{l3interface},
+which is essentially an API documentation that is not designed for 
+introductory purposes. This situation may have barred many \LaTeX\ 
+users from utilizing the generic programming capabilities of \LaTeX.
+Therefore, this article intends to provide an easy-to-understand 
+tutorial for \LaTeX\ users with computer programming knowledge.
+Hopefully, readers can improve their \LaTeX\ editing efficiency and 
+document quality after understanding \liii.
+
+This article is largely based on \emph{examples}, which demonstrate
+different aspects of \liii\ programming. The minimum preamble for 
+all examples is
+\begin{latexsample**}
+\documentclass{article}
+\usepackage{tikz} % load TikZ for some TikZ examples
+\usepackage{expl3} % load latex3 packages
+\end{latexsample**}
+\noindent Examples should be placed between \inltex|\begin{document}| 
+and \inltex|\end{document}|. All examples are tested with \TeX Live 
+2020 on Ubuntu 20.04.
+
+Since the scale of \liii\ is huge, it would be infeasible to cover
+all modules and functionalities in one tutorial. As a result, this
+article only focuses on most frequently used components in \liii. 
+The complete API documentation can be found in \emph{The \liii\ Interfaces}
+\cite{l3interface}. The numbers surrounded by parentheses in some 
+section titles of this tutorial indicate the corresponding 
+documentation location in \emph{The \liii\ Interfaces}.
+
+\subsection{Why \liii?}
+
+As mentioned above, \LaTeXe\ is already Turing complete and serves as
+the building block of many important packages. What are the reasons 
+for switching to \liii?
+
+\paragraph{Better expansion control} Fundamentally, \LaTeX\ works by 
+doing \emph{substitution}: commands are substituted by their definition,
+which is subsequently replaced by definition's definition, until 
+something irreplaceable is reached (e.g. text or \TeX\ primitives). 
+This process is called \emph{expansion}. The mechanism of expansion
+may sound simple and straightforward. However, it usually requires
+a lot of manual fine-tuning in practice.
+
+Consider the example below. We know that the \inltex|\uppercase| macro
+capitalize English letters, which renders the first output line in all 
+caps. But if we store some text in \inltex|\myname| and then apply
+\inltex|\uppercase| to the command, we can see that the output is
+\emph{not} turned into uppercase letters.
+
+\begin{latexsample*}
+\par\uppercase{Alan Xiang}
+\newcommand*{\myname}{Alan Xiang}
+\par\uppercase{\myname}
+\end{latexsample*}
+
+Why would this happen? Let us dig into how \inltex|\uppercase| works. 
+The \inltex|\uppercase| macro scans each token\footnotemark inside its argument 
+group one by one. If an English letter is encountered, its uppercase 
+form is left in the output stream. If a command is encountered, it 
+will not try to apply \inltex|\uppercase| to the content of the command. 
+Instead, the command itself will be placed into the output stream. 
+In this case, \inltex|\myname| will be left untouched in the output, 
+which is subsequently expanded to its original definition.
+
+\footnotetext{Tokens are smallest units that \TeX\ compilers work 
+with. For now, we can consider a token to be either a character 
+or command. For more about \TeX\ tokens, see \cite{overleaf-token}.}
+
+What if we also want to capitalize the content of \inltex|\myname| as 
+well? To achieve this, we need to fine-tune the expansion process by 
+changing the \emph{order} of expansion. That is, to expand 
+\inltex|\myname| before \inltex|\uppercase|. In this way, the 
+\inltex|\uppercase| command will receive the content of 
+\inltex|\myname| in the form of English letters, which allows 
+capitalization to function correctly.
+
+In \LaTeX, the classic way of controlling the order of expansion is
+via the \inltex|\expandafter| macro, which it is notoriously
+difficult to use. According to \emph{A Tutorial on \cs{expandafter}} 
+\cite{bechtolsheim1988tutorial}, to reverse the expansion of a series
+of $n$ tokens, the $i$th token has to be preceded by $2^{n-i}-1$
+\inltex|\expandafter|s. The exponential growth of the number of 
+\inltex|\expandafter|s greatly reduces the readability of source code
+and increases the chances of mistakes. 
+For example, in Joseph Wright's answer to an expansion-related
+question on \TeX\ StackExchange \cite{tex-se-expanding}, a total of 26 
+\inltex|\expandafter|s are used to reorder the expansion of merely 4
+arguments.  To avoid this annoyance, one of the key features
+of \liii\ is to provide simple and reliable expansion control.
+
+\paragraph{Standardized interface} Just like any other generic programming
+languages, \LaTeX\ provides integer, floating point, string and
+container variables. However, tradition \LaTeX\ interface for these types
+is very messy. For example, to compare the equality of two strings, we can
+use \inltex|\ifthenelse| and \inltex|\equal| from \verb|ifthen| package;
+we can use \inltex|\pdfstrcmp| from \verb|pdftexcmds| package; we can also
+use \inltex|\IfStrEq| from \verb|xstring| package. The fact that so many
+heterogeneous packages provide similar functionalities induces redundancy
+and potential compatibility issues. Therefore, \liii\ is to provide
+a set of unified and standardized interfaces for all possible \LaTeX\ 
+variable types.
+
+\paragraph{Modernized experience} \TeX\ was first designed in the late 1970s, when
+computer hardware and programming languages were prototypes compared to
+their contemporary counterparts. As a result, \TeX\ and \LaTeX\ contain
+quirky usages that may seem odd for programmers today. For example, to
+multiply a counter variable by 3, one writes 
+\inltex|\multiply|\inltex|\counter| \inltex|by| \inltex|3|; to invoke the \verb|date| command via
+the terminal, one writes \inltex|\immediate\write18{date}|. 
+It can be seen that these syntaxes are either outdated or perplexing. 
+In a fairly popular language nowadays 
+(e.g. Python), these two tasks can be done by \inlpy|counter*=3|
+and \inlpy|os.system('date')|, whose code possesses superior
+simplicity and interpretability. \liii\ attempts to modernize 
+the \LaTeX\ language by adapting to modern-language-like syntaxes
+and introducing a naming system that makes \LaTeX\ code more
+readable.
+
+\section{\liii\ Naming Conventions (I-1)}
+
+In Python or C++, if we see \inlpy|a(b);|, we can 
+tell \inlpy|a| is a function and \inlpy|b| is its 
+argument. However, in \LaTeX, if we see \inltex|\a\b|, 
+there are be two possibilities:
+\begin{itemize}
+\item \inltex|\a| is a function and \inltex|\b| is its argument
+\item Both \inltex|\a| and \inltex|\b| are variables
+\end{itemize}
+The syntactic design of \LaTeX\ makes it difficult
+to distinguish between functions and variables, for
+each control sequence can either be a function that 
+receives arguments or a variable that absorbs nothing.
+It can lead to confusion when one is trying to understand
+others' source code. Therefore, \liii\ introduces a set
+of naming rules that encode important information into
+the name of control sequences as a way to improve 
+readability.
+
+Before discussing \liii\ naming conventions, let us take a diversion 
+to look at the low-level design of \LaTeX\ and find out 
+how we can use non-English characters in command names.
+
+\subsection{Category Code \& Command Name}
+
+When the \LaTeX\ compiler reads a source file, it will read
+and process each character one by one. For each character in 
+the file, in addition to its character code, \LaTeX\ compiler 
+will also assign a \emph{category code} based on current
+category code table. The default \LaTeX\ category code table
+is shown in Table \ref{table:catcode-table}.
+
+\begin{center}
+\tabletail{\hline}
+\tablehead{
+\hline
+\makecell{Category\\Code} & Description & 
+\makecell{Character(s)}\\ \hline
+}
+\bottomcaption{Default \LaTeX\ category code table \cite{overleaf-catcode}. 
+Characters surround by single quotes indicate their C-style
+representation.}
+\label{table:catcode-table}
+\begin{supertabular}{|c|>{\centering}m{0.4\linewidth}|c|}
+0 & Escape character: tells \LaTeX\ 
+to start looking for a command & \verb|\| \\  \hline
+1 & Start of group & \verb|{|\\ \hline
+2 & End of group & \verb|}|\\ \hline
+3 & Toggle math mode & \verb|$|\\ \hline
+4 & Alignment tab & \verb|&|\\ \hline
+5 & End of line & \verb|'\r'|\\ \hline
+6 & Macro parameter & \verb|#| \\ \hline
+7 & Superscript & \verb|^| \\ \hline
+8 & Subscript & \verb|_| \\ \hline
+9 & Ignored character & \verb|'\0'| \\ \hline
+10 & Spacer & \verb|'\32'|, \verb|'\t'|\\ \hline
+11 & Letter & \verb|A|--\verb|Z|, \verb|a|--\verb|z|, \ldots\\ \hline
+12 & Other & \verb|0|--\verb|9|, \verb|+|, \verb|@|\ldots \\ \hline
+13 & Active character: used for single character commands & 
+\verb|~|\ldots\\ \hline
+14 & Comment character: ignore everything that follows until 
+end of line & \verb|%|\\ \hline
+15 & Invalid character: not allowed in \verb|.tex| files & 
+\verb|'\127'|\ldots \\ \hline
+\end{supertabular}
+\end{center}
+
+\LaTeX\ reacts to each character according to its category code
+instead of character code. If we change the category code associated
+with a character, we can completely change the \emph{meaning} of that
+character. For example, if we assign category code 7 to \verb|_| and
+category code 8 to \verb|^|, we can use \verb|_| to denote superscript
+and \verb|^| to denote subscript.
+
+\begin{latexsample}{Doing 123}
+\ExplSyntaxOn
+\tl_set:Nn \l_tmpa_tl {A}
+\group_begin:
+\tl_set:Nn \l_tmpa_tl {B}
+\par value~inside~group:~\tl_use:N \l_tmpa_tl
+\group_end:
+\par value~outside~group:~\tl_use:N \l_tmpa_tl
+
+\tl_set:Nn \l_tmpb_tl {A}
+\group_begin:
+\tl_gset:Nn \l_tmpb_tl {B}
+\par value~inside~group:~\tl_use:N \l_tmpb_tl
+\group_end:
+\par value~outside~group:~\tl_use:N \l_tmpb_tl
+\ExplSyntaxOff
+\end{latexsample}
+
+
+
+\bibliographystyle{tugboat}
+\bibliography{main.bib}
+
+\makesignature
+
+\end{document}

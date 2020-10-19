@@ -1,0 +1,7 @@
+{
+\setlength {\tabcolsep }{0.02\linewidth }
+\begin {supertabular}{@{}p{0.06\linewidth }p{0.8\linewidth }p{0.06\linewidth }@{}}
+1&\hyperlink {latex@sample@a}{Doing 123}&\pageref *{latex@sample@a}
+\tabularnewline 
+\end {supertabular}
+}
