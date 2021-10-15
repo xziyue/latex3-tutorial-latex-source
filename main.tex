@@ -1,143 +1,15 @@
+% !BIB TS-program = bibtex
+% !TeX TS-program = xelatex
 \documentclass{ltugboat}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage[english]{babel}
-\usepackage{metalogo}
-\usepackage{tcolorbox}
-\usepackage{microtype}
-\usepackage{expl3}
-\usepackage{etoolbox}
-\usepackage{supertabular}
-\usepackage{makecell}
-\usepackage{tikz}
-\usepackage{ragged2e}
-\usepackage{float}
-\usepackage{array}
-\usepackage{xcolor}
-%\usepackage[breaklinks,hidelinks,pdfa]{hyperref}
-\usepackage{hyperref}
 
-\tcbuselibrary{listings, minted, skins, breakable}
+\input{preamble.tex}
 
-\newcommand*{\liii}{\LaTeX3}
-
-% line number style
-\renewcommand{\theFancyVerbLine}{
-\ttfamily
-\textcolor[rgb]{0.5,0.5,0.5}{\scriptsize
-{\arabic{FancyVerbLine}}}}
-
-\newcommand*{\liiilexer}{tex_lexer.py:Tex3Lexer -x}
-\newmintinline[inltex]{\liiilexer}{}
-\newmintinline[inlpy]{python}{}
-
-\tcbset{
-  codesample/.style={
-    enhanced,
-    breakable,
-    listing engine=minted,
-    minted language=\liiilexer,
-    minted options={
-      fontsize=\scriptsize,
-      autogobble,
-      breaklines,
-      obeytabs,
-      tabsize=2,
-      linenos,
-      numbersep=2mm,
-      xleftmargin=4mm
-    },
-    colback=gray!5,
-    left=1mm,
-    right=1mm,
-    top=0.5mm,
-    bottom=0.5mm
-  }
-}
-
-
-\ExplSyntaxOn
-\int_new:N \g_latex_sample_counter_int
-\int_set:Nn \g_latex_sample_counter_int {0}
-\seq_new:N \g_latex_sample_seq
-
-\cs_set:Nn \latex_sample_anchor_name: {
-  latex@sample@\int_to_alph:n {\g_latex_sample_counter_int}
-}
-
-\cs_set_eq:NN \hypertarget:nn \hypertarget
-\cs_generate_variant:Nn \hypertarget:nn {xn}
-
-\cs_set:Npn \add_latex_sample:n #1 {
-  % add tabular line
-  \seq_gput_right:Nx \g_latex_sample_seq {
-    \int_use:N \g_latex_sample_counter_int &
-    \exp_not:N\hyperlink {\latex_sample_anchor_name:}{#1} &
-    \exp_not:N\pageref* {\latex_sample_anchor_name:}
-  }
-  \int_use:N \g_latex_sample_counter_int
-}
-
-\AtEndDocument{
-  \iow_open:Nn \g_tmpa_iow {\jobname-latex-examples.tabular}
-  \iow_now:Nx \g_tmpa_iow {\c_left_brace_str}
-  \iow_now:Nn \g_tmpa_iow {\setlength{\tabcolsep}{0.02\linewidth}}
-  \iow_now:Nn \g_tmpa_iow {\begin{supertabular}{@{}p{0.06\linewidth}
-                          p{0.8\linewidth}p{0.06\linewidth}@{}}}
-  \seq_map_variable:NNn \g_latex_sample_seq \l_tmpa_tl {
-    \exp_args:NNV \iow_now:Nn \g_tmpa_iow \l_tmpa_tl
-    \iow_now:Nn \g_tmpa_iow {\tabularnewline}
-  }
-  \iow_now:Nn \g_tmpa_iow {\end{supertabular}}
-  \iow_now:Nx \g_tmpa_iow {\c_right_brace_str}
-  \iow_close:N \g_tmpa_iow
-}
-
-\newcommand{\listoflatexsamples}{
-  \section*{List~of~Examples}
-  \IfFileExists{\jobname-latex-examples.tabular}{
-    \input{\jobname-latex-examples.tabular}
-  }{}
-}
-
-\newtcblisting{latexsample}[1]{
-  codesample,
-  title={
-    \int_gincr:N \g_latex_sample_counter_int
-    \exp_args:Nx \label {\latex_sample_anchor_name:}
-    \hypertarget:xn {\latex_sample_anchor_name:}{
-    \small\textbf{Example~\add_latex_sample:n {#1}}:~#1}
-  }
-}
-
-\ExplSyntaxOff
-
-% anonymous example
-\newtcblisting{latexsample*}{
-  codesample
-}
-
-% listing only example
-\newtcblisting{latexsample**}{
-  codesample,
-  listing only
-}
-
-% listing of any language
-\newtcblisting{codesample}[1]{
-  codesample,
-  listing only,
-  minted language=#1
-}
-
-
-\title{\liii: Programming in \LaTeX\ with Ease}
-\author{Ziyue ``Alan'' Xiang}
+\title{Modern \LaTeX~programming: an example based \liii~tutorial}
+\author{Ziyue Xiang}
 \address{Purdue University}
 \netaddress{ziyue.alan.xiang (at) gmail (dot) com}
 \personalURL{https://www.alanshawn.com}
 \ORCID{0000-0001-6054-5801}
-
 
 \begin{document}
 
@@ -148,62 +20,111 @@
 \maketitle
 
 \tableofcontents
-\listoflatexsamples
+\ListOfCodeExample
+
 
 \section{Introduction}
 
-Many people view \LaTeX\ as a typesetting language and overlook
-the importance of programming in document generation process. 
-In reality, many large and structural documents can benefit from
-a programming backend, which enhances layout standardization, symbol
-coherence, editing speed and many other aspects. Despite the fact the
-standard \LaTeX\ (\LaTeXe) is already Turing complete, which means
-it is capable of solving any programming task, the design of numerous
-programming interfaces is highly inconsistent due to the long history
-of \LaTeX. This makes programming with \LaTeXe\ extremely daunting, 
-even for seasoned computer programmers.
+There is no doubt that \LaTeX~is viewed as a typesetting language by most of the users.
+The programming aspect of \LaTeX~is often overlooked by many.
+In practice, many large and structured documents can benefit from the programming capabilities provided by \LaTeX. 
+Even understanding the most basic programming principles in \LaTeX~can greatly facilitate the efficiency of generating figures or tables that are made up of similar and repeated sub-structures.
+The infrastructure provided by \LaTeXe\ \cite{berry2017latex} is already Turing complete, which means its programming capabilities are identical to those of Python \cite{vanrossum2010python} and C \cite{ritchie1988c}.
+However, the syntax and conventions of \LaTeXe~are nonstandardized and obsolete compared to the mainstream programming languages now.
+This makes learning \LaTeXe~programming more difficult for today's \LaTeX~users.
 
-To make programming in \LaTeX\ easier, the \liii\ programming interface
-is introduced, which aims to provide modern-programming-language-like
-syntax and library for \LaTeX\ programmers. Unfortunately, learning
-materials for this wonderful language is scarce. One of the few resource
-available for new users is \emph{The \liii\ Interfaces} \cite{l3interface},
-which is essentially an API documentation that is not designed for 
-introductory purposes. This situation may have barred many \LaTeX\ 
-users from utilizing the generic programming capabilities of \LaTeX.
-Therefore, this article intends to provide an easy-to-understand 
-tutorial for \LaTeX\ users with computer programming knowledge.
-Hopefully, readers can improve their \LaTeX\ editing efficiency and 
-document quality after understanding \liii.
+%Many people view \LaTeX\ as a typesetting language and overlook the importance of programming in document generation process. 
+%In reality, many large and structural documents can benefit from
+%a programming backend, which enhances layout standardization, symbol
+%coherence, editing speed and many other aspects. Despite the fact the
+%standard \LaTeX\ (\LaTeXe) is already Turing complete, which means
+%it is capable of solving any programming task, the design of numerous
+%programming interfaces is highly inconsistent due to the long history
+%of \LaTeX. This makes programming with \LaTeXe\ extremely daunting, 
+%even for seasoned computer programmers.
 
-This article is largely based on \emph{examples}, which demonstrate
-different aspects of \liii\ programming. The minimum preamble for 
-all examples is
-\begin{latexsample**}
-\documentclass{article}
-\usepackage{tikz} % load TikZ for some TikZ examples
-\usepackage{expl3} % load latex3 packages
-\end{latexsample**}
-\noindent Examples should be placed between \inltex|\begin{document}| 
-and \inltex|\end{document}|. All examples are tested with \TeX Live 
-2020 on Ubuntu 20.04.
+In order to modernize the programming interfaces in \LaTeX, the \liii~programming interfaces are introduced \cite{mittelbach2020quo}.
+Unfortunately, the learning materials for this tool chain is scarce.
+One of the few resources available for new learners is The \liii\ Interfaces \cite{l3interface}, which is an API documentation that is difficult to for one to start with.
+Therefore, in this material we intend to provide an example based \liii~tutorial for \liii~learners with sufficient background in computer programming.
+That is, the reader is expected to understand basic structures (e.g., loops, conditional branches) as well as data types (e.g., integers, floating point numbers, strings) in programs. 
+It would be helpful if the reader also understands the basic principles of the C programming language \cite{ritchie1988c}.
 
-Since the scale of \liii\ is huge, it would be infeasible to cover
-all modules and functionalities in one tutorial. As a result, this
-article only focuses on most frequently used components in \liii. 
-The complete API documentation can be found in \emph{The \liii\ Interfaces}
-\cite{l3interface}. The numbers surrounded by parentheses in some 
-section titles of this tutorial indicate the corresponding 
-documentation location in \emph{The \liii\ Interfaces}.
+%To make programming in \LaTeX\ easier, the \liii\ programming interface
+%is introduced, which aims to provide modern-programming-language-like
+%syntax and library for \LaTeX\ programmers. Unfortunately, learning
+%materials for this wonderful language is scarce. 
+%which is essentially an API documentation that is not designed for 
+%introductory purposes. This situation may have barred many \LaTeX\ 
+%users from utilizing the generic programming capabilities of \LaTeX.
+%Therefore, this article intends to provide an easy-to-understand 
+%tutorial for \LaTeX\ users with computer programming knowledge.
+%Hopefully, readers can improve their \LaTeX\ editing efficiency and 
+%document quality after understanding \liii.
 
-\subsection{Why \liii?}
 
-As mentioned above, \LaTeXe\ is already Turing complete and serves as
-the building block of many important packages. What are the reasons 
-for switching to \liii?
+Since the \liii~project has accumulated a huge code base over the years, it is infeasible to cover all of its functionalities in one tutorial.
+In this tutorial, we focus on the most frequently used components in \liii. 
+The complete API documentation can be found in \cite{l3interface}. 
+In the upcoming section titles, if parentheses are present, then the section number in \cite{l3interface} corresponding to the section in this tutorial is shown in the parentheses.
 
-\paragraph{Better expansion control} Fundamentally, \LaTeX\ works by 
-doing \emph{substitution}: commands are substituted by their definition,
+\subsection{Motivations of \liii}
+
+As mentioned above, \LaTeXe~is already Turing complete and serves as the building blocks of many existing packages. In this section, we describe the problems of traditional \LaTeX~programming, which justifies the reason why \liii~is developed despite already having the powerful \LaTeXe~and many other existing packages.
+
+\paragraph{Nonuniform interface} 
+
+Outside \liii, the interfaces provided by traditional \LaTeX~are not standardized. They suffer from the following disadvantages.
+
+% 1: function/variable naming
+% 2: overlapping/scattered packages
+% 3: numerical computations
+
+Firstly, the mechanism of \LaTeX~can affect the readability of traditional \LaTeX~code. 
+In \LaTeX, functions and variables are all declared as control sequences (see Chapter 3 of \cite{knuth1984texbook}).
+When a function is invoked, it is expected to execute a series of predefined procedures, whereas variables are used to store values only.
+In \LaTeX, we can declare functions that absorbs one or multiple arguments. 
+The homogeneous nature of functions and variables can make reading traditional \LaTeX\ source code difficult.
+%Unlike many other programming languages that enclose the arguments with parentheses, \LaTeX~does not require delimiters between the function and its arguments. 
+In the example below, we define 6 control sequences, where \inltex|\ta| and \inltex|\td| are functions, and the rest are variables.
+\begin{latexsample*}[ex:func-var-def]
+\newcommand{\ta}[2]{[arg1={#1}, arg2={#2}]}
+\newcommand{\tb}{$\alpha$}
+\newcommand{\tc}{$\beta$}
+\newcommand{\td}[1]{[arg3={#1}]}
+\newcommand{\te}{$\gamma$}
+\newcommand{\tf}{$\delta$}
+\ta\tb\tc\td\te\tf
+\end{latexsample*}
+\noindent On line \lref{ex:func-var-def}{7}\footnotemark, we call functions \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables), as well as output the value of \inltex|\tf|.
+In appearance, line 7 is six control sequences placed next to each other.
+It is very difficult to understand the code unless the programmer finds out which control sequences are functions and how many arguments each function uses.
+This makes the source code of some \LaTeXe\ packages challenging to read.
+
+\footnotetext{Every listing has a unique index, which is shown at the bottom right corner. A line in the listing is referenced by <listing index>:<line number>.}
+
+Secondly, in traditional \LaTeX~the implementation of many fundamental programming capabilities are provided by external packages.
+As a result, the functionalities of multiple packages may overlap. 
+For example, to compare the equality of two strings, we can use \inltex|\ifthenelse| and \inltex|\equal| from \verb|ifthen| package \cite{pkg:ifthen};
+we can use \inltex|\pdfstrcmp| from \verb|pdftexcmds| package \cite{pkg:pdftexcmds};
+we can also use \inltex|\IfStrEq| from \verb|xstring| package \cite{pkg:xstring}. 
+The use of multiple similar packages is likely to cause redundancy and compatibility issues.
+The lack of a centralized documentation and comparison for these similar packages also increases the learning cost of traditional \LaTeX~programming.
+%Therefore, \liii\ is to provide a set of unified and standardized interfaces for all possible \LaTeX\ variable types.
+
+\paragraph{Expansion control} 
+
+% two situations: when trying to store something in a variable
+% when passing arguments to a function
+% only concerns arguments
+
+Unlike generic programming languages, \LaTeX\ does not have support for types.
+Programming components such as variables, functions and function arguments are all treated in the same way as macros.
+As a result, \LaTeX~programmers usually need to more precisely control how variables are defined and how functions are called. These techniques are known as expansion control.
+
+Expansion control is mostly required in two  scenarios.
+
+Fundamentally, \TeX\ works by doing: commands are substituted by their definition,
 which is subsequently replaced by definition's definition, until 
 something irreplaceable is reached (e.g. text or \TeX\ primitives). 
 This process is called \emph{expansion}. The mechanism of expansion
@@ -216,7 +137,7 @@ caps. But if we store some text in \inltex|\myname| and then apply
 \inltex|\uppercase| to the command, we can see that the output is
 \emph{not} turned into uppercase letters.
 
-\begin{latexsample*}
+\begin{latexsample*}[]
 \par\uppercase{Alan Xiang}
 \newcommand*{\myname}{Alan Xiang}
 \par\uppercase{\myname}
@@ -230,6 +151,8 @@ will not try to apply \inltex|\uppercase| to the content of the command.
 Instead, the command itself will be placed into the output stream. 
 In this case, \inltex|\myname| will be left untouched in the output, 
 which is subsequently expanded to its original definition.
+
+(More details about tokens can be found in and Chapter 7 of \cite{knuth1984texbook})
 
 \footnotetext{Tokens are smallest units that \TeX\ compilers work 
 with. For now, we can consider a token to be either a character 
@@ -257,17 +180,7 @@ question on \TeX\ StackExchange \cite{tex-se-expanding}, a total of 26
 arguments.  To avoid this annoyance, one of the key features
 of \liii\ is to provide simple and reliable expansion control.
 
-\paragraph{Standardized interface} Just like any other generic programming
-languages, \LaTeX\ provides integer, floating point, string and
-container variables. However, tradition \LaTeX\ interface for these types
-is very messy. For example, to compare the equality of two strings, we can
-use \inltex|\ifthenelse| and \inltex|\equal| from \verb|ifthen| package;
-we can use \inltex|\pdfstrcmp| from \verb|pdftexcmds| package; we can also
-use \inltex|\IfStrEq| from \verb|xstring| package. The fact that so many
-heterogeneous packages provide similar functionalities induces redundancy
-and potential compatibility issues. Therefore, \liii\ is to provide
-a set of unified and standardized interfaces for all possible \LaTeX\ 
-variable types.
+
 
 \paragraph{Modernized experience} \TeX\ was first designed in the late 1970s, when
 computer hardware and programming languages were prototypes compared to
@@ -284,6 +197,23 @@ simplicity and interpretability. \liii\ attempts to modernize
 the \LaTeX\ language by adapting to modern-language-like syntaxes
 and introducing a naming system that makes \LaTeX\ code more
 readable.
+
+\subsection{Compiling Examples}
+
+This tutorial is based on examples.
+To compile the examples, the minimum preamble required is:
+\begin{latexsample**}[ex:min-preamble]
+\documentclass{article}
+\usepackage{tikz} % load TikZ for some TikZ examples
+\usepackage{expl3} % load latex3 packages
+\end{latexsample**}
+\noindent The example code should be placed between \inltex|\begin{document}| 
+and \inltex|\end{document}|. 
+All examples are tested with \TeX Live  2020 on Ubuntu 20.04.
+For newer versions of \LaTeX~compilers, there is no need to load the \verb|expl3| package explicitly (i.e., line \lref{ex:min-preamble}{3} is optional).
+
+The source code of this tutorial can be obtained from \url{https://github.com/xziyue/latex3-tutorial-latex-source}.
+
 
 \section{\liii\ Naming Conventions (I-1)}
 
@@ -319,6 +249,7 @@ category code table. The default \LaTeX\ category code table
 is shown in Table \ref{table:catcode-table}.
 
 \begin{center}
+\small
 \tabletail{\hline}
 \tablehead{
 \hline
@@ -377,7 +308,6 @@ and \verb|^| to denote subscript.
 \par value~outside~group:~\tl_use:N \l_tmpb_tl
 \ExplSyntaxOff
 \end{latexsample}
-
 
 
 \bibliographystyle{tugboat}

@@ -1,0 +1,185 @@
+\input{font.tex}
+\usepackage[english]{babel}
+\usepackage{metalogo}
+\usepackage{tcolorbox}
+\usepackage{microtype}
+\usepackage{expl3}
+\usepackage{chngcntr}
+\usepackage{etoolbox}
+\usepackage{adjustbox}
+\usepackage{supertabular}
+\usepackage{makecell}
+\usepackage{tikz}
+\usepackage{ragged2e}
+\usepackage{float}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage[breaklinks,colorlinks,pdfa]{hyperref}
+%\usepackage[breaklinks]{hyperref}
+
+
+\tcbuselibrary{listings, minted, skins, breakable, xparse, hooks}
+
+\newcommand*{\liii}{\LaTeX3}
+
+% line number style
+
+\newcommand*{\liiilexer}{tex_lexer.py:Tex3Lexer -x}
+\newmintinline[inltex]{\liiilexer}{breaklines, fontfamily=IBMPlexMono}
+\newmintinline[inlpy]{python}{fontfamily=IBMPlexMono}
+
+
+% https://tex.stackexchange.com/questions/86711/tcolorbox-list-of-listings
+\newcommand{\ListOfCodeExampleName}{List of Examples}
+\makeatletter
+\newcommand{\ListOfCodeExample}{\section*{\ListOfCodeExampleName}\@starttoc{CodeExample}}
+\makeatother
+
+\newcounter{codeexample}
+\counterwithin{codeexample}{section}
+
+\newcommand{\GenExampleTitle}[1]{%
+    \refstepcounter{codeexample}
+    \bfseries
+    \hspace*{0.5em}
+    Example \thecodeexample
+    \addcontentsline{CodeExample}{subsection}{\protect\numberline{\thecodeexample}#1}
+}
+
+
+\ExplSyntaxOn
+\bool_new:N \g_lst_line_ref_bool
+\tl_new:N \g_lst_label_tl
+\prop_new:N \g_lst_index_prop
+
+\newcommand{\EnableLstRef}{\bool_gset_true:N \g_lst_line_ref_bool}
+\newcommand{\DisableLstRef}{\bool_gset_false:N \g_lst_line_ref_bool}
+\newcommand{\SetLstRefLabel}[1]{\tl_gset:Nn \g_lst_label_tl {#1}}
+\newcommand{\LstPutLookup}[1]{
+    \prop_gput:Nnx \g_lst_index_prop {#1} {\TheLstCounter}
+}
+
+\tl_new:N \l_lst_tmpa_tl
+
+\cs_set:Npn \__lst_render_line: {
+    \textcolor[rgb]{0.5,0.5,0.5}{
+    \ttfamily\scriptsize
+    \arabic{FancyVerbLine}
+    }
+}
+
+\renewcommand{\theFancyVerbLine}{
+    \bool_if:NTF \g_lst_line_ref_bool {
+        \tl_set:Nx \l_lst_tmpa_tl {\arabic{FancyVerbLine}}
+        \exp_args:Nx \hypertarget{\g_lst_label_tl-\l_lst_tmpa_tl}{
+            \__lst_render_line:
+        }
+    }{
+        \__lst_render_line:
+    }
+
+}
+
+\int_new:N \g_lst_counter_int
+\newcommand{\AddLstCounter}{\int_gincr:N \g_lst_counter_int}
+\newcommand{\TheLstCounter}{\int_use:N \g_lst_counter_int}
+
+\newcommand{\lref}[2]{
+    \hyperlink{#1-#2}{
+        \prop_item:Nn \g_lst_index_prop {#1}:#2
+    }
+}
+
+\ExplSyntaxOff
+
+
+\tcbset{
+  codesample/.style={
+    enhanced,
+    breakable,
+    beforeafter skip=3ex,
+    listing engine=minted,
+    minted language=\liiilexer,
+    fontlower=\sffamily\small,
+    minted options={
+      fontsize=\fontsize{9}{9},
+      autogobble,
+      breaklines,
+      obeytabs,
+      tabsize=2,
+      linenos,
+      numbersep=2mm,
+      xleftmargin=4mm,
+      fontfamily=IBMPlexMono
+    },
+    colback=white,
+    colframe=black,
+    boxrule=0.8pt,
+    left=1mm,
+    right=1mm,
+    top=0.5mm,
+    bottom=0.5mm,
+    before upper pre={\AddLstCounter},
+    overlay unbroken and last={
+        \node[font=\sffamily\bfseries\scriptsize, anchor=south east] at (frame.south east) {\color[rgb]{0.5,0.5,0.5} \TheLstCounter};
+    }
+  }
+}
+
+\newtcblisting{latexsample}[1]{
+  codesample,
+  title=\GenExampleTitle{#1}
+}
+
+% listing only example
+\DeclareTCBListing{latexsample**}{o}{
+    codesample,
+    listing only,
+    IfValueTF={#1}
+    {
+        before upper app={\EnableLstRef\SetLstRefLabel{#1}\LstPutLookup{#1}},
+        after app={\DisableLstRef}
+    }
+    {}
+}
+
+% anonymous example
+\DeclareTCBListing{latexsample*}{o}{
+    codesample,
+    IfValueTF={#1}
+    {
+        before upper app={\EnableLstRef\SetLstRefLabel{#1}\LstPutLookup{#1}},
+        after app={\DisableLstRef}
+    }
+    {}
+}
+
+%\newtcblisting{latexsample*}{
+%  codesample
+%}
+
+% listing of any language
+\newtcblisting{codesample}[1]{
+  codesample,
+  listing only,
+  minted language=#1
+}
+
+
+
+\makeatletter
+% better URL line breaking
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+
+%\newcommand{\inlcolorbox}[2]{
+%    \bgroup
+%    %\setlength{\fboxsep}{0pt}
+%    \colorbox{blue!30}{#2}
+%    \egroup
+%}
+
+%\patchcmd{\minted@inputpyg@inline}{\colorbox}{\inlcolorbox}{}{\GenericError{}{cannot patch minted}{}{}}
+%\let\old@minted@inputpyg@inline\minted@inputpyg@inline
+%\renewcommand{cmd}{def}
+
+\makeatother
