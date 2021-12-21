@@ -1,0 +1,16 @@
+%% Example 2.1: Doing 123
+\ExplSyntaxOn
+\tl_set:Nn \l_tmpa_tl {A}
+\group_begin:
+\tl_set:Nn \l_tmpa_tl {B}
+\par value~inside~group:~\tl_use:N \l_tmpa_tl
+\group_end:
+\par value~outside~group:~\tl_use:N \l_tmpa_tl
+
+\tl_set:Nn \l_tmpb_tl {A}
+\group_begin:
+\tl_gset:Nn \l_tmpb_tl {B}
+\par value~inside~group:~\tl_use:N \l_tmpb_tl
+\group_end:
+\par value~outside~group:~\tl_use:N \l_tmpb_tl
+\ExplSyntaxOff
