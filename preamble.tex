@@ -1,9 +1,11 @@
-\input{font.tex}
+\input{font_pdflatex.tex}
 \usepackage[english]{babel}
 \usepackage{metalogo}
 \usepackage{tcolorbox}
+\usepackage{booktabs}
 \usepackage{microtype}
 \usepackage{expl3}
+\usepackage{mdframed}
 \usepackage{chngcntr}
 \usepackage{etoolbox}
 \usepackage{adjustbox}
@@ -16,29 +18,37 @@
 \usepackage{xcolor}
 %\usepackage[breaklinks,colorlinks,pdfa]{hyperref}
 \usepackage[breaklinks]{hyperref}
+\usepackage[capitalise]{cleveref}
 
 
 \tcbuselibrary{listings, minted, skins, breakable, xparse, hooks}
 
+% a quick command for LaTeX3
 \newcommand*{\liii}{\LaTeX3}
 
-% line number style
 
+% using custom lexer for highlighting LaTeX3 syntax
 \newcommand*{\liiilexer}{tex_lexer.py:Tex3Lexer -x}
-\newmintinline[inltex]{\liiilexer}{breaklines, fontfamily=IBMPlexMono}
-\newmintinline[inlpy]{python}{fontfamily=IBMPlexMono}
+% other code highliting setup
+\newmintinline[inltex]{\liiilexer}{breaklines, breakanywhere, fontfamily=DejaVuSansMono-TLF}
+\newmintinline[inlpy]{python}{fontfamily=DejaVuSansMono-TLF}
+\newmintinline[inlpl]{text}{}
 
-
+% set the style of the list of examples
 % https://tex.stackexchange.com/questions/86711/tcolorbox-list-of-listings
 \newcommand{\ListOfCodeExampleName}{List of Examples}
 \makeatletter
 \newcommand{\ListOfCodeExample}{\section*{\ListOfCodeExampleName}\@starttoc{CodeExample}}
 \makeatother
 
+% the counter for numbered code examples
 \newcounter{codeexample}
 \counterwithin{codeexample}{section}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% this segment of code is to implement arbitrary code
+% cross-referencing within the article
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makeatletter
 \ExplSyntaxOn
 \bool_new:N \g_lst_line_ref_bool
@@ -96,17 +106,30 @@
 \newcommand{\AddLstCounter}{\int_gincr:N \g_lst_counter_int}
 \newcommand{\TheLstCounter}{\int_use:N \g_lst_counter_int}
 
+% user command to cross reference a line in the lising
+% #1: listing name
+% #2: line number
+% #3 (optional): would output a range of lines from #2 to #3 if present
 \DeclareDocumentCommand{\lref}{mmo}{
-    \hyperlink{#1-#2}{
+    \IfValueTF{#3}{Lines}{Line}~\hyperlink{#1-#2}{
         \LstUseLookup{#1}:
         \IfValueTF{#3}{#2-#3}{#2}
     }
 }
 
+% user command to cross referenec a listing
+\DeclareDocumentCommand{\lstref}{m}{
+    Listing~\hyperlink{#1-1}{
+        \LstUseLookup{#1}
+    }
+}
+
 \ExplSyntaxOff
 \makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+% basic style for examples
 \tcbset{
   codesample/.style={
     enhanced,
@@ -124,11 +147,11 @@
       linenos,
       numbersep=2mm,
       xleftmargin=4mm,
-      fontfamily=IBMPlexMono
+      fontfamily=DejaVuSansMono-TLF
     },
     fonttitle=\normalfont,
     colback=white,
-    colframe=black,
+    colframe=black!60,
     boxrule=0.8pt,
     left=1mm,
     right=1mm,
@@ -141,11 +164,14 @@
   }
 }
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% this segment of code is to implement code exporting
+% if \ExportExamplestrue is called, then the source code of each
+% example will be output to /examples
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newif\ifExportExamples
 
 \ifExportExamples
-
 
 % define our custom VerbatimOut like environment for latexsample
 \makeatletter
@@ -225,6 +251,7 @@
 
 \makeatother
 
+
 \newtcbinputlisting{\inputlatexsample}[2]{
   codesample,
   title=\GenExampleTitle{#1},
@@ -238,21 +265,41 @@
     \addcontentsline{CodeExample}{subsection}{\protect\numberline{\thecodeexample}#1}
 }
 
+%TODO: fix the environment when exporting!
+
 \else
 
-\newcommand{\GenExampleTitle}[1]{%
+\newcommand{\GenExampleTitle}[2]{%
     \refstepcounter{codeexample}
+    \IfValueT{#2}{\label{#2}}
     \hspace*{0.5em}
     Example \thecodeexample:~#1
     \addcontentsline{CodeExample}{subsection}{\protect\numberline{\thecodeexample}#1}
 }
 
-\newtcblisting{latexsample}[1]{
-  codesample,
-  title=\GenExampleTitle{#1}
+\DeclareTCBListing{latexsample}{m!o}{
+    codesample,
+    title=\GenExampleTitle{#1}{#2},
+    IfValueTF={#2}
+    {
+        before upper app={\EnableLstRef\SetLstRefLabel{#2}\LstPutLookup{#2}},
+        after app={\DisableLstRef}
+    }
+    {}
 }
 
+%\newtcblisting{latexsample}[1]{
+%  codesample,
+%  title=\GenExampleTitle{#1}
+%}
+
 \fi
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 % listing only example
 \DeclareTCBListing{latexsample**}{!o}{
@@ -304,5 +351,8 @@
 %\patchcmd{\minted@inputpyg@inline}{\colorbox}{\inlcolorbox}{}{\GenericError{}{cannot patch minted}{}{}}
 %\let\old@minted@inputpyg@inline\minted@inputpyg@inline
 %\renewcommand{cmd}{def}
+
+\crefname{codeexample}{Example}{Examples}
+\newcommand{\exfullref}[1]{Example \ref{#1} (\lstref{#1})}
 
 \makeatother

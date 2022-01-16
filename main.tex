@@ -1,5 +1,5 @@
 % !BIB TS-program = bibtex
-% !TeX TS-program = xelatex
+% !TeX TS-program = pdflatex
 \documentclass{ltugboat}
 
 \input{preamble.tex}
@@ -52,10 +52,10 @@ This makes learning \LaTeXe~programming more difficult for today's \LaTeX~users.
 
 In order to modernize the programming interfaces in \LaTeX, the \liii~programming interfaces are introduced \cite{mittelbach2020quo}.
 Unfortunately, the learning materials for this tool chain is scarce.
-One of the few resources available for new learners is The \liii\ Interfaces \cite{l3interface}, which is an technical documentation that is difficult to for one to start with.
-Therefore, in this material we intend to provide an example based \liii~tutorial for \liii~learners with sufficient background in computer programming.
-That is, the reader is expected to understand basic structures (e.g., loops, conditional branches) as well as data types (e.g., integers, floating point numbers, strings) in programs. 
-It would be helpful if the reader also understands the basic principles of the C programming language \cite{ritchie1988c}.
+One of the few resources available for new learners is \emph{The \liii\ Interfaces} \cite{l3interface}, which is a technical documentation that is difficult to for one to start with.
+Therefore, in this material we intend to provide an example based \liii\ tutorial for new \liii\ users with sufficient background in computer programming.
+That is, the reader is expected to understand basic structures (e.g., loops, conditional branches) as well as data types (e.g., integers, floating point numbers, strings) in computer programs. 
+%It would be helpful if the reader also understands the basic principles of the C programming language \cite{ritchie1988c}.
 
 %To make programming in \LaTeX\ easier, the \liii\ programming interface
 %is introduced, which aims to provide modern-programming-language-like
@@ -73,7 +73,9 @@ It would be helpful if the reader also understands the basic principles of the C
 Since the \liii~project has accumulated a huge code base over the years, it is infeasible to cover all of its functionalities in one tutorial.
 In this tutorial, we focus on the most frequently used components in \liii. 
 The complete documentation of \liii\  can be found in \cite{l3interface}. 
-In the upcoming section titles, if parentheses are present, then the content in the parentheses is the corresponding section number in \cite{l3interface}.
+In the upcoming section titles, if parentheses are present, then the content in the parentheses is the corresponding section number in the 2022-01-12 release of \cite{l3interface}.
+
+
 
 \subsection{Motivations of \liii}
 
@@ -247,14 +249,14 @@ To compile the examples, the minimum preamble required is:
 \noindent The example code should be placed between \inltex|\begin{document}| 
 and \inltex|\end{document}|. 
 All examples were tested with \TeX Live  2020 on Ubuntu 20.04.
-For newer versions of \LaTeX~compilers, there is no need to load the \verb|expl3| package explicitly (i.e., Line \lref{ex:min-preamble}{3}\footnotemark~is optional).
+For newer versions of \LaTeX~compilers, there is no need to load the \verb|expl3| package explicitly (i.e., \lref{ex:min-preamble}{3}\footnotemark~is optional).
 
-\footnotetext{Every listing has a unique index, which is shown at the bottom right corner. A line in the listing is referenced by <listing index>:<line number>.}
+\footnotetext{Every listing has a unique index, which is shown at the bottom right corner. A line in the listing is referenced by <listing index>:<line number>. A range of lines in the listing are referenced by <listing index>:<line number 1>-<line number 2>.}
 
 The source code of this tutorial can be obtained from \url{https://github.com/xziyue/latex3-tutorial-latex-source}.
 
 
-\section{\liii\ Naming Conventions (I-1)}
+\section{\liii\ Naming Conventions (I.1.1)}
 
 Unlike many programming languages that enclose the function arguments with parentheses, \LaTeX\ does not require delimiters between the function and its arguments. 
 In the example below, we define 6 control sequences, where \inltex|\ta| and \inltex|\td| are functions, and the rest are variables.
@@ -267,9 +269,9 @@ In the example below, we define 6 control sequences, where \inltex|\ta| and \inl
 \newcommand{\tf}{$\delta$}
 \ta\tb\tc\td\te\tf
 \end{latexsample*}
-\noindent On Line \lref{ex:func-var-def}{7}, we call functions \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables). 
+\noindent On \lref{ex:func-var-def}{7}, we call functions \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables). 
 We output the value of \inltex|\tf| next.
-In appearance, Line \lref{ex:func-var-def}{7} is six control sequences placed next to each other.
+In appearance, \lref{ex:func-var-def}{7} is six control sequences placed next to each other.
 It is difficult to understand the code unless the programmer finds out which control sequences are functions and how many arguments each function absorbs.
 To improve readability, \liii\ introduces a special naming convention where functions and variables are clearly distinguishable. In addition, programmers can gather more information from function and variable names such as the number of function arguments, the type of variables, and the scope of variables. 
 
@@ -300,16 +302,27 @@ To improve readability, \liii\ introduces a special naming convention where func
 \subsection{Category Codes and Command Names}
 
 In \LaTeX, every input character can be classified into 16 categories. 
-Each category is identified with an integer ranging from 0 to 15, which is known as the \emph{category code}.
-More detail about category codes can be obtained from \cite{overleaf-catcode}.
-We focus on one of the sixteen categories, which is known as \emph{letter}.
-In most cases, command names in \LaTeX\ can only be made up of characters from the letter category.
-Because the letter category only contains the lowercase and uppercase versions of the 26 English alphabets by default, command names are comprised of these 52 characters exclusively under the initial \LaTeX\ setup.
-By extending the letter category, it is possible to add more permissible characters to command names.
-For example, the \inltex|\makeatletter| command changes the category of \texttt{@} to letter, which allows it to be used in command names \cite{texse:makeatletter}. 
-Many packages use \inltex|\makeatletter| and include the \texttt{@} character in the defined command names. 
-This technique can prevent \LaTeX\ users from overwriting a command imported from the package accidentally, since one can only access commands whose names are made up of English alphabets under the default settings.
-To separate \liii\ from other \LaTeX\ programming conventions, \liii\ introduces two new characters into the command names, namely \texttt{\_} (underscore) and \texttt{:} (semicolon).
+Each category can be identified by an integer ranging from 0 to 15, which is known as the \emph{category code}.
+More details about category codes can be obtained from \cite{overleaf-catcode}.
+We focus on one of the sixteen categories, which is known as ``letter''.
+In most cases, command names in \LaTeX\ can only be made up of characters from the ``letter'' category.
+Because the ``letter'' category only contains the lowercase and uppercase versions of the 26 English alphabets by default, command names are comprised of these 52 characters exclusively under the initial \LaTeX\ setup.
+By extending the ``letter'' category, it is possible to add more permissible characters to command names.
+For example, the \inltex|\makeatletter| command changes the category of \texttt{@} to ``letter'', which allows the character to be used in command names \cite{texse:makeatletter}. 
+Many packages use the \texttt{@} character in their internal command names to maintain the integrity of defined commands.
+Since typical users can only access commands whose names are made up of English alphabets, this technique can prevent internal commands from being overwritten accidentally.
+The technique is also used in \liii\ to separate \liii\ from other \LaTeX\ programming conventions.
+In \liii, two new characters are introduced into the command names, namely \texttt{\_} (underscore) and \texttt{:} (semicolon).
+
+The command \inltex|\ExplSyntaxOn| allows one to enter \liii\ programming mode.
+It changes the category code of underscore and semicolon to ``letter''.
+%The command \inltex|\ExplSyntaxOn| changes the category code of the two characters to ``letter'' and allows one to enter \liii\ programming mode. 
+It also changes the category code associated with white space and line break characters so that they are ignored in \liii\ mode.
+Therefore, a white space should be explicitly entered with \verb|~| or \verb|\ | in \liii\ mode.
+%To exit \liii\ mode, one can use the command \inltex|\ExplSyntaxOff|.
+The command \inltex|\ExplSyntaxOff| is used to exit \liii\ mode.
+
+
 
 
 %In \LaTeX, every input character is associated with a \emph{category code} \cite{overleaf-catcode}. 
@@ -382,6 +395,269 @@ To separate \liii\ from other \LaTeX\ programming conventions, \liii\ introduces
 %\ExplSyntaxOff
 %\end{latexsample}
 
+
+\subsection{Names of Variables}\label{sec:name-of-variables}
+
+In \liii, the naming of variables and functions are different, which allows one to distinguish the two more easily. 
+A \liii\ variable can be public or private depending on the semantics.
+The name of each \liii\ variable is made up of four parts: \texttt{scope}, \texttt{module}, \texttt{description}, and \texttt{type}. 
+We will describe the meaning of each part later.
+
+The name of a public variable should follow:
+\begin{center}
+\texttt{\string\<scope>\_<module>\_<description>\_<type>}
+\end{center}
+The name of a private variable should follow:
+\begin{center}
+\texttt{\string\<scope>\_\_<module>\_<description>\_<type>}
+\end{center}
+Private variables have an extra underscore between the \texttt{scope} part and the \texttt{module} part.
+
+The meaning of each part is shown as follows.
+\begin{itemize}
+\item \texttt{scope}: a single letter identifying the scope of the variable; see \cref{sec:var-scope} for more details
+\begin{itemize}
+\item \texttt{l}: local variable
+\item \texttt{g}: global variable
+\item \texttt{c}: constant
+\end{itemize}
+\item \texttt{module}: the name of the module where the variable is defined
+\item \texttt{description}: the description of the variable
+\item \texttt{type}: the variable type; some common types are shown in \cref{tbl:var-type}.
+\end{itemize}
+The \texttt{description} part can contain multiple segments separated by underscore(s). 
+Some valid variables names are shown below.
+\begin{itemize}
+\item \inltex|\g_doc_variable_int|
+\item \inltex|\l_doc_bg_color_r_fp|
+\item \inltex|\l_doc_bg_color_g_fp|
+\item \inltex|\l__mypkg_tmpa_seq|
+\item \inltex|\c_left_brace_str|
+\end{itemize}
+
+Since the category code of underscore has been changed to ``letter'' under \liii\ mode, it can no longer be used to denoted subscript in math equations.
+One can use the predefined \liii\ constant \inltex|\c_math_subscript_token| to represent subscripts when programming in \liii.
+
+\begin{table}[htpb]
+\centering
+\scriptsize
+\begin{tabular}{>{\ttfamily\centering}p{0.15\linewidth}p{0.4\linewidth}}
+\toprule
+\multicolumn{1}{c}{Type} & Description\\ \midrule
+clist & comma separated list\\
+dim & dimension\\
+fp & floating point number\\
+int & integer\\
+seq & sequence\\
+str & string\\
+tl & token list\\
+bool & boolean\\
+regex & regular expression\\
+prop & property list\\
+ior & IO read\\
+iow & IO write\\ \bottomrule
+\end{tabular}
+%TODO: insert reference
+\caption{Commonly used variable types and their descriptions. See ?? for more information about variable types.}
+\label{tbl:var-type}
+\end{table}
+
+\subsection{Names of Functions}
+
+To increase the readability of \liii\ code, a function name in \liii\ includes information about the arguments that it absorbs. The name of a public \liii\ function should follow:
+\begin{center}
+\texttt{\string\<module>\_<description>:<arg-spec>}
+\end{center}
+The name of a private \liii\ function should follow:
+\begin{center}
+\texttt{\string\_\_<module>\_<description>:<arg-spec>}
+\end{center}
+The semicolon is only used in \liii\ function names.
+The meaning of each part is described as follows.
+\begin{itemize}
+\item \texttt{module}: the name of the module where the function is defined
+\item \texttt{description}: the description of the function
+\item \texttt{arg-spec}: the argument specifications--it is made up of zero or more English letters describing the type of every function argument, where each letter specifies the type of an argument; some common argument specification letters are shown in \cref{tbl:arg-spec-type}.
+\end{itemize}
+Some valid function names are shown below.
+\begin{itemize}
+\item \inltex|\group_begin:|
+\item \inltex|\tl_put_right:Nn|
+\item \inltex|\tl_gput_right:Nx|
+\item \inltex|\__doc_do_something:Nnxx|
+\end{itemize}
+
+\begin{table}[htpb]
+\centering
+\scriptsize
+\begin{tabular}{>{\ttfamily\centering}cm{0.6\linewidth}}
+\toprule
+\multicolumn{1}{c}{\texttt{arg-spec} Letter} & Description\\ \midrule
+n & A token list argument\\
+N & A single token argument\\
+V & An argument passed by value\\
+o & A token list argument expanded once\\
+x & A token list argument expanded recursively\\
+T & A true branch in conditional statements\\
+F & A false branch in conditional statements\\
+p & A parameter list\\
+c & A token list argument that is fully expanded and treated as a command name\\ \bottomrule
+\end{tabular}
+%TODO: insert reference and delete Section
+\caption{Commonly used argument specification letters and their descriptions. More details are described in Section \textcolor{red}{???}.}
+\label{tbl:arg-spec-type}
+\end{table}
+
+%TODO: think about how to deal with token and token lists
+
+\subsection{The Use of \liii\ Naming Conventions}
+
+The \liii\ naming conventions are essentially suggestions. 
+In reality, the \LaTeX\ compiler does not check if the code is written according to \liii\ naming conventions.
+However, using the naming conventions can greatly improve the readability of one's code.
+%TODO: insert reference and delete Section
+In Section \textcolor{red}{???}, we can also see that \liii's expansion control mechanism sometimes requires functions to be defined using \liii\ naming conventions.
+Almost all \liii\ packages are written using the naming conventions.
+Therefore, it is recommended that all \liii\ users follow the \liii\ naming conventions strictly.
+
+\section{Understanding \liii\ Documentation (I.1.2)}
+
+Currently, most information about \liii\ is compiled in \cite{l3interface}. 
+It is mainly a technical documentation on \liii\ functions, scratch variables, and constants. 
+We describe briefly how \cite{l3interface} documents these concepts.
+\begin{itemize}
+\item \liii\ functions: the majority of the contents in \cite{l3interface} are about \liii\ functions.
+In \cite{l3interface}, each function is documented using a block similar to the one shown in  \cref{fig:l3-doc-func-example}.
+The color background is added in the figure to help understand the block, it does not exist in the original document.
+
+The yellow part in \cref{fig:l3-doc-func-example} indicates the basic forms and the variants of the function. 
+The first and third line in the yellow part are the basic forms for local and global assignment (see \cref{sec:var-scope}), respectively.
+The second line shows the function variants for local assignment; the fourth line shows the function variants for global assignment.
+%TODO: insert reference and delete Section
+More details about function variants will be introduced in Section \textcolor{red}{???}.
+The cyan part in \cref{fig:l3-doc-func-example} shows the basic usage of the function, where the meaning of each function argument is described.
+The magenta part in \cref{fig:l3-doc-func-example} shows the detailed description of the function.
+
+\item Scratch variables: similar to the C programming language \cite{ritchie1988c}, variables in \liii\ need to be defined before use. 
+\liii\ has predefined a set of empty variables for convenience.
+These variables are known as scratch variables.
+In \liii, each package will usually define several scratch variables.
+They are documented in specific sections, similar to the one demonstrated in \cref{fig:l3-scratch-var-example}.
+The left hand side of \cref{fig:l3-scratch-var-example} shows the predefined scratch variables; the right hand side shows the description of the variables.
+It is recommended not to use scratch variables, especially in large projects or generic packages.
+This reduces the chances of collision.
+
+\item Constants: \liii\ defines a large number of constants such as the value of $\pi$, the value of $e$, special characters, etc. 
+They are documented in specific sections, similar to the one demonstrated in \cref{fig:l3-constant-example}.
+The left hand side of \cref{fig:l3-constant-example} shows the command name of the constant; the right hand side shows the description of the constant.
+
+\end{itemize}
+
+\begin{figure*}[htpb]
+\centering
+\mdfdefinestyle{plainmdbox}{topline=false,leftline=false,rightline=false,bottomline=false}
+\begin{minipage}[t]{0.52\linewidth}
+\begin{mdframed}[backgroundcolor=yellow!50, style=plainmdbox]
+\begin{tabular}{l}
+\toprule
+\inlpl|\tl_set:Nn|\\
+{\color{gray}\verb|\tl_set|}\inlpl!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)! \\
+\inlpl|\tl_gset:Nn| \\
+{\color{gray}\verb|\tl_gset|}\inlpl!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)! \\ \bottomrule
+\end{tabular}
+\end{mdframed}
+\end{minipage}
+\begin{minipage}{0.4\linewidth}
+\vspace*{3em}
+\begin{mdframed}[backgroundcolor=cyan!50, style=plainmdbox]
+\inlpl|\tl_set:Nn| {\ttfamily<\textsl{tl var}> \{<\textsl{tokens}>\}}
+\end{mdframed}
+\end{minipage}\\
+\begin{minipage}[t]{0.15\linewidth}
+\phantom{}
+\end{minipage}
+\begin{minipage}{0.82\linewidth}
+\begin{mdframed}[backgroundcolor=magenta!50, style=plainmdbox]
+Sets <\textit{tl var}> to contain <\textit{tokens}>, removing any previous content from the variable.
+\end{mdframed}
+\end{minipage}
+\caption{An example of function documentation excerpted from Section IV.15.2 of \protect\cite{l3interface}. 
+Color background is added in this figure to help understand the documentation.}
+\label{fig:l3-doc-func-example}
+\end{figure*}
+
+\begin{figure*}
+\centering
+\begin{minipage}[t]{0.15\linewidth}
+\begin{tabular}{l}
+\toprule
+\inlpl|\l_tmpa_tl|\\
+\inlpl|\l_tmpb_tl| \\ \bottomrule
+\end{tabular}
+\end{minipage}
+\begin{minipage}[t]{0.83\linewidth}
+\vspace*{-1em}
+Scratch token lists for local assignment.
+These are never used by the kernel code, and so are safe for use with any \liii--defined function.
+However, they may be overwritten by other non-kernel code and so should only be used for short-term storage.
+\end{minipage}
+\caption{An example of scratch variables excerpted from Section IV.15.8 of \protect\cite{l3interface}.}
+\label{fig:l3-scratch-var-example}
+\end{figure*}
+
+\begin{figure*}
+\centering
+\begin{minipage}[t]{0.15\linewidth}
+\begin{tabular}{l}
+\toprule
+\inlpl|\c_pi_fp|\\ \bottomrule
+\end{tabular}
+\end{minipage}
+\begin{minipage}[t]{0.83\linewidth}
+The value of $\pi$. This can be input directly in a floating point expression as \texttt{pi}.
+\end{minipage}
+\caption{An example of scratch variables excerpted from Section IV.28.6 of \protect\cite{l3interface}.}
+\label{fig:l3-constant-example}
+\end{figure*}
+
+
+\section{Variables and Functions}
+
+
+
+\appendix
+
+
+\section{Scope of Variables}\label{sec:var-scope}
+
+In \liii, the scope of value assignment is usually local.
+\exfullref{ex:group-demo} shows the difference between local and global assignment.
+In this example, \lref{ex:group-demo}{4}[9] are enclosed in a group.
+Inside the group, the value of \inltex|\l_tmpa_tl| is locally assigned with \inltex|\tl_set:Nn|, while the value of \inltex|\g_tmpa_tl| is globally assigned with \inltex|\tl_gset:Nn|.
+Since the value assignment of \inltex|\l_tmpa_tl| is local, the scope of the assignment is constrained within the group.
+Therefore, when we use its value outside the group, we get the old value.
+In contrast, the value assignment of \inltex|\g_tmpa_tl| is able to go beyond group boundaries.
+%TODO: cross-reference the right example
+% In example, we show... resursive functions
+
+\begin{latexsample}{Scope of value assignment}[ex:group-demo]
+\ExplSyntaxOn
+\tl_set:Nn \l_tmpa_tl {old}
+\tl_gset:Nn \g_tmpa_tl {old}
+\group_begin:
+\tl_set:Nn \l_tmpa_tl {new} % set value locally
+\tl_gset:Nn \g_tmpa_tl {new} % set value globally
+\par In~group:~\tl_use:N \l_tmpa_tl
+\par In~group:~\tl_use:N \g_tmpa_tl
+\group_end:
+\par Outside~group:~\tl_use:N \l_tmpa_tl
+\par Outside~group:~\tl_use:N \g_tmpa_tl
+\ExplSyntaxOff
+\end{latexsample}
+
+In \cref{sec:name-of-variables}, it is described that the scope of variables should be encoded as the first letter (prefix) of variable names.
+If a variable is to be assigned using \verb|set| functions, we can consider it to be local and use \verb|l| as the prefix.
+If a variable is to be assigned using \verb|gset| functions, we can consider it to be global and use \verb|g| as the prefix.
 
 \bibliographystyle{tugboat}
 \bibliography{main.bib}
