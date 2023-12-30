@@ -1,4 +1,5 @@
 *.tabular
+*.CodeExample
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
