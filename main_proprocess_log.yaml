@@ -1,0 +1,969 @@
+applied_changes:
+- category: env:latexsample
+  end: 34550
+  line: \begin{latexsample}{Scope of value assignment}[ex:group-demo]
+  original: '\begin{latexsample}{Scope of value assignment}[ex:group-demo]
+
+    \ExplSyntaxOn
+
+    \tl_set:Nn \l_tmpa_tl {old}
+
+    \tl_gset:Nn \g_tmpa_tl {old}
+
+    \group_begin:
+
+    \tl_set:Nn \l_tmpa_tl {new} % set value locally
+
+
+
+    % comments should be here
+
+
+
+    \tl_gset:Nn \g_tmpa_tl {new} % set value globally
+
+    \par In~group:~\tl_use:N \l_tmpa_tl
+
+    \par In~group:~\tl_use:N \g_tmpa_tl
+
+    \group_end:
+
+    \par Outside~group:~\tl_use:N \l_tmpa_tl
+
+    \par Outside~group:~\tl_use:N \g_tmpa_tl
+
+    \ExplSyntaxOff
+
+    \end{latexsample}'
+  repl: '\def\CurrentEnvName{latexsample}
+
+    \begin{filecontents}[force,noheader]{\jobname-lst-raw.vrb}
+
+    \ExplSyntaxOn
+
+    \tl_set:Nn \l_tmpa_tl {old}
+
+    \tl_gset:Nn \g_tmpa_tl {old}
+
+    \group_begin:
+
+    \tl_set:Nn \l_tmpa_tl {new} % set value locally
+
+
+
+    % comments should be here
+
+
+
+    \tl_gset:Nn \g_tmpa_tl {new} % set value globally
+
+    \par In~group:~\tl_use:N \l_tmpa_tl
+
+    \par In~group:~\tl_use:N \g_tmpa_tl
+
+    \group_end:
+
+    \par Outside~group:~\tl_use:N \l_tmpa_tl
+
+    \par Outside~group:~\tl_use:N \g_tmpa_tl
+
+    \ExplSyntaxOff
+
+    \end{filecontents}
+
+    \begin{filecontents}[force,noheader]{\jobname-lst-hl.vrb}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+    \PY{k}{\PYZbs{}ExplSyntaxOn}
+
+    \PY{k}{\PYZbs{}tl\PYZus{}set}\PY{n+nn}{:Nn} \PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}
+    \PY{n+nb}{\PYZob{}}old\PY{n+nb}{\PYZcb{}}
+
+    \PY{k}{\PYZbs{}tl\PYZus{}gset}\PY{n+nn}{:Nn} \PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}
+    \PY{n+nb}{\PYZob{}}old\PY{n+nb}{\PYZcb{}}
+
+    \PY{k}{\PYZbs{}group\PYZus{}begin}\PY{n+nn}{:}
+
+    \PY{k}{\PYZbs{}tl\PYZus{}set}\PY{n+nn}{:Nn} \PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}
+    \PY{n+nb}{\PYZob{}}new\PY{n+nb}{\PYZcb{}} \PY{c}{\PYZpc{} set value locally}
+
+
+
+    \PY{c}{\PYZpc{} comments should be here}
+
+
+
+    \PY{k}{\PYZbs{}tl\PYZus{}gset}\PY{n+nn}{:Nn} \PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}
+    \PY{n+nb}{\PYZob{}}new\PY{n+nb}{\PYZcb{}} \PY{c}{\PYZpc{} set value globally}
+
+    \PY{k}{\PYZbs{}par} In\PYZti{}group:\PYZti{}\PY{k}{\PYZbs{}tl\PYZus{}use}\PY{n+nn}{:N}
+    \PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}
+
+    \PY{k}{\PYZbs{}par} In\PYZti{}group:\PYZti{}\PY{k}{\PYZbs{}tl\PYZus{}use}\PY{n+nn}{:N}
+    \PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}
+
+    \PY{k}{\PYZbs{}group\PYZus{}end}\PY{n+nn}{:}
+
+    \PY{k}{\PYZbs{}par} Outside\PYZti{}group:\PYZti{}\PY{k}{\PYZbs{}tl\PYZus{}use}\PY{n+nn}{:N}
+    \PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}
+
+    \PY{k}{\PYZbs{}par} Outside\PYZti{}group:\PYZti{}\PY{k}{\PYZbs{}tl\PYZus{}use}\PY{n+nn}{:N}
+    \PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}
+
+    \PY{k}{\PYZbs{}ExplSyntaxOff}
+
+    \end{Verbatim}
+
+    \end{filecontents}'
+  start: 34077
+- category: env:latexsample*
+  end: 16446
+  line: \begin{latexsample*}[ex:func-var-def]
+  original: '\begin{latexsample*}[ex:func-var-def]
+
+    \newcommand{\ta}[2]{[arg1={#1}, arg2={#2}]}
+
+    \newcommand{\tb}{$\alpha$}
+
+    \newcommand{\tc}{$\beta$}
+
+    \newcommand{\td}[1]{[arg3={#1}]}
+
+    \newcommand{\te}{$\gamma$}
+
+    \newcommand{\tf}{$\delta$}
+
+    \ta\tb\tc\td\te\tf
+
+    \end{latexsample*}'
+  repl: '\def\CurrentEnvName{latexsample*}
+
+    \begin{filecontents}[force,noheader]{\jobname-lst-raw.vrb}
+
+    \newcommand{\ta}[2]{[arg1={#1}, arg2={#2}]}
+
+    \newcommand{\tb}{$\alpha$}
+
+    \newcommand{\tc}{$\beta$}
+
+    \newcommand{\td}[1]{[arg3={#1}]}
+
+    \newcommand{\te}{$\gamma$}
+
+    \newcommand{\tf}{$\delta$}
+
+    \ta\tb\tc\td\te\tf
+
+    \end{filecontents}
+
+    \begin{filecontents}[force,noheader]{\jobname-lst-hl.vrb}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+    \PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}ta}\PY{n+nb}{\PYZcb{}}[2]\PY{n+nb}{\PYZob{}}[arg1=\PY{n+nb}{\PYZob{}}\PYZsh{}1\PY{n+nb}{\PYZcb{}},
+    arg2=\PY{n+nb}{\PYZob{}}\PYZsh{}2\PY{n+nb}{\PYZcb{}}]\PY{n+nb}{\PYZcb{}}
+
+    \PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}tb}\PY{n+nb}{\PYZcb{}}\PY{n+nb}{\PYZob{}}\PY{l+s}{\PYZdl{}}\PY{n+nv}{\PYZbs{}alpha}\PY{l+s}{\PYZdl{}}\PY{n+nb}{\PYZcb{}}
+
+    \PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}tc}\PY{n+nb}{\PYZcb{}}\PY{n+nb}{\PYZob{}}\PY{l+s}{\PYZdl{}}\PY{n+nv}{\PYZbs{}beta}\PY{l+s}{\PYZdl{}}\PY{n+nb}{\PYZcb{}}
+
+    \PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}td}\PY{n+nb}{\PYZcb{}}[1]\PY{n+nb}{\PYZob{}}[arg3=\PY{n+nb}{\PYZob{}}\PYZsh{}1\PY{n+nb}{\PYZcb{}}]\PY{n+nb}{\PYZcb{}}
+
+    \PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}te}\PY{n+nb}{\PYZcb{}}\PY{n+nb}{\PYZob{}}\PY{l+s}{\PYZdl{}}\PY{n+nv}{\PYZbs{}gamma}\PY{l+s}{\PYZdl{}}\PY{n+nb}{\PYZcb{}}
+
+    \PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}tf}\PY{n+nb}{\PYZcb{}}\PY{n+nb}{\PYZob{}}\PY{l+s}{\PYZdl{}}\PY{n+nv}{\PYZbs{}delta}\PY{l+s}{\PYZdl{}}\PY{n+nb}{\PYZcb{}}
+
+    \PY{k}{\PYZbs{}ta}\PY{k}{\PYZbs{}tb}\PY{k}{\PYZbs{}tc}\PY{k}{\PYZbs{}td}\PY{k}{\PYZbs{}te}\PY{k}{\PYZbs{}tf}
+
+    \end{Verbatim}
+
+    \end{filecontents}'
+  start: 16187
+- category: env:latexsample**
+  end: 15130
+  line: \begin{latexsample**}[ex:min-preamble]
+  original: '\begin{latexsample**}[ex:min-preamble]
+
+    \documentclass{article}
+
+    \usepackage{tikz} % load TikZ for some TikZ examples
+
+    \usepackage{expl3} % load latex3 packages
+
+    \end{latexsample**}'
+  repl: '\def\CurrentEnvName{latexsample**}
+
+    \begin{filecontents}[force,noheader]{\jobname-lst-raw.vrb}
+
+    \documentclass{article}
+
+    \usepackage{tikz} % load TikZ for some TikZ examples
+
+    \usepackage{expl3} % load latex3 packages
+
+    \end{filecontents}
+
+    \begin{filecontents}[force,noheader]{\jobname-lst-hl.vrb}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+    \PY{k}{\PYZbs{}documentclass}\PY{n+nb}{\PYZob{}}article\PY{n+nb}{\PYZcb{}}
+
+    \PY{k}{\PYZbs{}usepackage}\PY{n+nb}{\PYZob{}}tikz\PY{n+nb}{\PYZcb{}} \PY{c}{\PYZpc{}
+    load TikZ for some TikZ examples}
+
+    \PY{k}{\PYZbs{}usepackage}\PY{n+nb}{\PYZob{}}expl3\PY{n+nb}{\PYZcb{}} \PY{c}{\PYZpc{}
+    load latex3 packages}
+
+    \end{Verbatim}
+
+    \end{filecontents}'
+  start: 14953
+- category: inline:tex3
+  close_char: '|'
+  end: 7504
+  line: For example, to compare the equality of two strings, we can use \inltex|\ifthenelse|
+    and \inltex|\equal| from \verb|ifthen| package \cite{pkg:ifthen};
+  open_char: '|'
+  original: \inltex|\ifthenelse|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}ifthenelse}}
+  start: 7484
+- category: inline:tex3
+  close_char: '|'
+  end: 7545
+  line: For example, to compare the equality of two strings, we can use \inlinestylea{\PY{k}{\PYZbs{}ifthenelse}}
+    and \inltex|\equal| from \verb|ifthen| package \cite{pkg:ifthen};
+  open_char: '|'
+  original: \inltex|\equal|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}equal}}
+  start: 7530
+- category: inline:tex3
+  close_char: '|'
+  end: 7643
+  line: we can use \inltex|\pdfstrcmp| from \verb|pdftexcmds| package \cite{pkg:pdftexcmds};
+  open_char: '|'
+  original: \inltex|\pdfstrcmp|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}pdfstrcmp}}
+  start: 7624
+- category: inline:tex3
+  close_char: '|'
+  end: 7752
+  line: 'we can also use \inltex|\IfStrEq| from \verb|xstring| package \cite{pkg:xstring}. '
+  open_char: '|'
+  original: \inltex|\IfStrEq|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}IfStrEq}}
+  start: 7735
+- category: inline:tex3
+  close_char: '|'
+  end: 8789
+  line: Expansion control in traditional \LaTeX~is achieved by using the \inltex|\expandafter|
+    command, which is difficult to use because the number of \inltex|\expandafter|
+    command calls required may scale exponentially \cite{bechtolsheim1988tutorial}.
+  open_char: '|'
+  original: \inltex|\expandafter|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}expandafter}}
+  start: 8768
+- category: inline:tex3
+  close_char: '|'
+  end: 8889
+  line: Expansion control in traditional \LaTeX~is achieved by using the \inlinestylea{\PY{k}{\PYZbs{}expandafter}}
+    command, which is difficult to use because the number of \inltex|\expandafter|
+    command calls required may scale exponentially \cite{bechtolsheim1988tutorial}.
+  open_char: '|'
+  original: \inltex|\expandafter|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}expandafter}}
+  start: 8868
+- category: inline:tex3
+  close_char: '|'
+  end: 15820
+  line: '\noindent The example code should be placed between \inltex|\begin{document}| '
+  open_char: '|'
+  original: \inltex|\begin{document}|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}begin}\PY{n+nb}{\PYZob{}}document\PY{n+nb}{\PYZcb{}}}
+  start: 15795
+- category: inline:tex3
+  close_char: '|'
+  end: 15906
+  line: 'and \inltex|\end{document}|. '
+  open_char: '|'
+  original: \inltex|\end{document}|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}end}\PY{n+nb}{\PYZob{}}document\PY{n+nb}{\PYZcb{}}}
+  start: 15883
+- category: inline:tex3
+  close_char: '|'
+  end: 16852
+  line: In the example below, we define 6 control sequences, where \inltex|\ta| and
+    \inltex|\td| are functions, and the rest are variables.
+  open_char: '|'
+  original: \inltex|\ta|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}ta}}
+  start: 16840
+- category: inline:tex3
+  close_char: '|'
+  end: 16890
+  line: In the example below, we define 6 control sequences, where \inlinestylea{\PY{k}{\PYZbs{}ta}}
+    and \inltex|\td| are functions, and the rest are variables.
+  open_char: '|'
+  original: \inltex|\td|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}td}}
+  start: 16878
+- category: inline:tex3
+  close_char: '|'
+  end: 18712
+  line: '\noindent On \lref{ex:func-var-def}{7}, we call functions \inltex|\ta| and
+    \inltex|\td| with their respective arguments (stored in variables). '
+  open_char: '|'
+  original: \inltex|\ta|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}ta}}
+  start: 18700
+- category: inline:tex3
+  close_char: '|'
+  end: 18750
+  line: '\noindent On \lref{ex:func-var-def}{7}, we call functions \inlinestylea{\PY{k}{\PYZbs{}ta}}
+    and \inltex|\td| with their respective arguments (stored in variables). '
+  open_char: '|'
+  original: \inltex|\td|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}td}}
+  start: 18738
+- category: inline:tex3
+  close_char: '|'
+  end: 18863
+  line: We output the value of \inltex|\tf| next.
+  open_char: '|'
+  original: \inltex|\tf|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}tf}}
+  start: 18851
+- category: inline:tex3
+  close_char: '|'
+  end: 21289
+  line: 'For example, the \inltex|\makeatletter| command changes the category of \texttt{@}
+    to ``letter'''', which allows the character to be used in command names \cite{texse:makeatletter}. '
+  open_char: '|'
+  original: \inltex|\makeatletter|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}makeatletter}}
+  start: 21267
+- category: inline:tex3
+  close_char: '|'
+  end: 22010
+  line: The command \inltex|\ExplSyntaxOn| allows one to enter \liii\ programming
+    mode.
+  open_char: '|'
+  original: \inltex|\ExplSyntaxOn|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}ExplSyntaxOn}}
+  start: 21988
+- category: inline:tex3
+  close_char: '|'
+  end: 22629
+  line: The command \inltex|\ExplSyntaxOff| is used to exit \liii\ mode.
+  open_char: '|'
+  original: \inltex|\ExplSyntaxOff|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}ExplSyntaxOff}}
+  start: 22606
+- category: inline:tex3
+  close_char: '|'
+  end: 26850
+  line: \item \inltex|\g_doc_variable_int|
+  open_char: '|'
+  original: \inltex|\g_doc_variable_int|
+  repl: \inlinestylea{\PY{n+nv}{\PYZbs{}g\PYZus{}doc\PYZus{}variable\PYZus{}int}}
+  start: 26822
+- category: inline:tex3
+  close_char: '|'
+  end: 26931
+  line: \item \inltex|\l_doc_bg_color_r_fp|
+  open_char: '|'
+  original: \inltex|\l_doc_bg_color_r_fp|
+  repl: \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}doc\PYZus{}bg\PYZus{}color\PYZus{}r\PYZus{}fp}}
+  start: 26902
+- category: inline:tex3
+  close_char: '|'
+  end: 27026
+  line: \item \inltex|\l_doc_bg_color_g_fp|
+  open_char: '|'
+  original: \inltex|\l_doc_bg_color_g_fp|
+  repl: \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}doc\PYZus{}bg\PYZus{}color\PYZus{}g\PYZus{}fp}}
+  start: 26997
+- category: inline:tex3
+  close_char: '|'
+  end: 27119
+  line: \item \inltex|\l__mypkg_tmpa_seq|
+  open_char: '|'
+  original: \inltex|\l__mypkg_tmpa_seq|
+  repl: \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}\PYZus{}mypkg\PYZus{}tmpa\PYZus{}seq}}
+  start: 27092
+- category: inline:tex3
+  close_char: '|'
+  end: 27204
+  line: \item \inltex|\c_left_brace_str|
+  open_char: '|'
+  original: \inltex|\c_left_brace_str|
+  repl: \inlinestylea{\PY{n+nv}{\PYZbs{}c\PYZus{}left\PYZus{}brace\PYZus{}str}}
+  start: 27178
+- category: inline:tex3
+  close_char: '|'
+  end: 27493
+  line: One can use the predefined \liii\ constant \inltex|\c_math_subscript_token|
+    to represent subscripts when programming in \liii.
+  open_char: '|'
+  original: \inltex|\c_math_subscript_token|
+  repl: \inlinestylea{\PY{n+nv}{\PYZbs{}c\PYZus{}math\PYZus{}subscript\PYZus{}token}}
+  start: 27461
+- category: inline:tex3
+  close_char: '|'
+  end: 29277
+  line: \item \inltex|\group_begin:|
+  open_char: '|'
+  original: \inltex|\group_begin:|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}group\PYZus{}begin}\PY{n+nn}{:}}
+  start: 29255
+- category: inline:tex3
+  close_char: '|'
+  end: 29348
+  line: \item \inltex|\tl_put_right:Nn|
+  open_char: '|'
+  original: \inltex|\tl_put_right:Nn|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}tl\PYZus{}put\PYZus{}right}\PY{n+nn}{:Nn}}
+  start: 29323
+- category: inline:tex3
+  close_char: '|'
+  end: 29427
+  line: \item \inltex|\tl_gput_right:Nx|
+  open_char: '|'
+  original: \inltex|\tl_gput_right:Nx|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}tl\PYZus{}gput\PYZus{}right}\PY{n+nn}{:Nx}}
+  start: 29401
+- category: inline:tex3
+  close_char: '|'
+  end: 29513
+  line: \item \inltex|\__doc_do_something:Nnxx|
+  open_char: '|'
+  original: \inltex|\__doc_do_something:Nnxx|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}\PYZus{}\PYZus{}doc\PYZus{}do\PYZus{}something}\PY{n+nn}{:Nnxx}}
+  start: 29480
+- category: inline:tex3
+  close_char: '|'
+  end: 36382
+  line: Inside the group, the value of \inltex|\l_tmpa_tl| is locally assigned with
+    \inltex|\tl_set:Nn|, while the value of \inltex|\g_tmpa_tl| is globally assigned
+    with \inltex|\tl_gset:Nn|.
+  open_char: '|'
+  original: \inltex|\l_tmpa_tl|
+  repl: \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}}
+  start: 36363
+- category: inline:tex3
+  close_char: '|'
+  end: 36465
+  line: Inside the group, the value of \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}}
+    is locally assigned with \inltex|\tl_set:Nn|, while the value of \inltex|\g_tmpa_tl|
+    is globally assigned with \inltex|\tl_gset:Nn|.
+  open_char: '|'
+  original: \inltex|\tl_set:Nn|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}tl\PYZus{}set}\PY{n+nn}{:Nn}}
+  start: 36446
+- category: inline:tex3
+  close_char: '|'
+  end: 36544
+  line: Inside the group, the value of \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}}
+    is locally assigned with \inlinestylea{\PY{k}{\PYZbs{}tl\PYZus{}set}\PY{n+nn}{:Nn}},
+    while the value of \inltex|\g_tmpa_tl| is globally assigned with \inltex|\tl_gset:Nn|.
+  open_char: '|'
+  original: \inltex|\g_tmpa_tl|
+  repl: \inlinestylea{\PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}}
+  start: 36525
+- category: inline:tex3
+  close_char: '|'
+  end: 36629
+  line: Inside the group, the value of \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}}
+    is locally assigned with \inlinestylea{\PY{k}{\PYZbs{}tl\PYZus{}set}\PY{n+nn}{:Nn}},
+    while the value of \inlinestylea{\PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}} is
+    globally assigned with \inltex|\tl_gset:Nn|.
+  open_char: '|'
+  original: \inltex|\tl_gset:Nn|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}tl\PYZus{}gset}\PY{n+nn}{:Nn}}
+  start: 36609
+- category: inline:tex3
+  close_char: '|'
+  end: 36719
+  line: Since the value assignment of \inltex|\l_tmpa_tl| is local, the scope of the
+    assignment is constrained within the group.
+  open_char: '|'
+  original: \inltex|\l_tmpa_tl|
+  repl: \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}}
+  start: 36700
+- category: inline:tex3
+  close_char: '|'
+  end: 36959
+  line: In contrast, the value assignment of \inltex|\g_tmpa_tl| is able to go beyond
+    group boundaries.
+  open_char: '|'
+  original: \inltex|\g_tmpa_tl|
+  repl: \inlinestylea{\PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}}
+  start: 36940
+- category: inlnie:verbatim
+  close_char: '|'
+  end: 33961
+  line: \inlpl|\tl_set:Nn|\\
+  open_char: '|'
+  original: \inlpl|\tl_set:Nn|
+  repl: \verb|\tl_set:Nn|
+  start: 33943
+- category: inlnie:verbatim
+  close_char: '!'
+  end: 34034
+  line: '{\color{gray}\verb|\tl_set|}\inlpl!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)! \\'
+  open_char: '!'
+  original: \inlpl!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)!
+  repl: \verb!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)!
+  start: 33991
+- category: inlnie:verbatim
+  close_char: '|'
+  end: 34056
+  line: \inlpl|\tl_gset:Nn| \\
+  open_char: '|'
+  original: \inlpl|\tl_gset:Nn|
+  repl: \verb|\tl_gset:Nn|
+  start: 34037
+- category: inlnie:verbatim
+  close_char: '!'
+  end: 34131
+  line: '{\color{gray}\verb|\tl_gset|}\inlpl!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)!
+    \\ \bottomrule'
+  open_char: '!'
+  original: \inlpl!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)!
+  repl: \verb!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)!
+  start: 34088
+- category: inlnie:verbatim
+  close_char: '|'
+  end: 34314
+  line: \inlpl|\tl_set:Nn| {\ttfamily<\textsl{tl var}> \{<\textsl{tokens}>\}}
+  open_char: '|'
+  original: \inlpl|\tl_set:Nn|
+  repl: \verb|\tl_set:Nn|
+  start: 34296
+- category: inlnie:verbatim
+  close_char: '|'
+  end: 35032
+  line: \inlpl|\l_tmpa_tl|\\
+  open_char: '|'
+  original: \inlpl|\l_tmpa_tl|
+  repl: \verb|\l_tmpa_tl|
+  start: 35014
+- category: inlnie:verbatim
+  close_char: '|'
+  end: 35052
+  line: \inlpl|\l_tmpb_tl| \\ \bottomrule
+  open_char: '|'
+  original: \inlpl|\l_tmpb_tl|
+  repl: \verb|\l_tmpb_tl|
+  start: 35034
+- category: inlnie:verbatim
+  close_char: '|'
+  end: 35673
+  line: \inlpl|\c_pi_fp|\\ \bottomrule
+  open_char: '|'
+  original: \inlpl|\c_pi_fp|
+  repl: \verb|\c_pi_fp|
+  start: 35657
+skipped_changes:
+- category: inline:tex3
+  close_char: '|'
+  end: 6210
+  line: '%In the example below, we define 6 control sequences, where \inltex|\ta|
+    and \inltex|\td| are functions, and the rest are variables.'
+  open_char: '|'
+  original: \inltex|\ta|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}ta}}
+  start: 6198
+- category: inline:tex3
+  close_char: '|'
+  end: 6227
+  line: '%In the example below, we define 6 control sequences, where \inltex|\ta|
+    and \inltex|\td| are functions, and the rest are variables.'
+  open_char: '|'
+  original: \inltex|\td|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}td}}
+  start: 6215
+- category: inline:tex3
+  close_char: '|'
+  end: 6629
+  line: '%\noindent On line \lref{ex:func-var-def}{7}\footnotemark, we call functions
+    \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables),
+    as well as output the value of \inltex|\tf|.'
+  open_char: '|'
+  original: \inltex|\ta|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}ta}}
+  start: 6617
+- category: inline:tex3
+  close_char: '|'
+  end: 6646
+  line: '%\noindent On line \lref{ex:func-var-def}{7}\footnotemark, we call functions
+    \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables),
+    as well as output the value of \inltex|\tf|.'
+  open_char: '|'
+  original: \inltex|\td|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}td}}
+  start: 6634
+- category: inline:tex3
+  close_char: '|'
+  end: 6745
+  line: '%\noindent On line \lref{ex:func-var-def}{7}\footnotemark, we call functions
+    \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables),
+    as well as output the value of \inltex|\tf|.'
+  open_char: '|'
+  original: \inltex|\tf|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}tf}}
+  start: 6733
+- category: inline:tex3
+  close_char: '|'
+  end: 9645
+  line: '%Suppose we are trying to generate a random integer and save it in the variable
+    \inltex|\myrandint|, as shown in the example below. '
+  open_char: '|'
+  original: \inltex|\myrandint|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}myrandint}}
+  start: 9626
+- category: inline:tex3
+  close_char: '|'
+  end: 9755
+  line: '%To generate a random integer, we can use the function \inltex|\int_rand:nn|. '
+  open_char: '|'
+  original: \inltex|\int_rand:nn|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}int\PYZus{}rand}\PY{n+nn}{:nn}}
+  start: 9734
+- category: inline:tex3
+  close_char: '|'
+  end: 9948
+  line: '%For now, we just need to know \inltex|\int_rand:nn| takes two arguments,
+    which are the lower bound and upper bound of the random integer, respectively. '
+  open_char: '|'
+  original: \inltex|\int_rand:nn|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}int\PYZus{}rand}\PY{n+nn}{:nn}}
+  start: 9927
+- category: inline:tex3
+  close_char: '|'
+  end: 10158
+  line: '%In line \lref{ex:gen-save-rand-int}{4}, we wish to save the generated random
+    integer in \inltex|\myrandint|. '
+  open_char: '|'
+  original: \inltex|\myrandint|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}myrandint}}
+  start: 10139
+- category: inline:tex3
+  close_char: '|'
+  end: 10331
+  line: '%It can be seen that the value stored in \inltex|\myrandint| changes every
+    time, which is undesirable. '
+  open_char: '|'
+  original: \inltex|\myrandint|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}myrandint}}
+  start: 10312
+- category: inline:tex3
+  close_char: '|'
+  end: 10407
+  line: '%If we use the \inltex|\meaning| command to examine the definition of \inltex|\myrandint|,
+    we can see that \inltex|\myrandint| contains the \inltex|\int_rand:nn| command
+    call instead of the generated random number.'
+  open_char: '|'
+  original: \inltex|\meaning|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}meaning}}
+  start: 10390
+- category: inline:tex3
+  close_char: '|'
+  end: 10464
+  line: '%If we use the \inltex|\meaning| command to examine the definition of \inltex|\myrandint|,
+    we can see that \inltex|\myrandint| contains the \inltex|\int_rand:nn| command
+    call instead of the generated random number.'
+  open_char: '|'
+  original: \inltex|\myrandint|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}myrandint}}
+  start: 10445
+- category: inline:tex3
+  close_char: '|'
+  end: 10501
+  line: '%If we use the \inltex|\meaning| command to examine the definition of \inltex|\myrandint|,
+    we can see that \inltex|\myrandint| contains the \inltex|\int_rand:nn| command
+    call instead of the generated random number.'
+  open_char: '|'
+  original: \inltex|\myrandint|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}myrandint}}
+  start: 10482
+- category: inline:tex3
+  close_char: '|'
+  end: 10536
+  line: '%If we use the \inltex|\meaning| command to examine the definition of \inltex|\myrandint|,
+    we can see that \inltex|\myrandint| contains the \inltex|\int_rand:nn| command
+    call instead of the generated random number.'
+  open_char: '|'
+  original: \inltex|\int_rand:nn|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}int\PYZus{}rand}\PY{n+nn}{:nn}}
+  start: 10515
+- category: inline:tex3
+  close_char: '|'
+  end: 11453
+  line: '%Consider the example below. We know that the \inltex|\uppercase| macro'
+  open_char: '|'
+  original: \inltex|\uppercase|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}uppercase}}
+  start: 11434
+- category: inline:tex3
+  close_char: '|'
+  end: 11585
+  line: '%caps. But if we store some text in \inltex|\myname| and then apply'
+  open_char: '|'
+  original: \inltex|\myname|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}myname}}
+  start: 11569
+- category: inline:tex3
+  close_char: '|'
+  end: 11621
+  line: '%\inltex|\uppercase| to the command, we can see that the output is'
+  open_char: '|'
+  original: \inltex|\uppercase|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}uppercase}}
+  start: 11602
+- category: inline:tex3
+  close_char: '|'
+  end: 11908
+  line: '%Why would this happen? Let us dig into how \inltex|\uppercase| works. '
+  open_char: '|'
+  original: \inltex|\uppercase|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}uppercase}}
+  start: 11889
+- category: inline:tex3
+  close_char: '|'
+  end: 11941
+  line: '%The \inltex|\uppercase| macro scans each token\footnotemark inside its argument '
+  open_char: '|'
+  original: \inltex|\uppercase|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}uppercase}}
+  start: 11922
+- category: inline:tex3
+  close_char: '|'
+  end: 12181
+  line: '%will not try to apply \inltex|\uppercase| to the content of the command. '
+  open_char: '|'
+  original: \inltex|\uppercase|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}uppercase}}
+  start: 12162
+- category: inline:tex3
+  close_char: '|'
+  end: 12314
+  line: '%In this case, \inltex|\myname| will be left untouched in the output, '
+  open_char: '|'
+  original: \inltex|\myname|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}myname}}
+  start: 12298
+- category: inline:tex3
+  close_char: '|'
+  end: 12776
+  line: '%What if we also want to capitalize the content of \inltex|\myname| as '
+  open_char: '|'
+  original: \inltex|\myname|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}myname}}
+  start: 12760
+- category: inline:tex3
+  close_char: '|'
+  end: 12930
+  line: '%\inltex|\myname| before \inltex|\uppercase|. In this way, the '
+  open_char: '|'
+  original: \inltex|\myname|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}myname}}
+  start: 12914
+- category: inline:tex3
+  close_char: '|'
+  end: 12957
+  line: '%\inltex|\myname| before \inltex|\uppercase|. In this way, the '
+  open_char: '|'
+  original: \inltex|\uppercase|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}uppercase}}
+  start: 12938
+- category: inline:tex3
+  close_char: '|'
+  end: 12997
+  line: '%\inltex|\uppercase| command will receive the content of '
+  open_char: '|'
+  original: \inltex|\uppercase|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}uppercase}}
+  start: 12978
+- category: inline:tex3
+  close_char: '|'
+  end: 13052
+  line: '%\inltex|\myname| in the form of English letters, which allows '
+  open_char: '|'
+  original: \inltex|\myname|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}myname}}
+  start: 13036
+- category: inline:tex3
+  close_char: '|'
+  end: 13239
+  line: '%via the \inltex|\expandafter| macro, which it is notoriously'
+  open_char: '|'
+  original: \inltex|\expandafter|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}expandafter}}
+  start: 13218
+- category: inline:tex3
+  close_char: '|'
+  end: 13501
+  line: '%\inltex|\expandafter|s. The exponential growth of the number of '
+  open_char: '|'
+  original: \inltex|\expandafter|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}expandafter}}
+  start: 13480
+- category: inline:tex3
+  close_char: '|'
+  end: 13567
+  line: '%\inltex|\expandafter|s greatly reduces the readability of source code'
+  open_char: '|'
+  original: \inltex|\expandafter|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}expandafter}}
+  start: 13546
+- category: inline:tex3
+  close_char: '|'
+  end: 13816
+  line: '%\inltex|\expandafter|s are used to reorder the expansion of merely 4'
+  open_char: '|'
+  original: \inltex|\expandafter|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}expandafter}}
+  start: 13795
+- category: inline:tex3
+  close_char: '|'
+  end: 14364
+  line: '%\inltex|\multiply|\inltex|\counter| \inltex|by| \inltex|3|; to invoke the
+    \verb|date| command via'
+  open_char: '|'
+  original: \inltex|\multiply|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}multiply}}
+  start: 14346
+- category: inline:tex3
+  close_char: '|'
+  end: 14381
+  line: '%\inltex|\multiply|\inltex|\counter| \inltex|by| \inltex|3|; to invoke the
+    \verb|date| command via'
+  open_char: '|'
+  original: \inltex|\counter|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}counter}}
+  start: 14364
+- category: inline:tex3
+  close_char: '|'
+  end: 14393
+  line: '%\inltex|\multiply|\inltex|\counter| \inltex|by| \inltex|3|; to invoke the
+    \verb|date| command via'
+  open_char: '|'
+  original: \inltex|by|
+  repl: \inlinestylea{by}
+  start: 14382
+- category: inline:tex3
+  close_char: '|'
+  end: 14404
+  line: '%\inltex|\multiply|\inltex|\counter| \inltex|by| \inltex|3|; to invoke the
+    \verb|date| command via'
+  open_char: '|'
+  original: \inltex|3|
+  repl: \inlinestylea{3}
+  start: 14394
+- category: inline:tex3
+  close_char: '|'
+  end: 14503
+  line: '%the terminal, one writes \inltex|\immediate\write18{date}|. '
+  open_char: '|'
+  original: \inltex|\immediate\write18{date}|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}immediate}\PY{k}{\PYZbs{}write}18\PY{n+nb}{\PYZob{}}date\PY{n+nb}{\PYZcb{}}}
+  start: 14470
+- category: inline:tex3
+  close_char: '|'
+  end: 19607
+  line: '%argument. However, in \LaTeX, if we see \inltex|\a\b|, '
+  open_char: '|'
+  original: \inltex|\a\b|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}a}\PY{k}{\PYZbs{}b}}
+  start: 19594
+- category: inline:tex3
+  close_char: '|'
+  end: 19678
+  line: '%\item \inltex|\a| is a function and \inltex|\b| is its argument'
+  open_char: '|'
+  original: \inltex|\a|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}a}}
+  start: 19667
+- category: inline:tex3
+  close_char: '|'
+  end: 19708
+  line: '%\item \inltex|\a| is a function and \inltex|\b| is its argument'
+  open_char: '|'
+  original: \inltex|\b|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}b}}
+  start: 19697
+- category: inline:tex3
+  close_char: '|'
+  end: 19748
+  line: '%\item Both \inltex|\a| and \inltex|\b| are variables'
+  open_char: '|'
+  original: \inltex|\a|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}a}}
+  start: 19737
+- category: inline:tex3
+  close_char: '|'
+  end: 19764
+  line: '%\item Both \inltex|\a| and \inltex|\b| are variables'
+  open_char: '|'
+  original: \inltex|\b|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}b}}
+  start: 19753
+- category: inline:tex3
+  close_char: '|'
+  end: 22184
+  line: '%The command \inltex|\ExplSyntaxOn| changes the category code of the two
+    characters to ``letter'''' and allows one to enter \liii\ programming mode. '
+  open_char: '|'
+  original: \inltex|\ExplSyntaxOn|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}ExplSyntaxOn}}
+  start: 22162
+- category: inline:tex3
+  close_char: '|'
+  end: 22592
+  line: '%To exit \liii\ mode, one can use the command \inltex|\ExplSyntaxOff|.'
+  open_char: '|'
+  original: \inltex|\ExplSyntaxOff|
+  repl: \inlinestylea{\PY{k}{\PYZbs{}ExplSyntaxOff}}
+  start: 22569
+- category: inline:python3
+  close_char: '|'
+  end: 14683
+  line: '%(e.g. Python), these two tasks can be done by \inlpy|counter*=3|'
+  open_char: '|'
+  original: \inlpy|counter*=3|
+  repl: \inlinestyleb{\PY{n}{counter}\PY{o}{*}\PY{o}{=}\PY{l+m+mi}{3}}
+  start: 14665
+- category: inline:python3
+  close_char: '|'
+  end: 14714
+  line: '%and \inlpy|os.system(''date'')|, whose code possesses superior'
+  open_char: '|'
+  original: \inlpy|os.system('date')|
+  repl: \inlinestyleb{\PY{n}{os}\PY{o}{.}\PY{n}{system}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}}
+  start: 14689
+- category: inline:python3
+  close_char: '|'
+  end: 19491
+  line: '%In Python or C++, if we see \inlpy|a(b);|, we can '
+  open_char: '|'
+  original: \inlpy|a(b);|
+  repl: \inlinestyleb{\PY{n}{a}\PY{p}{(}\PY{n}{b}\PY{p}{)}\PY{p}{;}}
+  start: 19478
+- category: inline:python3
+  close_char: '|'
+  end: 19516
+  line: '%tell \inlpy|a| is a function and \inlpy|b| is its '
+  open_char: '|'
+  original: \inlpy|a|
+  repl: \inlinestyleb{\PY{n}{a}}
+  start: 19507
+- category: inline:python3
+  close_char: '|'
+  end: 19544
+  line: '%tell \inlpy|a| is a function and \inlpy|b| is its '
+  open_char: '|'
+  original: \inlpy|b|
+  repl: \inlinestyleb{\PY{n}{b}}
+  start: 19535

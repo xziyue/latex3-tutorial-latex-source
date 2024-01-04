@@ -1,24 +1,20 @@
-% !BIB TS-program = bibtex
-% !TeX TS-program = pdflatex
-
-% this is the prototype source of the document
-% it needs to be processed by Python program to generate compilable LaTeX source
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass{ltugboat}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{preamble.tex}
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{Modern \LaTeX~programming: an example based \liii~tutorial}
 \author{Ziyue Xiang}
 \address{Purdue University}
 \netaddress{ziyue.alan.xiang (at) gmail (dot) com}
 \personalURL{https://www.alanshawn.com}
 \ORCID{0000-0001-6054-5801}
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 The programming side of \LaTeX\ is often overlooked.
 In many cases, the use of programming capabilities of \LaTeX\ can facilitate document editing and improve the quality of the compiled document.
@@ -26,15 +22,15 @@ In many cases, the use of programming capabilities of \LaTeX\ can facilitate doc
 Compared to traditional \LaTeX\ programming, \LaTeX3 yields more standardized, readable, and robust code.
 In this tutorial, we present a series of examples that help readers understand the commonly used modules of \LaTeX3.
 \end{abstract}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \maketitle
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \tableofcontents
 \ListOfCodeExample
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 There is no doubt that \LaTeX~is viewed as a typesetting language by most of the users.
 The programming aspect of \LaTeX~is often overlooked by many.
 In practice, many large and structured documents can benefit from the programming capabilities provided by \LaTeX. 
@@ -42,56 +38,32 @@ Even understanding the most basic programming principles in \LaTeX~can greatly f
 The infrastructure provided by \LaTeXe\ \cite{berry2017latex} is already Turing complete, which means its programming capabilities are identical to those of Python \cite{vanrossum2010python} and C \cite{ritchie1988c}.
 However, the syntax and conventions of \LaTeXe~are nonstandardized and obsolete compared to the mainstream programming languages now.
 This makes learning \LaTeXe~programming more difficult for today's \LaTeX~users.
-
-%Many people view \LaTeX\ as a typesetting language and overlook the importance of programming in document generation process. 
-%In reality, many large and structural documents can benefit from
-%a programming backend, which enhances layout standardization, symbol
-%coherence, editing speed and many other aspects. Despite the fact the
-%standard \LaTeX\ (\LaTeXe) is already Turing complete, which means
-%it is capable of solving any programming task, the design of numerous
-%programming interfaces is highly inconsistent due to the long history
-%of \LaTeX. This makes programming with \LaTeXe\ extremely daunting, 
-%even for seasoned computer programmers.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In order to modernize the programming interfaces in \LaTeX, the \liii~programming interfaces are introduced \cite{mittelbach2020quo}.
 Unfortunately, the learning materials for this tool chain is scarce.
 One of the few resources available for new learners is \emph{The \liii\ Interfaces} \cite{l3interface}, which is a technical documentation that is difficult to for one to start with.
 Therefore, in this material we intend to provide an example based \liii\ tutorial for new \liii\ users with sufficient background in computer programming.
 That is, the reader is expected to understand basic structures (e.g., loops, conditional branches) as well as data types (e.g., integers, floating point numbers, strings) in computer programs. 
-%It would be helpful if the reader also understands the basic principles of the C programming language \cite{ritchie1988c}.
-
-%To make programming in \LaTeX\ easier, the \liii\ programming interface
-%is introduced, which aims to provide modern-programming-language-like
-%syntax and library for \LaTeX\ programmers. Unfortunately, learning
-%materials for this wonderful language is scarce. 
-%which is essentially an API documentation that is not designed for 
-%introductory purposes. This situation may have barred many \LaTeX\ 
-%users from utilizing the generic programming capabilities of \LaTeX.
-%Therefore, this article intends to provide an easy-to-understand 
-%tutorial for \LaTeX\ users with computer programming knowledge.
-%Hopefully, readers can improve their \LaTeX\ editing efficiency and 
-%document quality after understanding \liii.
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Since the \liii~project has accumulated a huge code base over the years, it is infeasible to cover all of its functionalities in one tutorial.
 In this tutorial, we focus on the most frequently used components in \liii. 
 The complete documentation of \liii\  can be found in \cite{l3interface}. 
 In the upcoming section titles, if parentheses are present, then the content in the parentheses is the corresponding section number in the 2022-01-12 release of \cite{l3interface}.
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Motivations of \liii}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 As mentioned above, \LaTeXe~is already Turing complete and serves as the building blocks of many existing packages. In this section, we describe the problems of traditional \LaTeX~programming, which justifies the reason why \liii~is developed despite already having the powerful \LaTeXe~and many other existing packages.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Nonuniform interface} 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Outside \liii, the interfaces provided by traditional \LaTeX~are not standardized. They suffer from the following disadvantages.
-
-% 1: function/variable naming
-% 2: overlapping/scattered packages
-% 3: numerical computations
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Firstly, the mechanism of \LaTeX~can affect the readability of traditional \LaTeX~code. 
 In \LaTeX, functions and variables are all declared using control sequences (see Chapter 3 of \cite{knuth1984texbook}).
 When a function is invoked, it is expected to execute a series of predefined procedures. Variables are used to store values only.
@@ -99,171 +71,64 @@ In \LaTeX, we can declare functions that absorb one or multiple arguments.
 Sometimes arguments are stored in variables.
 Since both functions and its arguments can be both control sequences, it is difficult to distinguish between them. 
 This is likely to make reading traditional \LaTeX\ source code difficult.
-%Unlike many other programming languages that enclose the arguments with parentheses, \LaTeX~does not require delimiters between the function and its arguments. 
-%In the example below, we define 6 control sequences, where \inltex|\ta| and \inltex|\td| are functions, and the rest are variables.
-%\begin{latexsample*}[ex:func-var-def]
-%\newcommand{\ta}[2]{[arg1={#1}, arg2={#2}]}
-%\newcommand{\tb}{$\alpha$}
-%\newcommand{\tc}{$\beta$}
-%\newcommand{\td}[1]{[arg3={#1}]}
-%\newcommand{\te}{$\gamma$}
-%\newcommand{\tf}{$\delta$}
-%\ta\tb\tc\td\te\tf
-%\end{latexsample*}
-%\noindent On line \lref{ex:func-var-def}{7}\footnotemark, we call functions \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables), as well as output the value of \inltex|\tf|.
-%In appearance, line 7 is six control sequences placed next to each other.
-%It is very difficult to understand the code unless the programmer finds out which control sequences are functions and how many arguments each function uses.
-%This makes the source code of some \LaTeXe\ packages challenging to read.
-
-%\footnotetext{Every listing has a unique index, which is shown at the bottom right corner. A line in the listing is referenced by <listing index>:<line number>.}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Secondly, in traditional \LaTeX~the implementation of many fundamental programming capabilities are provided by external packages.
-%As a result, the functionalities of multiple packages may overlap. 
-For example, to compare the equality of two strings, we can use \inltex|\ifthenelse| and \inltex|\equal| from \verb|ifthen| package \cite{pkg:ifthen};
-we can use \inltex|\pdfstrcmp| from \verb|pdftexcmds| package \cite{pkg:pdftexcmds};
-we can also use \inltex|\IfStrEq| from \verb|xstring| package \cite{pkg:xstring}. 
+For example, to compare the equality of two strings, we can use \inlinestylea{\PY{k}{\PYZbs{}ifthenelse}} and \inlinestylea{\PY{k}{\PYZbs{}equal}} from \verb|ifthen| package \cite{pkg:ifthen};
+we can use \inlinestylea{\PY{k}{\PYZbs{}pdfstrcmp}} from \verb|pdftexcmds| package \cite{pkg:pdftexcmds};
+we can also use \inlinestylea{\PY{k}{\PYZbs{}IfStrEq}} from \verb|xstring| package \cite{pkg:xstring}. 
 The use of multiple similar packages is likely to cause redundancy and compatibility issues.
 The lack of a centralized documentation and comparison for these similar packages also increases the learning cost of traditional \LaTeX\ programming.
-%Therefore, \liii\ is to provide a set of unified and standardized interfaces for all possible \LaTeX\ variable types.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Expansion control} 
-
-% two situations: when trying to store something in a variable
-% when passing arguments to a function
-% only concerns arguments
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Unlike generic programming languages, \LaTeX\ does not have support for types.
 Programming components such as variables, functions and function arguments are all treated in the same way.
 Therefore, \LaTeX~programmers need to more precisely control how variables are defined and how functions are called. 
 These techniques are known as expansion control. 
-Expansion control in traditional \LaTeX~is achieved by using the \inltex|\expandafter| command, which is difficult to use because the number of \inltex|\expandafter| command calls required may scale exponentially \cite{bechtolsheim1988tutorial}.
-
+Expansion control in traditional \LaTeX~is achieved by using the \inlinestylea{\PY{k}{\PYZbs{}expandafter}} command, which is difficult to use because the number of \inlinestylea{\PY{k}{\PYZbs{}expandafter}} command calls required may scale exponentially \cite{bechtolsheim1988tutorial}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \liii~aims at mitigating these inconveniences in traditional \LaTeX\ programming.
 It provides a uniform interface for \LaTeX~programmers, where functions and variables are separated from each other. 
 It defines standardized infrastructure for many programming tasks such as string processing, numerical calculation, regular expression matching, etc.
 The new expansion control mechanism of \liii\ is easier and more straightforward to use.
-
-%Expansion control is mostly required in two  scenarios. 
-%Firstly, it is needed when one is defining variables. 
-%Suppose we are trying to generate a random integer and save it in the variable \inltex|\myrandint|, as shown in the example below. 
-%To generate a random integer, we can use the function \inltex|\int_rand:nn|. 
-%This is a \liii\ function that contains a colon (:) in its function name. 
-%We will describe the function naming rules in \liii\ later. 
-%For now, we just need to know \inltex|\int_rand:nn| takes two arguments, which are the lower bound and upper bound of the random integer, respectively. 
-%In line \lref{ex:gen-save-rand-int}{4}, we wish to save the generated random integer in \inltex|\myrandint|. 
-%In line \lref{ex:gen-save-rand-int}{6}[8], we output the random integer stored in the variable three times. 
-%It can be seen that the value stored in \inltex|\myrandint| changes every time, which is undesirable. 
-%If we use the \inltex|\meaning| command to examine the definition of \inltex|\myrandint|, we can see that \inltex|\myrandint| contains the \inltex|\int_rand:nn| command call instead of the generated random number.
-%\begin{latexsample*}[ex:gen-save-rand-int]
-%\ExplSyntaxOn % enter LaTeX3 mode
-%% set the random seed for reproducibility
-%\sys_gset_rand_seed:n {0}
-%\newcommand{\myrandint}{\int_rand:nn {1}{100}}
-%\ExplSyntaxOff % exit LaTeX3 mode
-%\par the random number is: \myrandint
-%\par the random number is: \myrandint
-%\par the random number is: \myrandint
-%\par \meaning\myrandint
-%\end{latexsample*}
-%
-%Fundamentally, \TeX\ works by doing: commands are substituted by their definition,
-%which is subsequently replaced by definition's definition, until 
-%something irreplaceable is reached (e.g. text or \TeX\ primitives). 
-%This process is called \emph{expansion}. The mechanism of expansion
-%may sound simple and straightforward. However, it usually requires
-%a lot of manual fine-tuning in practice.
-%
-%Consider the example below. We know that the \inltex|\uppercase| macro
-%capitalize English letters, which renders the first output line in all 
-%caps. But if we store some text in \inltex|\myname| and then apply
-%\inltex|\uppercase| to the command, we can see that the output is
-%\emph{not} turned into uppercase letters.
-%
-%\begin{latexsample*}
-%\par\uppercase{Alan Xiang}
-%\newcommand*{\myname}{Alan Xiang}
-%\par\uppercase{\myname}
-%\end{latexsample*}
-%
-%Why would this happen? Let us dig into how \inltex|\uppercase| works. 
-%The \inltex|\uppercase| macro scans each token\footnotemark inside its argument 
-%group one by one. If an English letter is encountered, its uppercase 
-%form is left in the output stream. If a command is encountered, it 
-%will not try to apply \inltex|\uppercase| to the content of the command. 
-%Instead, the command itself will be placed into the output stream. 
-%In this case, \inltex|\myname| will be left untouched in the output, 
-%which is subsequently expanded to its original definition.
-
-%(More details about tokens can be found in and Chapter 7 of \cite{knuth1984texbook})
-%
-%\footnotetext{Tokens are smallest units that \TeX\ compilers work 
-%with. For now, we can consider a token to be either a character 
-%or command. For more about \TeX\ tokens, see \cite{overleaf-token}.}
-%
-%What if we also want to capitalize the content of \inltex|\myname| as 
-%well? To achieve this, we need to fine-tune the expansion process by 
-%changing the \emph{order} of expansion. That is, to expand 
-%\inltex|\myname| before \inltex|\uppercase|. In this way, the 
-%\inltex|\uppercase| command will receive the content of 
-%\inltex|\myname| in the form of English letters, which allows 
-%capitalization to function correctly.
-%
-%In \LaTeX, the classic way of controlling the order of expansion is
-%via the \inltex|\expandafter| macro, which it is notoriously
-%difficult to use. According to \emph{A Tutorial on \cs{expandafter}} 
-%\cite{bechtolsheim1988tutorial}, to reverse the expansion of a series
-%of $n$ tokens, the $i$th token has to be preceded by $2^{n-i}-1$
-%\inltex|\expandafter|s. The exponential growth of the number of 
-%\inltex|\expandafter|s greatly reduces the readability of source code
-%and increases the chances of mistakes. 
-%For example, in Joseph Wright's answer to an expansion-related
-%question on \TeX\ StackExchange \cite{tex-se-expanding}, a total of 26 
-%\inltex|\expandafter|s are used to reorder the expansion of merely 4
-%arguments.  To avoid this annoyance, one of the key features
-%of \liii\ is to provide simple and reliable expansion control.
-%
-%
-%
-%\paragraph{Modernized experience} \TeX\ was first designed in the late 1970s, when
-%computer hardware and programming languages were prototypes compared to
-%their contemporary counterparts. As a result, \TeX\ and \LaTeX\ contain
-%quirky usages that may seem odd for programmers today. For example, to
-%multiply a counter variable by 3, one writes 
-%\inltex|\multiply|\inltex|\counter| \inltex|by| \inltex|3|; to invoke the \verb|date| command via
-%the terminal, one writes \inltex|\immediate\write18{date}|. 
-%It can be seen that these syntaxes are either outdated or perplexing. 
-%In a fairly popular language nowadays 
-%(e.g. Python), these two tasks can be done by \inlpy|counter*=3|
-%and \inlpy|os.system('date')|, whose code possesses superior
-%simplicity and interpretability. \liii\ attempts to modernize 
-%the \LaTeX\ language by adapting to modern-language-like syntaxes
-%and introducing a naming system that makes \LaTeX\ code more
-%readable.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Compiling Examples}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 This tutorial is based on examples.
 To compile the examples, the minimum preamble required is:
-\begin{latexsample**}[ex:min-preamble]
+\def\CurrentEnvName{latexsample**}
+\begin{filecontents}[force,noheader]{\jobname-lst-raw.vrb}
 \documentclass{article}
 \usepackage{tikz} % load TikZ for some TikZ examples
 \usepackage{expl3} % load latex3 packages
-\end{latexsample**}
-\noindent The example code should be placed between \inltex|\begin{document}| 
-and \inltex|\end{document}|. 
+\end{filecontents}
+\begin{filecontents}[force,noheader]{\jobname-lst-hl.vrb}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{\PYZbs{}documentclass}\PY{n+nb}{\PYZob{}}article\PY{n+nb}{\PYZcb{}}
+\PY{k}{\PYZbs{}usepackage}\PY{n+nb}{\PYZob{}}tikz\PY{n+nb}{\PYZcb{}} \PY{c}{\PYZpc{} load TikZ for some TikZ examples}
+\PY{k}{\PYZbs{}usepackage}\PY{n+nb}{\PYZob{}}expl3\PY{n+nb}{\PYZcb{}} \PY{c}{\PYZpc{} load latex3 packages}
+\end{Verbatim}
+\end{filecontents}
+\noindent The example code should be placed between \inlinestylea{\PY{k}{\PYZbs{}begin}\PY{n+nb}{\PYZob{}}document\PY{n+nb}{\PYZcb{}}} 
+and \inlinestylea{\PY{k}{\PYZbs{}end}\PY{n+nb}{\PYZob{}}document\PY{n+nb}{\PYZcb{}}}. 
 All examples were tested with \TeX Live  2020 on Ubuntu 20.04.
 For newer versions of \LaTeX~compilers, there is no need to load the \verb|expl3| package explicitly (i.e., \lref{ex:min-preamble}{3}\footnotemark~is optional).
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \footnotetext{Every listing has a unique index, which is shown at the bottom right corner. A line in the listing is referenced by <listing index>:<line number>. A range of lines in the listing are referenced by <listing index>:<line number 1>-<line number 2>.}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The source code of this tutorial can be obtained from \url{https://github.com/xziyue/latex3-tutorial-latex-source}.
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{\liii\ Naming Conventions (I.1.1)}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Unlike many programming languages that enclose the function arguments with parentheses, \LaTeX\ does not require delimiters between the function and its arguments. 
-In the example below, we define 6 control sequences, where \inltex|\ta| and \inltex|\td| are functions, and the rest are variables.
-\begin{latexsample*}[ex:func-var-def]
+In the example below, we define 6 control sequences, where \inlinestylea{\PY{k}{\PYZbs{}ta}} and \inlinestylea{\PY{k}{\PYZbs{}td}} are functions, and the rest are variables.
+\def\CurrentEnvName{latexsample*}
+\begin{filecontents}[force,noheader]{\jobname-lst-raw.vrb}
 \newcommand{\ta}[2]{[arg1={#1}, arg2={#2}]}
 \newcommand{\tb}{$\alpha$}
 \newcommand{\tc}{$\beta$}
@@ -271,39 +136,30 @@ In the example below, we define 6 control sequences, where \inltex|\ta| and \inl
 \newcommand{\te}{$\gamma$}
 \newcommand{\tf}{$\delta$}
 \ta\tb\tc\td\te\tf
-\end{latexsample*}
-\noindent On \lref{ex:func-var-def}{7}, we call functions \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables). 
-We output the value of \inltex|\tf| next.
+\end{filecontents}
+\begin{filecontents}[force,noheader]{\jobname-lst-hl.vrb}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}ta}\PY{n+nb}{\PYZcb{}}[2]\PY{n+nb}{\PYZob{}}[arg1=\PY{n+nb}{\PYZob{}}\PYZsh{}1\PY{n+nb}{\PYZcb{}}, arg2=\PY{n+nb}{\PYZob{}}\PYZsh{}2\PY{n+nb}{\PYZcb{}}]\PY{n+nb}{\PYZcb{}}
+\PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}tb}\PY{n+nb}{\PYZcb{}}\PY{n+nb}{\PYZob{}}\PY{l+s}{\PYZdl{}}\PY{n+nv}{\PYZbs{}alpha}\PY{l+s}{\PYZdl{}}\PY{n+nb}{\PYZcb{}}
+\PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}tc}\PY{n+nb}{\PYZcb{}}\PY{n+nb}{\PYZob{}}\PY{l+s}{\PYZdl{}}\PY{n+nv}{\PYZbs{}beta}\PY{l+s}{\PYZdl{}}\PY{n+nb}{\PYZcb{}}
+\PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}td}\PY{n+nb}{\PYZcb{}}[1]\PY{n+nb}{\PYZob{}}[arg3=\PY{n+nb}{\PYZob{}}\PYZsh{}1\PY{n+nb}{\PYZcb{}}]\PY{n+nb}{\PYZcb{}}
+\PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}te}\PY{n+nb}{\PYZcb{}}\PY{n+nb}{\PYZob{}}\PY{l+s}{\PYZdl{}}\PY{n+nv}{\PYZbs{}gamma}\PY{l+s}{\PYZdl{}}\PY{n+nb}{\PYZcb{}}
+\PY{k}{\PYZbs{}newcommand}\PY{n+nb}{\PYZob{}}\PY{k}{\PYZbs{}tf}\PY{n+nb}{\PYZcb{}}\PY{n+nb}{\PYZob{}}\PY{l+s}{\PYZdl{}}\PY{n+nv}{\PYZbs{}delta}\PY{l+s}{\PYZdl{}}\PY{n+nb}{\PYZcb{}}
+\PY{k}{\PYZbs{}ta}\PY{k}{\PYZbs{}tb}\PY{k}{\PYZbs{}tc}\PY{k}{\PYZbs{}td}\PY{k}{\PYZbs{}te}\PY{k}{\PYZbs{}tf}
+\end{Verbatim}
+\end{filecontents}
+\noindent On \lref{ex:func-var-def}{7}, we call functions \inlinestylea{\PY{k}{\PYZbs{}ta}} and \inlinestylea{\PY{k}{\PYZbs{}td}} with their respective arguments (stored in variables). 
+We output the value of \inlinestylea{\PY{k}{\PYZbs{}tf}} next.
 In appearance, \lref{ex:func-var-def}{7} is six control sequences placed next to each other.
 It is difficult to understand the code unless the programmer finds out which control sequences are functions and how many arguments each function absorbs.
 To improve readability, \liii\ introduces a special naming convention where functions and variables are clearly distinguishable. In addition, programmers can gather more information from function and variable names such as the number of function arguments, the type of variables, and the scope of variables. 
-
-%In Python or C++, if we see \inlpy|a(b);|, we can 
-%tell \inlpy|a| is a function and \inlpy|b| is its 
-%argument. However, in \LaTeX, if we see \inltex|\a\b|, 
-%there are be two possibilities:
-%\begin{itemize}
-%\item \inltex|\a| is a function and \inltex|\b| is its argument
-%\item Both \inltex|\a| and \inltex|\b| are variables
-%\end{itemize}
-%The syntactic design of \LaTeX\ makes it difficult
-%to distinguish between functions and variables, for
-%each control sequence can either be a function that 
-%receives arguments or a variable that absorbs nothing.
-%It can lead to confusion when one is trying to understand
-%others' source code. Therefore, \liii\ introduces a set
-%of naming rules that encode important information into
-%the name of control sequences as a way to improve 
-%readability.
-
-%Before discussing \liii\ naming conventions, let us take a diversion 
-%to look at the low-level design of \LaTeX\ and find out 
-%how we can use non-English characters in command names.
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Category Codes and Command Names}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In \LaTeX, every input character can be classified into 16 categories. 
 Each category can be identified by an integer ranging from 0 to 15, which is known as the \emph{category code}.
 More details about category codes can be obtained from \cite{overleaf-catcode}.
@@ -311,101 +167,31 @@ We focus on one of the sixteen categories, which is known as ``letter''.
 In most cases, command names in \LaTeX\ can only be made up of characters from the ``letter'' category.
 Because the ``letter'' category only contains the lowercase and uppercase versions of the 26 English alphabets by default, command names are comprised of these 52 characters exclusively under the initial \LaTeX\ setup.
 By extending the ``letter'' category, it is possible to add more permissible characters to command names.
-For example, the \inltex|\makeatletter| command changes the category of \texttt{@} to ``letter'', which allows the character to be used in command names \cite{texse:makeatletter}. 
+For example, the \inlinestylea{\PY{k}{\PYZbs{}makeatletter}} command changes the category of \texttt{@} to ``letter'', which allows the character to be used in command names \cite{texse:makeatletter}. 
 Many packages use the \texttt{@} character in their internal command names to maintain the integrity of defined commands.
 Since typical users can only access commands whose names are made up of English alphabets, this technique can prevent internal commands from being overwritten accidentally.
 The technique is also used in \liii\ to separate \liii\ from other \LaTeX\ programming conventions.
 In \liii, two new characters are introduced into the command names, namely \texttt{\_} (underscore) and \texttt{:} (semicolon).
-
-The command \inltex|\ExplSyntaxOn| allows one to enter \liii\ programming mode.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The command \inlinestylea{\PY{k}{\PYZbs{}ExplSyntaxOn}} allows one to enter \liii\ programming mode.
 It changes the category code of underscore and semicolon to ``letter''.
-%The command \inltex|\ExplSyntaxOn| changes the category code of the two characters to ``letter'' and allows one to enter \liii\ programming mode. 
 It also changes the category code associated with white space and line break characters so that they are ignored in \liii\ mode.
 Therefore, a white space should be explicitly entered with \verb|~| or \verb|\ | in \liii\ mode.
-%To exit \liii\ mode, one can use the command \inltex|\ExplSyntaxOff|.
-The command \inltex|\ExplSyntaxOff| is used to exit \liii\ mode.
-
-
-
-
-%In \LaTeX, every input character is associated with a \emph{category code} \cite{overleaf-catcode}. 
-
-%When the \LaTeX\ compiler reads a source file, it will read
-%and process each character one by one. For each character in 
-%the file, in addition to its character code, \LaTeX\ compiler 
-%will also assign a \emph{category code} based on current
-%category code table. The default \LaTeX\ category code table
-%is shown in Table \ref{table:catcode-table}.
-%
-%\begin{center}
-%\small
-%\tabletail{\hline}
-%\tablehead{
-%\hline
-%\makecell{Category\\Code} & Description & 
-%\makecell{Character(s)}\\ \hline
-%}
-%\bottomcaption{Default \LaTeX\ category code table \cite{overleaf-catcode}. 
-%Characters surround by single quotes indicate their C-style
-%representation.}
-%\label{table:catcode-table}
-%\begin{supertabular}{|c|>{\centering}m{0.4\linewidth}|c|}
-%0 & Escape character: tells \LaTeX\ 
-%to start looking for a command & \verb|\| \\  \hline
-%1 & Start of group & \verb|{|\\ \hline
-%2 & End of group & \verb|}|\\ \hline
-%3 & Toggle math mode & \verb|$|\\ \hline
-%4 & Alignment tab & \verb|&|\\ \hline
-%5 & End of line & \verb|'\r'|\\ \hline
-%6 & Macro parameter & \verb|#| \\ \hline
-%7 & Superscript & \verb|^| \\ \hline
-%8 & Subscript & \verb|_| \\ \hline
-%9 & Ignored character & \verb|'\0'| \\ \hline
-%10 & Spacer & \verb|'\32'|, \verb|'\t'|\\ \hline
-%11 & Letter & \verb|A|--\verb|Z|, \verb|a|--\verb|z|, \ldots\\ \hline
-%12 & Other & \verb|0|--\verb|9|, \verb|+|, \verb|@|\ldots \\ \hline
-%13 & Active character: used for single character commands & 
-%\verb|~|\ldots\\ \hline
-%14 & Comment character: ignore everything that follows until 
-%end of line & \verb|%|\\ \hline
-%15 & Invalid character: not allowed in \verb|.tex| files & 
-%\verb|'\127'|\ldots \\ \hline
-%\end{supertabular}
-%\end{center}
-%
-%\LaTeX\ reacts to each character according to its category code
-%instead of character code. If we change the category code associated
-%with a character, we can completely change the \emph{meaning} of that
-%character. For example, if we assign category code 7 to \verb|_| and
-%category code 8 to \verb|^|, we can use \verb|_| to denote superscript
-%and \verb|^| to denote subscript.
-%
-%\begin{latexsample}{Doing 123}
-%\ExplSyntaxOn
-%\tl_set:Nn \l_tmpa_tl {A}
-%\group_begin:
-%\tl_set:Nn \l_tmpa_tl {B}
-%\par value~inside~group:~\tl_use:N \l_tmpa_tl
-%\group_end:
-%\par value~outside~group:~\tl_use:N \l_tmpa_tl
-%
-%\tl_set:Nn \l_tmpb_tl {A}
-%\group_begin:
-%\tl_gset:Nn \l_tmpb_tl {B}
-%\par value~inside~group:~\tl_use:N \l_tmpb_tl
-%\group_end:
-%\par value~outside~group:~\tl_use:N \l_tmpb_tl
-%\ExplSyntaxOff
-%\end{latexsample}
-
-
+The command \inlinestylea{\PY{k}{\PYZbs{}ExplSyntaxOff}} is used to exit \liii\ mode.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Names of Variables}\label{sec:name-of-variables}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In \liii, the naming of variables and functions are different, which allows one to distinguish the two more easily. 
 A \liii\ variable can be public or private depending on the semantics.
 The name of each \liii\ variable is made up of four parts: \texttt{scope}, \texttt{module}, \texttt{description}, and \texttt{type}. 
 We will describe the meaning of each part later.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The name of a public variable should follow:
 \begin{center}
 \texttt{\string\<scope>\_<module>\_<description>\_<type>}
@@ -415,7 +201,7 @@ The name of a private variable should follow:
 \texttt{\string\<scope>\_\_<module>\_<description>\_<type>}
 \end{center}
 Private variables have an extra underscore between the \texttt{scope} part and the \texttt{module} part.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The meaning of each part is shown as follows.
 \begin{itemize}
 \item \texttt{scope}: a single letter identifying the scope of the variable; see \cref{sec:var-scope} for more details
@@ -431,16 +217,16 @@ The meaning of each part is shown as follows.
 The \texttt{description} part can contain multiple segments separated by underscore(s). 
 Some valid variables names are shown below.
 \begin{itemize}
-\item \inltex|\g_doc_variable_int|
-\item \inltex|\l_doc_bg_color_r_fp|
-\item \inltex|\l_doc_bg_color_g_fp|
-\item \inltex|\l__mypkg_tmpa_seq|
-\item \inltex|\c_left_brace_str|
+\item \inlinestylea{\PY{n+nv}{\PYZbs{}g\PYZus{}doc\PYZus{}variable\PYZus{}int}}
+\item \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}doc\PYZus{}bg\PYZus{}color\PYZus{}r\PYZus{}fp}}
+\item \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}doc\PYZus{}bg\PYZus{}color\PYZus{}g\PYZus{}fp}}
+\item \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}\PYZus{}mypkg\PYZus{}tmpa\PYZus{}seq}}
+\item \inlinestylea{\PY{n+nv}{\PYZbs{}c\PYZus{}left\PYZus{}brace\PYZus{}str}}
 \end{itemize}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Since the category code of underscore has been changed to ``letter'' under \liii\ mode, it can no longer be used to denoted subscript in math equations.
-One can use the predefined \liii\ constant \inltex|\c_math_subscript_token| to represent subscripts when programming in \liii.
-
+One can use the predefined \liii\ constant \inlinestylea{\PY{n+nv}{\PYZbs{}c\PYZus{}math\PYZus{}subscript\PYZus{}token}} to represent subscripts when programming in \liii.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{table}[htpb]
 \centering
 \scriptsize
@@ -460,13 +246,12 @@ prop & property list\\
 ior & IO read\\
 iow & IO write\\ \bottomrule
 \end{tabular}
-%TODO: insert reference
 \caption{Commonly used variable types and their descriptions. See ?? for more information about variable types.}
 \label{tbl:var-type}
 \end{table}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Names of Functions}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 To increase the readability of \liii\ code, a function name in \liii\ includes information about the arguments that it absorbs. The name of a public \liii\ function should follow:
 \begin{center}
 \texttt{\string\<module>\_<description>:<arg-spec>}
@@ -484,12 +269,12 @@ The meaning of each part is described as follows.
 \end{itemize}
 Some valid function names are shown below.
 \begin{itemize}
-\item \inltex|\group_begin:|
-\item \inltex|\tl_put_right:Nn|
-\item \inltex|\tl_gput_right:Nx|
-\item \inltex|\__doc_do_something:Nnxx|
+\item \inlinestylea{\PY{k}{\PYZbs{}group\PYZus{}begin}\PY{n+nn}{:}}
+\item \inlinestylea{\PY{k}{\PYZbs{}tl\PYZus{}put\PYZus{}right}\PY{n+nn}{:Nn}}
+\item \inlinestylea{\PY{k}{\PYZbs{}tl\PYZus{}gput\PYZus{}right}\PY{n+nn}{:Nx}}
+\item \inlinestylea{\PY{k}{\PYZbs{}\PYZus{}\PYZus{}doc\PYZus{}do\PYZus{}something}\PY{n+nn}{:Nnxx}}
 \end{itemize}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{table}[htpb]
 \centering
 \scriptsize
@@ -506,25 +291,22 @@ F & A false branch in conditional statements\\
 p & A parameter list\\
 c & A token list argument that is fully expanded and treated as a command name\\ \bottomrule
 \end{tabular}
-%TODO: insert reference and delete Section
 \caption{Commonly used argument specification letters and their descriptions. More details are described in Section \textcolor{red}{???}.}
 \label{tbl:arg-spec-type}
 \end{table}
-
-%TODO: think about how to deal with token and token lists
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Use of \liii\ Naming Conventions}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The \liii\ naming conventions are essentially suggestions. 
 In reality, the \LaTeX\ compiler does not check if the code is written according to \liii\ naming conventions.
 However, using the naming conventions can greatly improve the readability of one's code.
-%TODO: insert reference and delete Section
 In Section \textcolor{red}{???}, we can also see that \liii's expansion control mechanism sometimes requires functions to be defined using \liii\ naming conventions.
 Almost all \liii\ packages are written using the naming conventions.
 Therefore, it is recommended that all \liii\ users follow the \liii\ naming conventions strictly.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Understanding \liii\ Documentation (I.1.2)}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Currently, most information about \liii\ is compiled in \cite{l3interface}. 
 It is mainly a technical documentation on \liii\ functions, scratch variables, and constants. 
 We describe briefly how \cite{l3interface} documents these concepts.
@@ -532,15 +314,14 @@ We describe briefly how \cite{l3interface} documents these concepts.
 \item \liii\ functions: the majority of the contents in \cite{l3interface} are about \liii\ functions.
 In \cite{l3interface}, each function is documented using a block similar to the one shown in  \cref{fig:l3-doc-func-example}.
 The color background is added in the figure to help understand the block, it does not exist in the original document.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The yellow part in \cref{fig:l3-doc-func-example} indicates the basic forms and the variants of the function. 
 The first and third line in the yellow part are the basic forms for local and global assignment (see \cref{sec:var-scope}), respectively.
 The second line shows the function variants for local assignment; the fourth line shows the function variants for global assignment.
-%TODO: insert reference and delete Section
 More details about function variants will be introduced in Section \textcolor{red}{???}.
 The cyan part in \cref{fig:l3-doc-func-example} shows the basic usage of the function, where the meaning of each function argument is described.
 The magenta part in \cref{fig:l3-doc-func-example} shows the detailed description of the function.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item Scratch variables: similar to the C programming language \cite{ritchie1988c}, variables in \liii\ need to be defined before use. 
 \liii\ has predefined a set of empty variables for convenience.
 These variables are known as scratch variables.
@@ -549,13 +330,13 @@ They are documented in specific sections, similar to the one demonstrated in \cr
 The left hand side of \cref{fig:l3-scratch-var-example} shows the predefined scratch variables; the right hand side shows the description of the variables.
 It is recommended not to use scratch variables, especially in large projects or generic packages.
 This reduces the chances of collision.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \item Constants: \liii\ defines a large number of constants such as the value of $\pi$, the value of $e$, special characters, etc. 
 They are documented in specific sections, similar to the one demonstrated in \cref{fig:l3-constant-example}.
 The left hand side of \cref{fig:l3-constant-example} shows the command name of the constant; the right hand side shows the description of the constant.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{itemize}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure*}[htpb]
 \centering
 \mdfdefinestyle{plainmdbox}{topline=false,leftline=false,rightline=false,bottomline=false}
@@ -563,17 +344,17 @@ The left hand side of \cref{fig:l3-constant-example} shows the command name of t
 \begin{mdframed}[backgroundcolor=yellow!50, style=plainmdbox]
 \begin{tabular}{l}
 \toprule
-\inlpl|\tl_set:Nn|\\
-{\color{gray}\verb|\tl_set|}\inlpl!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)! \\
-\inlpl|\tl_gset:Nn| \\
-{\color{gray}\verb|\tl_gset|}\inlpl!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)! \\ \bottomrule
+\verb|\tl_set:Nn|\\
+{\color{gray}\verb|\tl_set|}\verb!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)! \\
+\verb|\tl_gset:Nn| \\
+{\color{gray}\verb|\tl_gset|}\verb!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)! \\ \bottomrule
 \end{tabular}
 \end{mdframed}
 \end{minipage}
 \begin{minipage}{0.4\linewidth}
 \vspace*{3em}
 \begin{mdframed}[backgroundcolor=cyan!50, style=plainmdbox]
-\inlpl|\tl_set:Nn| {\ttfamily<\textsl{tl var}> \{<\textsl{tokens}>\}}
+\verb|\tl_set:Nn| {\ttfamily<\textsl{tl var}> \{<\textsl{tokens}>\}}
 \end{mdframed}
 \end{minipage}\\
 \begin{minipage}[t]{0.15\linewidth}
@@ -588,14 +369,14 @@ Sets <\textit{tl var}> to contain <\textit{tokens}>, removing any previous conte
 Color background is added in this figure to help understand the documentation.}
 \label{fig:l3-doc-func-example}
 \end{figure*}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure*}
 \centering
 \begin{minipage}[t]{0.15\linewidth}
 \begin{tabular}{l}
 \toprule
-\inlpl|\l_tmpa_tl|\\
-\inlpl|\l_tmpb_tl| \\ \bottomrule
+\verb|\l_tmpa_tl|\\
+\verb|\l_tmpb_tl| \\ \bottomrule
 \end{tabular}
 \end{minipage}
 \begin{minipage}[t]{0.83\linewidth}
@@ -607,13 +388,13 @@ However, they may be overwritten by other non-kernel code and so should only be 
 \caption{An example of scratch variables excerpted from Section IV.15.8 of \protect\cite{l3interface}.}
 \label{fig:l3-scratch-var-example}
 \end{figure*}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure*}
 \centering
 \begin{minipage}[t]{0.15\linewidth}
 \begin{tabular}{l}
 \toprule
-\inlpl|\c_pi_fp|\\ \bottomrule
+\verb|\c_pi_fp|\\ \bottomrule
 \end{tabular}
 \end{minipage}
 \begin{minipage}[t]{0.83\linewidth}
@@ -622,28 +403,27 @@ The value of $\pi$. This can be input directly in a floating point expression as
 \caption{An example of scratch variables excerpted from Section IV.28.6 of \protect\cite{l3interface}.}
 \label{fig:l3-constant-example}
 \end{figure*}
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Variables and Functions}
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Scope of Variables}\label{sec:var-scope}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In \liii, the scope of value assignment is usually local.
 \exfullref{ex:group-demo} shows the difference between local and global assignment.
 In this example, \lref{ex:group-demo}{4}[9] are enclosed in a group.
-Inside the group, the value of \inltex|\l_tmpa_tl| is locally assigned with \inltex|\tl_set:Nn|, while the value of \inltex|\g_tmpa_tl| is globally assigned with \inltex|\tl_gset:Nn|.
-Since the value assignment of \inltex|\l_tmpa_tl| is local, the scope of the assignment is constrained within the group.
+Inside the group, the value of \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}} is locally assigned with \inlinestylea{\PY{k}{\PYZbs{}tl\PYZus{}set}\PY{n+nn}{:Nn}}, while the value of \inlinestylea{\PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}} is globally assigned with \inlinestylea{\PY{k}{\PYZbs{}tl\PYZus{}gset}\PY{n+nn}{:Nn}}.
+Since the value assignment of \inlinestylea{\PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}} is local, the scope of the assignment is constrained within the group.
 Therefore, when we use its value outside the group, we get the old value.
-In contrast, the value assignment of \inltex|\g_tmpa_tl| is able to go beyond group boundaries.
-%TODO: cross-reference the right example
-% In example, we show... resursive functions
-
-\begin{latexsample}{Scope of value assignment}[ex:group-demo]
+In contrast, the value assignment of \inlinestylea{\PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}} is able to go beyond group boundaries.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\CurrentEnvName{latexsample}
+\begin{filecontents}[force,noheader]{\jobname-lst-raw.vrb}
 \ExplSyntaxOn
 \tl_set:Nn \l_tmpa_tl {old}
 \tl_gset:Nn \g_tmpa_tl {old}
@@ -661,15 +441,36 @@ In contrast, the value assignment of \inltex|\g_tmpa_tl| is able to go beyond gr
 \par Outside~group:~\tl_use:N \l_tmpa_tl
 \par Outside~group:~\tl_use:N \g_tmpa_tl
 \ExplSyntaxOff
-\end{latexsample}
+\end{filecontents}
+\begin{filecontents}[force,noheader]{\jobname-lst-hl.vrb}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{\PYZbs{}ExplSyntaxOn}
+\PY{k}{\PYZbs{}tl\PYZus{}set}\PY{n+nn}{:Nn} \PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl} \PY{n+nb}{\PYZob{}}old\PY{n+nb}{\PYZcb{}}
+\PY{k}{\PYZbs{}tl\PYZus{}gset}\PY{n+nn}{:Nn} \PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl} \PY{n+nb}{\PYZob{}}old\PY{n+nb}{\PYZcb{}}
+\PY{k}{\PYZbs{}group\PYZus{}begin}\PY{n+nn}{:}
+\PY{k}{\PYZbs{}tl\PYZus{}set}\PY{n+nn}{:Nn} \PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl} \PY{n+nb}{\PYZob{}}new\PY{n+nb}{\PYZcb{}} \PY{c}{\PYZpc{} set value locally}
 
+
+\PY{c}{\PYZpc{} comments should be here}
+
+
+\PY{k}{\PYZbs{}tl\PYZus{}gset}\PY{n+nn}{:Nn} \PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl} \PY{n+nb}{\PYZob{}}new\PY{n+nb}{\PYZcb{}} \PY{c}{\PYZpc{} set value globally}
+\PY{k}{\PYZbs{}par} In\PYZti{}group:\PYZti{}\PY{k}{\PYZbs{}tl\PYZus{}use}\PY{n+nn}{:N} \PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}
+\PY{k}{\PYZbs{}par} In\PYZti{}group:\PYZti{}\PY{k}{\PYZbs{}tl\PYZus{}use}\PY{n+nn}{:N} \PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}
+\PY{k}{\PYZbs{}group\PYZus{}end}\PY{n+nn}{:}
+\PY{k}{\PYZbs{}par} Outside\PYZti{}group:\PYZti{}\PY{k}{\PYZbs{}tl\PYZus{}use}\PY{n+nn}{:N} \PY{n+nv}{\PYZbs{}l\PYZus{}tmpa\PYZus{}tl}
+\PY{k}{\PYZbs{}par} Outside\PYZti{}group:\PYZti{}\PY{k}{\PYZbs{}tl\PYZus{}use}\PY{n+nn}{:N} \PY{n+nv}{\PYZbs{}g\PYZus{}tmpa\PYZus{}tl}
+\PY{k}{\PYZbs{}ExplSyntaxOff}
+\end{Verbatim}
+\end{filecontents}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In \cref{sec:name-of-variables}, it is described that the scope of variables should be encoded as the first letter (prefix) of variable names.
 If a variable is to be assigned using \verb|set| functions, we can consider it to be local and use \verb|l| as the prefix.
 If a variable is to be assigned using \verb|gset| functions, we can consider it to be global and use \verb|g| as the prefix.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{tugboat}
 \bibliography{main.bib}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makesignature
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%PROTECT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}

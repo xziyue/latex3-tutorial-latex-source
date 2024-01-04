@@ -3,7 +3,7 @@ import click
 from functools import partial
 import warnings
 import io
-
+from typing import Callable
 from pygments import highlight
 from pygments.lexer import Lexer
 from pygments.lexers import Python3Lexer
@@ -16,112 +16,82 @@ import yaml
 STYLE=None
 FORMATTER=None
 
+COMMENT_RE = re.compile(r'(?<!\\)%')
+TEX3_SOURCE_CODE_ENVS = [
+    'latexsample',
+    'latexsample*',
+    'latexsample**'
+]
+
 
 class Document:
 
     def __init__(self, src:str):
         self.src = src
-        self.changes = []
-        self._build_line_lut()
-
-        self.change_start = []
-        self.change_end = []
-
-    def _build_line_lut(self):
-        line_lut = [0]
-        pos = self.src.find('\n')
-        while pos != -1:
-            line_lut.append(pos+1)
-            pos = self.src.find('\n', pos + 1)
-        
-        self.line_lut = line_lut
-
-    def get_line_col(self, pos:int):
-        assert pos >= 0
-        if pos == 0:
-            return 0, 0
-        row = np.searchsorted(self.line_lut, pos) - 1
-        col = pos - self.line_lut[row]
-        return row + 1, col
-    
-    def add_change(self, start:int, end:int, repl:str, category:str, **kwargs):
-
-        if len(self.change_start) > 0:
-            near_start_ind = np.searchsorted(self.change_start, start, side='right')
-            if near_start_ind > 0:
-                near_start = self.change_start[near_start_ind - 1]
-                near_end = self.change_end[near_start_ind - 1]
-                if start >= near_start and start < near_end:
-                    raise RuntimeError('overlapped change detected')
-        
-        assert end > start
-        assert end <= len(self.src)
-
-        insert_pos = 0 if len(self.change_start) == 0 else np.searchsorted(self.change_start, start)
-
-        self.change_start.insert(insert_pos, start)
-        self.change_end.insert(insert_pos, end)
+        self.applied_changes = []
+        self.skipped_changes = []
 
 
-        line, col = self.get_line_col(start)
-        self.changes.insert(
-            insert_pos,
-            dict(
-                start=start,
-                end=end,
-                org=self.src[start:end],
-                repl=repl,
-                category=category,
-                line=int(line),
-                col=int(col),
-                **kwargs
-            )
+    def is_commented(self, pos:int) -> int:
+        prev_line_pos = self.src.rfind('\n', 0, pos)
+        content_ahead = self.src[prev_line_pos + 1:pos].lstrip()
+        if COMMENT_RE.search(content_ahead):
+            return True
+        return False
+
+
+
+    def apply_change(self, start:int, end:int, repl:str, category:str, apply_to_comments=False, **kwargs) -> int:
+
+        prev_line_pos = max(self.src.rfind('\n', 0, start), 0)
+        this_line_end = self.src.find('\n', start)
+        if this_line_end == -1:
+            this_line_end == len(self.src)
+
+        change_item = dict(
+            start=start,
+            end=end,
+            original=self.src[start:end],
+            repl=repl,
+            category=category,
+            line=self.src[prev_line_pos+1:this_line_end].lstrip(),
+            **kwargs
         )
-    
-    def apply_changes(self) -> dict:
-        new_src = self.src
-        delta = 0
 
-        change_start = [item['start'] for item in self.changes]
-        assert np.all(np.diff(change_start) >= 0)
+        if not apply_to_comments:
+            if self.is_commented(start):
+                self.skipped_changes.append(change_item)
+                return end # no change will happen in this case
 
-        log = dict()
+        self.applied_changes.append(change_item)
 
-        for item in self.changes:
-            pos = item['start'] + delta
-            org_len = len(item['org'])
-            assert new_src[pos : pos + org_len] == item['org']
-            delta += len(item['repl']) - org_len
-            new_src = new_src[:pos] + item['repl'] + new_src[pos + org_len:]
-            
-            category = item['category']
-            if category not in log:
-                log[category] = []
-            log[category].append(item)
-        
+        new_src = self.src[:start] + repl + self.src[end:]
+        self.src = new_src
 
+        return start + len(repl)
+
+
+    def get_log(self) -> str:
         sio = io.StringIO()
-        yaml.dump(log, sio)
-        return dict(
-            new_src=new_src,
-            log=sio.getvalue()
-        )
-        
+        yaml.dump(dict(
+            applied_changes=self.applied_changes,
+            skipped_changes=self.skipped_changes), sio)
+        return sio.getvalue()
 
+    
 def _process_inline_generic(doc:Document, inline_cmd:str, lexer:Lexer, new_cmd:str, category:str, keep_open_close=False):
-    src = doc.src
 
-    pos = src.find(inline_cmd)
+    pos = doc.src.find(inline_cmd)
     while pos != -1:
         open_char_pos = pos + len(inline_cmd)
-        open_char = src[open_char_pos]
+        open_char = doc.src[open_char_pos]
         if open_char == '{':
             close_char = '}'
         else:
             close_char = open_char
         
-        pos2 = src.find(close_char, open_char_pos + 1)
-        content = src[open_char_pos + 1 : pos2]
+        pos2 = doc.src.find(close_char, open_char_pos + 1)
+        content = doc.src[open_char_pos + 1 : pos2]
 
         if '\n' in content:
             warnings.warn('line break detected in inline highlight content', category=UserWarning)
@@ -138,7 +108,7 @@ def _process_inline_generic(doc:Document, inline_cmd:str, lexer:Lexer, new_cmd:s
         else:
             repl = '%s{%s}' % (new_cmd, highlighted_content)
 
-        doc.add_change(
+        next_pos = doc.apply_change(
             start=pos,
             end=pos2 + 1,
             repl=repl,
@@ -147,44 +117,105 @@ def _process_inline_generic(doc:Document, inline_cmd:str, lexer:Lexer, new_cmd:s
             close_char=close_char
         )
 
-        pos = src.find(inline_cmd, pos2 + 1)
+        pos = doc.src.find(inline_cmd, next_pos)
 
 
 def _process_env_generic(doc:Document, env_name:str, lexer:Lexer, category:str):
-    src = doc.src
-
     begin_cmd = '\\begin{%s}' % env_name
     end_cmd = '\\end{%s}' % env_name
 
-
-    pos = src.find(begin_cmd)
+    pos = doc.src.find(begin_cmd)
     while pos != -1:
+
+        if doc.is_commented(pos):
+            pos = doc.src.find(begin_cmd, pos + len(begin_cmd))
+            continue
+        
         next_end_line_pos = doc.src.find('\n', pos + len(begin_cmd))
         end_cmd_pos = doc.src.find(end_cmd, next_end_line_pos + 1)
+        assert end_cmd_pos != -1
         body = doc.src[next_end_line_pos + 1:end_cmd_pos]
 
-        repl = ''
-        repl += '\\begin{filecontents}[force]{\\jobname-lst-raw.vrb}\n%s\\end{filecontents}\n' % body
+        repl = '\\def\CurrentEnvName{%s}\n' % env_name
+        repl += '\\begin{filecontents}[force,noheader]{\\jobname-lst-raw.vrb}\n%s\\end{filecontents}\n' % body
         highlighted_content = highlight(body, lexer, FORMATTER)
-        repl += '\\begin{filecontents}[force]{\\jobname-lst-hl.vrb}\n%s\\end{filecontents}' % highlighted_content
+        repl += '\\begin{filecontents}[force,noheader]{\\jobname-lst-hl.vrb}\n%s\\end{filecontents}' % highlighted_content
 
-        doc.add_change(
+        next_pos = doc.apply_change(
             start=pos,
             end=end_cmd_pos+len(end_cmd),
             repl=repl,
             category=category
         )
 
-        pos = end_cmd_pos + 1
+        pos = doc.src.find(begin_cmd, next_pos)
 
 
 def _process(doc:Document):
-    _process_env_generic(doc, 'latexsample', Tex3Lexer(), 'env:latexsample')
+    for env in TEX3_SOURCE_CODE_ENVS:
+        _process_env_generic(doc, env, Tex3Lexer(), f'env:{env}')
+
 
     # inline highlighters
     _process_inline_generic(doc, r'\inltex', Tex3Lexer(), r'\inlinestylea', 'inline:tex3')
     _process_inline_generic(doc, r'\inlpy', Python3Lexer(), r'\inlinestyleb', 'inline:python3')
     _process_inline_generic(doc, r'\inlpl', None, r'\verb', 'inlnie:verbatim', keep_open_close=True)
+
+
+
+def _apply_env_safe_line_op(doc:Document, skip_envs:list, op:Callable):
+    src = doc.src
+    env_cmds = dict()
+
+    for env_name in skip_envs:
+        begin_cmd = '\\begin{%s}' % env_name
+        end_cmd = '\\end{%s}' % env_name
+
+        env_cmds[env_name] = (begin_cmd, end_cmd)
+    
+    new_src = ''
+    pos = 0
+
+    while pos <= len(src):
+        line_end_pos = src.find('\n', pos)
+        if line_end_pos == -1:
+            line_end_pos = len(src)
+
+        line = src[pos:line_end_pos+1]
+
+        best_env_start_pos = len(src) + 1
+        best_env_start_cmd = None
+        best_env_end_cmd = None
+        for env_name, (env_start, env_end) in env_cmds.items():
+            start = line.find(env_start)
+            if start != -1 and start < best_env_start_pos:
+                best_env_start_pos = start
+                best_env_start_cmd = env_start
+                best_env_end_cmd = env_end
+
+        # skip comments
+        # if no env start is found in this line, apply op and add the result to output
+        if best_env_start_cmd is None or doc.is_commented(pos + best_env_start_pos):
+            new_src += op(line)
+            pos = line_end_pos + 1
+            continue
+
+        # an env start command is found in this line, skip all contents until end of the environment
+        env_end_pos = pos + best_env_start_pos + len(best_env_start_cmd)
+        while True:
+            env_end_pos = src.find(best_env_end_cmd, env_end_pos)
+            assert env_end_pos != -1
+            if not doc.is_commented(env_end_pos):
+                break
+        
+        env_end_pos = src.find('\n', env_end_pos+len(best_env_end_cmd))
+        if env_end_pos == -1:
+            env_end_pos = len(src)
+        
+        new_src += src[pos+best_env_start_pos:env_end_pos+1]
+        pos = env_end_pos+1
+
+    doc.src = new_src
 
 
 if __name__ == '__main__':
@@ -215,7 +246,8 @@ if __name__ == '__main__':
     @click.option('-s', '--style', default='default')
     @click.option('-l', '--log', default=None, help='log file')
     @click.option('-p', '--protect', help='fill the output document with protection pattern', is_flag=True)
-    def process(input, output, style, log, protect):
+    @click.option('-c', '--clean', help='clean comments', is_flag=True)
+    def process(input, output, style, log, protect, clean):
         set_style(style)
 
         with open(input) as f:
@@ -224,13 +256,23 @@ if __name__ == '__main__':
         doc = Document(src)
         _process(doc)
 
-        ret = doc.apply_changes()
+        if clean:
+            _apply_env_safe_line_op(doc, ['filecontents'], 
+                                          lambda x: '' if x.strip().startswith('%') else x)
+
+        if protect:
+            _apply_env_safe_line_op(doc, ['filecontents'], 
+                                          lambda x: 'PROTECT'.center(80, '%') + '\n' if len(x.strip()) == 0 else x)
+        
+        src = doc.src
         with open(output, 'w') as f:
-            f.write(ret['new_src'])
+            f.write(src)
 
         if log:
             with open(log, 'w') as f:
-                f.write(ret['log'])
+                f.write(doc.get_log())
+
+        
 
     main()
 

@@ -16,12 +16,15 @@
 \usepackage{float}
 \usepackage{array}
 \usepackage{xcolor}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{seqsplit}
 %\usepackage[breaklinks,colorlinks,pdfa]{hyperref}
 \usepackage[breaklinks]{hyperref}
 \usepackage[capitalise]{cleveref}
 
 
-\tcbuselibrary{listings, minted, skins, breakable, xparse, hooks}
+\tcbuselibrary{listings, skins, breakable, xparse, hooks}
 
 % a quick command for LaTeX3
 \newcommand*{\liii}{\LaTeX3}
@@ -123,74 +126,65 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % basic style for examples
-\tcbset{
-  codesample/.style={
-    enhanced,
-    breakable,
-    beforeafter skip=3ex,
-    listing engine=minted,
-    minted language=\liiilexer,
-    fontlower=\sffamily\small,
-    minted options={
-      fontsize=\fontsize{9}{9},
-      autogobble,
-      breaklines,
-      obeytabs,
-      tabsize=2,
-      linenos,
-      numbersep=2mm,
-      xleftmargin=4mm,
-      fontfamily=DejaVuSansMono-TLF
-    },
-    fonttitle=\normalfont,
-    colback=white,
-    colframe=black!60,
-    boxrule=0.8pt,
-    left=1mm,
-    right=1mm,
-    top=0.5mm,
-    bottom=0.5mm,
-    before upper pre={\AddLstCounter},
-    overlay unbroken and last={
-        \node[font=\sffamily\bfseries\scriptsize, anchor=south east] at (frame.south east) {\color[rgb]{0.5,0.5,0.5} \TheLstCounter};
-    }
-  }
-}
+% \tcbset{
+%   codesample/.style={
+%     enhanced,
+%     breakable,
+%     beforeafter skip=3ex,
+%     listing engine=minted,
+%     minted language=\liiilexer,
+%     fontlower=\sffamily\small,
+%     minted options={
+%       fontsize=\fontsize{9}{9},
+%       autogobble,
+%       breaklines,
+%       obeytabs,
+%       tabsize=2,
+%       linenos,
+%       numbersep=2mm,
+%       xleftmargin=4mm,
+%       fontfamily=DejaVuSansMono-TLF
+%     },
+%     fonttitle=\normalfont,
+%     colback=white,
+%     colframe=black!60,
+%     boxrule=0.8pt,
+%     left=1mm,
+%     right=1mm,
+%     top=0.5mm,
+%     bottom=0.5mm,
+%     before upper pre={\AddLstCounter},
+%     overlay unbroken and last={
+%         \node[font=\sffamily\bfseries\scriptsize, anchor=south east] at (frame.south east) {\color[rgb]{0.5,0.5,0.5} \TheLstCounter};
+%     }
+%   }
+% }
 
 
-% listing only example
-\DeclareTCBListing{latexsample**}{!o}{
-    codesample,
-    listing only,
-    IfValueTF={#1}
-    {
-        before upper app={\EnableLstRef\SetLstRefLabel{#1}\LstPutLookup{#1}},
-        after app={\DisableLstRef}
-    }
-    {}
-}
+% % listing only anonymous example
+% \DeclareTCBListing{latexsample**}{!o}{
+%     codesample,
+%     listing only,
+%     IfValueTF={#1}
+%     {
+%         before upper app={\EnableLstRef\SetLstRefLabel{#1}\LstPutLookup{#1}},
+%         after app={\DisableLstRef}
+%     }
+%     {}
+% }
 
-% anonymous example
-\DeclareTCBListing{latexsample*}{!o}{
-    codesample,
-    IfValueTF={#1}
-    {
-        before upper app={\EnableLstRef\SetLstRefLabel{#1}\LstPutLookup{#1}},
-        after app={\DisableLstRef}
-    }
-    {}
-}
+% % anonymous example
+% \DeclareTCBListing{latexsample*}{!o}{
+%     codesample,
+%     IfValueTF={#1}
+%     {
+%         before upper app={\EnableLstRef\SetLstRefLabel{#1}\LstPutLookup{#1}},
+%         after app={\DisableLstRef}
+%     }
+%     {}
+% }
 
-%\newtcblisting{latexsample*}{
-%  codesample
-%}
 
-% listing of any language
-\newtcblisting{codesample}[1]{
-  codesample,
-  listing only,
-  minted language=#1
-}
 
 
 
@@ -213,3 +207,17 @@
 \newcommand{\exfullref}[1]{Example \ref{#1} (\lstref{#1})}
 
 \makeatother
+
+% silence this warning
+\usepackage{silence}
+\WarningFilter{latex}{Writing or overwriting}
+
+% load pygments styles
+\input{style/default.tex}
+
+\lstdefinestyle{tex3inline}{
+    
+}
+
+% \newcommand{\inlinestylea}[1]{{\ttfamily #1}}
+% \newcommand{\inlinestyleb}[1]{{\ttfamily #1}}
