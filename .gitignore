@@ -1,6 +1,8 @@
 *.tabular
 *.CodeExample
 main.pdf
+USE_SHELL_ESCAPE
+MINTED_FINALIZE
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

@@ -16,6 +16,27 @@
 \usepackage{float}
 \usepackage{array}
 \usepackage{xcolor}
+
+\ExplSyntaxOn
+\file_if_exist:nTF{USE_SHELL_ESCAPE}
+{
+    \file_if_exist:nTF{MINTED_FINALIZE}
+    {
+        \iow_term:n {=====~Document~is~compiled~in~finalization~mode~=====}
+        \usepackage[finalizecache]{minted}
+    }
+    {
+        \iow_term:n {=====~Document~is~compiled~in~development~mode~=====}
+        \usepackage{minted}
+    }
+}
+{
+    \iow_term:n {=====~Document~is~compiled~in~submission~mode~=====}
+    \usepackage[frozencache]{minted}
+}
+\ExplSyntaxOff
+
+
 %\usepackage[breaklinks,colorlinks,pdfa]{hyperref}
 \usepackage[breaklinks]{hyperref}
 \usepackage[capitalise]{cleveref}
@@ -26,11 +47,9 @@
 % a quick command for LaTeX3
 \newcommand*{\liii}{\LaTeX3}
 
-
-% using custom lexer for highlighting LaTeX3 syntax
-\newcommand*{\liiilexer}{tex_lexer.py:Tex3Lexer -x}
+\renewcommand{\MintedPygmentize}{./my_pygmentize}
 % other code highliting setup
-\newmintinline[inltex]{\liiilexer}{breaklines, breakanywhere, fontfamily=DejaVuSansMono-TLF}
+\newmintinline[inltex]{tex_lexer.py:Tex3Lexer}{breaklines, breakanywhere, fontfamily=DejaVuSansMono-TLF}
 \newmintinline[inlpy]{python}{fontfamily=DejaVuSansMono-TLF}
 \newmintinline[inlpl]{text}{}
 
@@ -136,7 +155,7 @@
     breakable,
     beforeafter skip=3ex,
     listing engine=minted,
-    minted language=\liiilexer,
+    minted language=tex_lexer.py:Tex3Lexer,
     fontlower=\sffamily\small,
     minted options={
       fontsize=\fontsize{9}{9},
