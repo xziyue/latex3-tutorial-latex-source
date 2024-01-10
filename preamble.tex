@@ -23,7 +23,7 @@
     \file_if_exist:nTF{MINTED_FINALIZE}
     {
         \iow_term:n {=====~Document~is~compiled~in~finalization~mode~=====}
-        \usepackage[finalizecache]{minted}
+        \usepackage[finalizecache,cachedir={minted-frozen}]{minted}
     }
     {
         \iow_term:n {=====~Document~is~compiled~in~development~mode~=====}
@@ -32,7 +32,7 @@
 }
 {
     \iow_term:n {=====~Document~is~compiled~in~submission~mode~=====}
-    \usepackage[frozencache]{minted}
+    \usepackage[frozencache,cachedir={minted-frozen}]{minted}
 }
 \ExplSyntaxOff
 
@@ -46,6 +46,8 @@
 
 % a quick command for LaTeX3
 \newcommand*{\liii}{\LaTeX3}
+\let\LT\LaTeX
+\let\LTT\liii
 
 \renewcommand{\MintedPygmentize}{./my_pygmentize}
 % other code highliting setup

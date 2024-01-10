@@ -4,7 +4,7 @@
 
 \input{preamble.tex}
 
-\title{Modern \LaTeX~programming: an example based \liii~tutorial}
+\title{A \LTT{} programming tutorial}
 \author{Ziyue Xiang}
 \address{Purdue University}
 \netaddress{ziyue.alan.xiang (at) gmail (dot) com}
@@ -17,11 +17,19 @@
 \begin{document}
 
 \begin{abstract}
-The programming side of \LaTeX\ is often overlooked.
-In many cases, the use of programming capabilities of \LaTeX\ can facilitate document editing and improve the quality of the compiled document.
-\LaTeX3 is a set of modern programming interfaces provided by the \LaTeX\ kernel.
-Compared to traditional \LaTeX\ programming, \LaTeX3 yields more standardized, readable, and robust code.
-In this tutorial, we present a series of examples that help readers understand the commonly used modules of \LaTeX3.
+\LT{} is widely used to generate high quality documents.
+It provides not only control over document content and style, but also the logic behind the document generation process.
+For many users, knowledge on the programming side of \LT{} can facilitate document generation.
+When being viewed as a programming language, \LT{} is different from popular languages in various different ways.
+In this material, we first briefly describe the difference between \LT{} and other programming languages.
+Then, we introduce \LTT{}--a set of modern programming interfaces in \LT{} to help users write general purpose programs.
+\LTT{} contains functionalities such as boolean logic, integer/floating point arithmetic, data structures, and regular expressions.
+This material is an example based \LTT{} tutorial that introduces readers to the commonly used components of \LTT{}.
+% The programming side of \LaTeX\ is often overlooked.
+% In many cases, the use of programming capabilities of \LaTeX\ can facilitate document editing and improve the quality of the compiled document.
+% \LaTeX3 is a set of modern programming interfaces provided by the \LaTeX\ kernel.
+% Compared to traditional \LaTeX\ programming, \LaTeX3 yields more standardized, readable, and robust code.
+% In this tutorial, we present a series of examples that help readers understand the commonly used modules of \LaTeX3.
 \end{abstract}
 
 \maketitle
@@ -31,6 +39,9 @@ In this tutorial, we present a series of examples that help readers understand t
 
 
 \section{Introduction}
+
+
+
 
 There is no doubt that \LaTeX~is viewed as a typesetting language by most of the users.
 The programming aspect of \LaTeX~is often overlooked by many.
@@ -75,6 +86,60 @@ In this tutorial, we focus on the most frequently used components in \liii.
 The complete documentation of \liii\  can be found in \cite{l3interface}. 
 In the upcoming section titles, if parentheses are present, then the content in the parentheses is the corresponding section number in the 2022-01-12 release of \cite{l3interface}.
 
+\subsection{\LT{} as a programming language}
+
+When being viewed as a programming language, \LT{} is significantly different from existing languages such as Python \cite{vanrossum2010python} and C \cite{ritchie1988c}.
+% Fundamentally, \LT{} is a macro language that functions by replacing patterns according to a set of defined rules (known as macros).
+% This replacement process is also known as \emph{macro expansion}.
+In most programming languages, valid function/variable names and meanings of punctuations are predefined and cannot be changed.
+In \LT{}, the user has the freedom to change them.
+For example, normally \verb|\| is used to start a control sequence, \verb|$| is used to toggle math mode, \verb|%| is used for comments, and Latin alphabets are used as control sequence names.
+However, with several lines of code, one can change the configurations so that \verb|@| is used to start a control sequence, \verb|+| is used to toggle math mode, \verb|#| is used for comments, and both Latin alphabets and Arabic numerals are used as control sequence names.
+To understand how this is possible, we need to introduce the concept of \emph{category code}.
+In \LT{}, each character is associated with a hidden attribute known as the \emph{category code}.
+There are 16 category codes in \LT{}, which are shown in \cref{tab:cat-code}.
+
+
+\begin{table}[tb]
+    \centering
+    \footnotesize
+    \begin{tabular}{|c|>{\centering\arraybackslash}m{0.3\linewidth}|>{\centering\arraybackslash}m{0.3\linewidth}|}
+        \hline
+        \makecell{Category\\Code} & Description & \makecell{Example\\Character(s)} \\ \hline
+        0 & Start a control sequence  & \verb|'\'| \\ \hline
+        1 & Start a group & \verb|'{'| \\ \hline
+        2 & End a group & \verb|'}'| \\ \hline
+        3 & Toggle math mode & \verb|'$'| \\ \hline
+        4 & Alignment tab & \verb|'&'| \\ \hline
+        5 & End of line & ASCII(13) \\ \hline
+        6 & Macro parameter & \verb|'#'| \\ \hline
+        7 & Superscript & \verb|'^'| \\ \hline
+        8 & Subscript & \verb|'_'| \\ \hline
+        9 & Ignored character & ASCII(0) \\ \hline
+        10 & White space (spacer) & ASCII(32), ASCII(9) \\ \hline
+        11 & Letter & \verb|'a'|, \ldots, \verb|'z'|, \verb|'A'|, \ldots, \verb|'Z'|\\ \hline
+        12 & Other & \verb|'0'|, \ldots, \verb|'9'|, \verb|';'|, \verb|','|, \verb|'?'|, \ldots\\ \hline
+        13 & Active (used as commands) & \verb|'~'|, \ldots\\ \hline
+        14 & Comment & \verb|%| \\ \hline
+        15 & Invalid & ASCII(127) \\ \hline
+    \end{tabular}
+    \caption{List of the 16 category codes in \LT{} and example characters with given category codes under standard \LT{} configuration.}
+    \label{tab:cat-code}
+\end{table}
+
+% 3	Math shift-switch in/out of math mode	$
+% 4	Alignment tab	&
+% 5	End of line	ASCII code 13 (\r)
+% 6	Macro parameter	#
+% 7	Superscript for typesetting math	^
+% 8	Subscript for typesetting math	_
+% 9	Ignored character	ASCII 0 \0
+% 10	Spacer	ASCII codes 32 (space) and 9 (tab character)
+% 11	Letter	A…Z, a…z
+% 12	Other	0…9 plus @,.;?” and many others
+% 13	Active character	Special category code for creating single-character macros such as ~
+% 14	Comment character-ignore everything that follows until the end of the line	%
+% 15	Invalid character, not allowed to appear in the .tex input file	ASCII code 127 (\127)
 
 
 \subsection{Motivations of \liii}
