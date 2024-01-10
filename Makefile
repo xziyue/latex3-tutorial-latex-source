@@ -22,3 +22,4 @@ build: clean_signals
 
 clean: clean_signals
 	rm -f main.pdf *.out *aux *bbl *blg *log *toc *.ptb *.tod *.fls *.fdb_latexmk *.lof
+	rm -rf _minted-main/
