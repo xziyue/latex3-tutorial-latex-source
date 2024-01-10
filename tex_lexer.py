@@ -26,7 +26,8 @@ class Tex3Lexer(RegexLexer):
             (r'\$\$', String.Backtick, 'displaymath'),
             (r'\$', String, 'inlinemath'),
             (r'\\(([glc])_{1,2}[a-zA-Z_@]*)', Name.Variable),
-            (r'\\([a-zA-Z_@]+|.)', Keyword, 'command'),
+            (r'\\(__[a-zA-Z@_]+|[a-zA-Z@]+_[a-zA-Z@_]*)', Keyword, 'command3'),
+            (r'\\([a-zA-Z@]+|.)', Name.Function, 'command'),
             (r'\\$', Keyword),
             include('general'),
             (r'[^\\$%&_^{}]+', Text),
@@ -49,10 +50,13 @@ class Tex3Lexer(RegexLexer):
             (r'\$', Name.Builtin),
             include('math'),
         ],
+        'command3': [
+            (r':[a-zA-Z]*', Name.Namespace),  # use an unused color
+            default('#pop'),
+        ],
         'command': [
             (r'\[.*?\]', Name.Attribute),
-            (r'\*', Keyword),
-            (r':[a-zA-Z]*', Name.Namespace),  # use an unused color
+            (r'\*', Name.Function),
             default('#pop'),
         ]
     }
