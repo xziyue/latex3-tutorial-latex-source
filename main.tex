@@ -143,7 +143,7 @@ In the following example, suppose we have a function \inltex|\cmda| that scans e
 In \inltex|\cmda|, we use the \inltex|\detokenize| command to output the verbatim of its argument without parsing.
 Because it is common to store characters in a control sequence, let us observe what happens when \inltex|\cmda| is called with a control sequence \inltex|\vala| as its argument (\lref{ex:trad-expan-ctrl}{5}).
 From the first line of output, it can be seen that the argument is still \inltex|\vala|, which means the character-wise operation in \inltex|\cmda| will not work when a control sequence is used as its input.
-\begin{latexsample}[examplelabel=ex:trad-expan-ctrl]
+\begin{latexsample}[examplelabel=ex:trad-expan-ctrl,exampletitle={Expansion Control}]
 \def\cmda#1{%
   % do some character-wise operation with #1
   arg: \detokenize{#1} % output #1

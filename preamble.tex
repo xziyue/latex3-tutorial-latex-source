@@ -53,8 +53,8 @@
 
 \renewcommand{\MintedPygmentize}{./my_pygmentize}
 % other code highliting setup
-\newmintinline[inltex]{tex_lexer.py:Tex3Lexer}{breaklines, breakanywhere, fontfamily=DejaVuSansMono-TLF}
-\newmintinline[inlpy]{python}{fontfamily=DejaVuSansMono-TLF}
+\newmintinline[inltex]{tex_lexer.py:Tex3Lexer}{breaklines, breakanywhere, fontfamily=DejaVuSansMono-TLF,style=colorful}
+\newmintinline[inlpy]{python}{fontfamily=DejaVuSansMono-TLF,style=colorful}
 \newmintinline[inlpl]{text}{}
 
 % set the style of the list of examples
@@ -168,7 +168,8 @@
       linenos,
       numbersep=2mm,
       xleftmargin=4mm,
-      fontfamily=DejaVuSansMono-TLF
+      fontfamily=DejaVuSansMono-TLF,
+      style=colorful
     },
     fonttitle=\normalfont,
     colback=white,
@@ -178,7 +179,7 @@
     right=1mm,
     top=0.5mm,
     bottom=0.5mm,
-    before upper app={\SetBoolTrue\ExportCurrentCodeExample\SetLstRefLabel{}}
+    before upper app={\SetBoolTrue\ExportCurrentCodeExample\SetLstRefLabel{}},
   }
 }
 
@@ -189,7 +190,7 @@
         before upper app={\SetLstRefLabel{#1}},
     },
     exampletitle/.style args={#1}{
-        \gdef\CurrentExampleTitle{#1}
+        title={Example \thecodeexample: #1}
     },
     noexport/.code={
         \SetBoolFalse\ExportCurrentCodeExample
@@ -235,29 +236,19 @@
 
 \iow_new:N \g_lst_example_iow
 \ior_new:N \g_lst_example_ior
-\seq_new:N \l_lst_title_segments_seq
 \tl_new:N \l_lst_now_time_tl
 
 \cs_set:Npn \@@DoLaTeXExample #1 {
 
     \refstepcounter{codeexample}
 
-    % generate title
-    \seq_clear:N \l_lst_title_segments_seq
-    \tl_if_empty:NTF \CurrentExampleTitle
-    {
-        \seq_put_right:Nx \l_lst_title_segments_seq {title={Example~\thecodeexample}}
-    }
-    {
-        \seq_put_right:Nx \l_lst_title_segments_seq {title={Example~\thecodeexample:~\exp_not:V \CurrentExampleTitle}}
-    }
-
+    \tl_gset:Nx \CurrentExampleTitle {Example~\thecodeexample}
 
     % load the listing file
     \exp_args:Nx \tcbinputlisting { 
         codesample,
         listing~file={temp-example.vrb},
-        \seq_use:Nn \l_lst_title_segments_seq {,}
+        title={\exp_not:V \CurrentExampleTitle}
         \exp_not:V #1
     }
 
