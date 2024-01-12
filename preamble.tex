@@ -16,6 +16,7 @@
 \usepackage{float}
 \usepackage{array}
 \usepackage{xcolor}
+\usepackage{datetime2}
 \usepackage[scale=0.9]{tgheros}
 
 \ExplSyntaxOn
@@ -77,28 +78,8 @@
 \tl_new:N \g_lst_label_tl
 \tl_new:N \l_lst_tmpa_tl
 \tl_new:N \l_lst_tmpb_tl
-\prop_new:N \g_lst_index_prop
 
-\cs_set:Npn \__lst_write_aux:n #1 {
-    \immediate\write\@auxout{#1}
-}
-
-\newcommand{\EnableLstRef}{\bool_gset_true:N \g_lst_line_ref_bool}
-\newcommand{\DisableLstRef}{\bool_gset_false:N \g_lst_line_ref_bool}
 \newcommand{\SetLstRefLabel}[1]{\tl_gset:Nn \g_lst_label_tl {#1}}
-\newcommand{\LstPutLookup}[1]{
-    \tl_set:Nn \l_lst_tmpb_tl {
-       \string\expandafter\string\gdef\string\csname\space @@lst-lookup-#1\string\endcsname{\TheLstCounter}
-    }
-    \exp_args:Nx \__lst_write_aux:n \l_lst_tmpb_tl
-}
-\newcommand{\LstUseLookup}[1]{
-    \cs_if_exist:cTF {@@lst-lookup-#1} {
-        \use:c {@@lst-lookup-#1}
-    } {
-        ?
-    }
-}
 
 
 \cs_set:Npn \__lst_render_line: {
@@ -113,46 +94,62 @@
 }
 
 \renewcommand{\theFancyVerbLine}{
-    \bool_if:NTF \g_lst_line_ref_bool {
+    \tl_if_empty:NTF \g_lst_label_tl {
+        \__lst_render_line:
+    }{
         \tl_set:Nx \l_lst_tmpa_tl {\arabic{FancyVerbLine}}
         \exp_args:Nx \__lst_make_hypertarget:nn {\g_lst_label_tl-\l_lst_tmpa_tl}{
             \__lst_render_line:
         }
-    }{
-        \__lst_render_line:
     }
-
 }
-
-\int_new:N \g_lst_counter_int
-\newcommand{\AddLstCounter}{\int_gincr:N \g_lst_counter_int}
-\newcommand{\TheLstCounter}{\int_use:N \g_lst_counter_int}
 
 % user command to cross reference a line in the listing
 % #1: listing name
 % #2: line number
 % #3 (optional): would output a range of lines from #2 to #3 if present
-\DeclareDocumentCommand{\lref}{mmo}{
-    \IfValueTF{#3}{Lines}{Line}~\hyperlink{#1-#2}{
-        \IfValueTF{#3}{#2-#3}{#2}
-        @
-        \LstUseLookup{#1}
+% \DeclareDocumentCommand{\lref}{mmo}{
+%     \IfValueTF{#3}{Lines}{Line}~\hyperlink{#1-#2}{
+%         \IfValueTF{#3}{#2-#3}{#2}
+%         @
+%         \LstUseLookup{#1}
+%     }
+% }
+
+\seq_new:N \l_lst_line_seg_seq
+\tl_new:N \l_lst_first_line_tl
+\DeclareDocumentCommand{\lref}{mm}{
+    \regex_split:nnN {-} {#2} \l_lst_line_seg_seq
+    \int_case:nnF {\seq_count:N \l_lst_line_seg_seq}
+    {
+        {1} {Line~}
+        {2} {Lines~}
     }
+    {
+        \GenericError{}{\string\lref~received~invalid~arguments}{}{}
+    }
+
+    \seq_pop_left:NN \l_lst_line_seg_seq \l_lst_first_line_tl
+
+    \exp_args:Nx \hyperlink{#1-\l_lst_first_line_tl}
+    {
+        #2
+    }
+    @\ref{#1}
 }
 
-% user command to cross reference a listing
-\DeclareDocumentCommand{\lstref}{m}{
-    Listing~\hyperlink{#1-1}{
-        \LstUseLookup{#1}
-    }
-}
 
+
+\bool_new:N \ExportCurrentCodeExample
+\let\SetBoolTrue\bool_gset_true:N
+\let\SetBoolFalse\bool_gset_false:N
 \ExplSyntaxOff
 \makeatother
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % basic style for examples
+\gdef\CurrentExampleTitle{}
 \tcbset{
   codesample/.style={
     enhanced,
@@ -181,30 +178,42 @@
     right=1mm,
     top=0.5mm,
     bottom=0.5mm,
-    before upper pre={\AddLstCounter},
-    overlay unbroken and last={
-        \node[font=\sffamily\bfseries\scriptsize, anchor=south east] at (frame.south east) {\color[rgb]{0.5,0.5,0.5} \TheLstCounter};
-    }
+    before upper app={\SetBoolTrue\ExportCurrentCodeExample\SetLstRefLabel{}}
   }
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% this segment of code is to implement code exporting
-% if \ExportExamplestrue is called, then the source code of each
-% example will be output to /examples
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newif\ifExportExamples
 
-\ifExportExamples
+\tcbset{
+    noexec/.style={listing only},
+    examplelabel/.style args={#1}{
+        before upper app={\SetLstRefLabel{#1}},
+    },
+    exampletitle/.style args={#1}{
+        \gdef\CurrentExampleTitle{#1}
+    },
+    noexport/.code={
+        \SetBoolFalse\ExportCurrentCodeExample
+    }
+}
 
-% define our custom VerbatimOut like environment for latexsample
+
+
 \makeatletter
-
 \ExplSyntaxOn
+
+% options for controlling example export globally
+\bool_new:N \g_lst_export_example_bool
+\bool_gset_false:N \g_lst_export_example_bool
+\cs_new:Npn \ExportExamples
+{
+    \bool_gset_true:N \g_lst_export_example_bool
+}
 
 \cs_set:Npn \__doc_write:Nn #1#2 {
     \immediate\write#1{#2}
 }
+
+
 \cs_generate_variant:Nn \__doc_write:Nn {Nx}
 \cs_set_eq:NN \MyWriteA \__doc_write:Nn
 \cs_set_eq:NN \MyWriteB \__doc_write:Nx
@@ -218,135 +227,175 @@
 
 \tl_new:N \l_doc_tmpa_tl
 \tl_new:N \ExampleFilename
-
 \cs_set:Npn \UpdateExampleFilename {
     \tl_set_eq:NN \l_doc_tmpa_tl \thecodeexample
     \regex_replace_all:nnN {\.} {-} \l_doc_tmpa_tl
     \tl_set_eq:NN \ExampleFilename \l_doc_tmpa_tl
 }
 
-\ExplSyntaxOff
+\iow_new:N \g_lst_example_iow
+\ior_new:N \g_lst_example_ior
+\seq_new:N \l_lst_title_segments_seq
+\tl_new:N \l_lst_now_time_tl
 
-\newwrite\FV@OutFileA
-\newwrite\FV@OutFileB
+\cs_set:Npn \@@DoLaTeXExample #1 {
 
-\def\MyProcessLine#1{%
-    \immediate\write\FV@OutFileA{#1}%
-    \immediate\write\FV@OutFileB{#1}%
+    \refstepcounter{codeexample}
+
+    % generate title
+    \seq_clear:N \l_lst_title_segments_seq
+    \tl_if_empty:NTF \CurrentExampleTitle
+    {
+        \seq_put_right:Nx \l_lst_title_segments_seq {title={Example~\thecodeexample}}
+    }
+    {
+        \seq_put_right:Nx \l_lst_title_segments_seq {title={Example~\thecodeexample:~\exp_not:V \CurrentExampleTitle}}
+    }
+
+
+    % load the listing file
+    \exp_args:Nx \tcbinputlisting { 
+        codesample,
+        listing~file={temp-example.vrb},
+        \seq_use:Nn \l_lst_title_segments_seq {,}
+        \exp_not:V #1
+    }
+
+    % add labels
+    \tl_if_empty:NF \g_lst_label_tl
+    {   
+        \iow_term:x {=== \g_lst_label_tl : \thecodeexample}
+        \exp_args:NV \label \g_lst_label_tl
+    }
+
+    % export example
+    \bool_if:nT {\g_lst_export_example_bool && \ExportCurrentCodeExample}
+    {
+        \UpdateExampleFilename
+        \iow_open:Nn \g_lst_example_iow {examples/example-\ExampleFilename.tex}
+        \ior_open:Nn \g_lst_example_ior {temp-example.vrb}
+
+        \tl_if_empty:NTF \CurrentExampleTitle
+        {
+            \iow_now:Nx \g_lst_example_iow {\c_percent_str\space  This~is~Example~\thecodeexample\space ~exported~by~\jobname.tex}
+        }
+        {
+            \iow_now:Nx \g_lst_example_iow {\c_percent_str\space   This~is~exported~Example~\thecodeexample\space ~(\CurrentExampleTitle)~exported~by~\jobname.tex}
+        }
+        \iow_now:Nx \g_lst_example_iow {\c_percent_str\space   Do~not~modify~this~file~directly;~the~changes~will~not~be~reflected~in~the~source~document}
+
+        \tl_set:Nx \l_lst_now_time_tl {\DTMNow}
+        \regex_replace_all:nnN {\c{relax}} {} \l_lst_now_time_tl
+        \iow_now:Nx \g_lst_example_iow {\c_percent_str\space Export~timestamp:~\l_lst_now_time_tl}
+        
+        \ior_str_map_inline:Nn \g_lst_example_ior
+        {
+            \iow_now:Nn \g_lst_example_iow {##1}
+        }
+        \ior_close:N \g_lst_example_ior
+        \iow_close:N \g_lst_example_iow
+    }
+
+    \gdef\CurrentExampleTitle{}
 }
 
-\def\latexsample{\FV@Environment{}{latexsample}}
-\def\FVB@latexsample#1{%
+\ExplSyntaxOff
+
+
+% change fancyvrb environment so that we can use our own key-val options
+\def\@@CurLaTeXExArgs{}
+\def\FV@EnvironmentNew#1#2{%
+  \def\FV@KeyValues{#1}%
+  \def\@@CurLaTeXExArgs{}
+  \catcode`\^^M=\active
+  \@ifnextchar[%
+    {\catcode`\^^M=5 \FV@GetKeyValues{\let\@@CurLaTeXExArgs\FV@KeyValues\def\FV@KeyValues{#1}\@nameuse{FVB@#2}}}%
+    {\catcode`\^^M=5 \@nameuse{FVB@#2}}}
+
+\def\FVB@latexsample{%
   \@bsphack
   \begingroup
     \FV@UseKeyValues
     \FV@DefineWhiteSpace
     \def\FV@Space{\space}%
     \FV@DefineTabOut
-    \let\FV@ProcessLine\MyProcessLine
-    % increment example counter
-    \refstepcounter{codeexample}
-    \UpdateExampleFilename
-    %\def\FV@ProcessLine{\immediate\write\FV@OutFile}%
-    % copy1: this is to be read back and compiled in the document
-    \MyOpenOut\FV@OutFileA{temp-example.vrb}
-    %\immediate\openout\FV@OutFileA temp-example.vrb\relax
-    % copy2: this is to be saved in examples folder
-    %\immediate\openout\FV@OutFileB temp-example2.vrb\relax
-    \MyOpenOut\FV@OutFileB{examples/example-\ExampleFilename.tex}
-    % write the comment in the example
-    \MyWriteB\FV@OutFileB{\PCTSGN\PCTSGN\space Example \thecodeexample: #1}
-    % save #1
-    \gdef\TempExampleTitle{#1}
+    \def\FV@ProcessLine{\immediate\write\FV@OutFile}%
+    \immediate\openout\FV@OutFile temp-example.vrb\relax
     \let\FV@FontScanPrep\relax
 %% DG/SR modification begin - May. 18, 1998 (to avoid problems with ligatures)
     \let\@noligs\relax
 %% DG/SR modification end
     \FV@Scan}
-\def\FVE@latexsample{%
-\immediate\closeout\FV@OutFileA%
-\immediate\closeout\FV@OutFileB%
-\endgroup\@esphack%
-% input listing
-\inputlatexsample{\TempExampleTitle}{temp-example.vrb}
-}
+\def\FVE@latexsample{\immediate\closeout\FV@OutFile\endgroup\@esphack\@@DoLaTeXExample\@@CurLaTeXExArgs}
 
-\DefineVerbatimEnvironment{latexsample}{latexsample}{}
+
+\@namedef{latexsample}{\FV@EnvironmentNew{}{latexsample}}%
+\@namedef{endlatexsample}{\@nameuse{FVE@latexsample}}%
+
 
 \makeatother
 
 
-\newtcbinputlisting{\inputlatexsample}[2]{
-  codesample,
-  title=\GenExampleTitle{#1},
-  listing file={#2}
-}
+% \newtcbinputlisting{\inputlatexsample}[2]{
+%   codesample,
+%   title=\GenExampleTitle{#1},
+%   listing file={#2}
+% }
 
-\newcommand{\GenExampleTitle}[1]{%
-    %\refstepcounter{codeexample}
-    \hspace*{0.5em}
-    Example \thecodeexample:~#1
-    \addcontentsline{CodeExample}{subsection}{\protect\numberline{\thecodeexample}#1}
-}
+% \newcommand{\GenExampleTitle}[1]{%
+%     %\refstepcounter{codeexample}
+%     \hspace*{0.5em}
+%     Example \thecodeexample:~#1
+%     \addcontentsline{CodeExample}{subsection}{\protect\numberline{\thecodeexample}#1}
+% }
 
-%TODO: fix the environment when exporting!
+% %TODO: fix the environment when exporting!
 
-\else
+% \else
 
-\newcommand{\GenExampleTitle}[2]{%
-    \refstepcounter{codeexample}
-    \IfValueT{#2}{\label{#2}}
-    \hspace*{0.5em}
-    Example \thecodeexample:~#1
-    \addcontentsline{CodeExample}{subsection}{\protect\numberline{\thecodeexample}#1}
-}
+% \newcommand{\GenExampleTitle}[2]{%
+%     \refstepcounter{codeexample}
+%     \IfValueT{#2}{\label{#2}}
+%     \hspace*{0.5em}
+%     Example \thecodeexample:~#1
+%     \addcontentsline{CodeExample}{subsection}{\protect\numberline{\thecodeexample}#1}
+% }
 
-\DeclareTCBListing{latexsample}{m!o}{
-    codesample,
-    title=\GenExampleTitle{#1}{#2},
-    IfValueTF={#2}
-    {
-        before upper app={\EnableLstRef\SetLstRefLabel{#2}\LstPutLookup{#2}},
-        after app={\DisableLstRef}
-    }
-    {}
-}
+% \DeclareTCBListing{latexsample}{m!o}{
+%     codesample,
+%     title=\GenExampleTitle{#1}{#2},
+%     IfValueTF={#2}
+%     {
+%         before upper app={\EnableLstRef\SetLstRefLabel{#2}\LstPutLookup{#2}},
+%         after app={\DisableLstRef}
+%     }
+%     {}
+% }
 
 %\newtcblisting{latexsample}[1]{
 %  codesample,
 %  title=\GenExampleTitle{#1}
 %}
 
-\fi
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-% listing only example
-\DeclareTCBListing{latexsample**}{!o}{
-    codesample,
-    listing only,
-    IfValueTF={#1}
+\ExplSyntaxOn
+\newcommand*{\GenAnonTitle}[1]{
+    \refstepcounter{codeexample}
+    \tl_if_empty:nTF {#1}
     {
-        before upper app={\EnableLstRef\SetLstRefLabel{#1}\LstPutLookup{#1}},
-        after app={\DisableLstRef}
+        Example~\thecodeexample
     }
-    {}
+    {
+        Example~\thecodeexample: 
+    }
 }
 
-% anonymous example
-\DeclareTCBListing{latexsample*}{!o}{
-    codesample,
-    IfValueTF={#1}
-    {
-        before upper app={\EnableLstRef\SetLstRefLabel{#1}\LstPutLookup{#1}},
-        after app={\DisableLstRef}
-    }
-    {}
-}
+\ExplSyntaxOff
+
 
 %\newtcblisting{latexsample*}{
 %  codesample
@@ -377,6 +426,5 @@
 %\renewcommand{cmd}{def}
 
 \crefname{codeexample}{Example}{Examples}
-\newcommand{\exfullref}[1]{Example \ref{#1} (\lstref{#1})}
 
 \makeatother

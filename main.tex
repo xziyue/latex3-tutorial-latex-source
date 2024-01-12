@@ -12,7 +12,7 @@
 \ORCID{0000-0001-6054-5801}
 
 
-\ExportExamplesfalse
+\ExportExamples
 
 \begin{document}
 
@@ -86,7 +86,7 @@ In this tutorial, we focus on the most frequently used components in \liii.
 The complete documentation of \liii\  can be found in \cite{l3interface}. 
 In the upcoming section titles, if parentheses are present, then the content in the parentheses is the corresponding section number in the 2022-01-12 release of \cite{l3interface}.
 
-\subsection{\texorpdfstring{\LT{}}{LaTeX} as a programming language}
+\subsection{\LT{} as a programming language}
 
 \LT{} \emph{is} a programming language. 
 It is Turing completel just like popular generic programming languages such as Python \cite{vanrossum2010python} and C++ \cite{stroustrup2013cpp}. 
@@ -143,7 +143,7 @@ In the following example, suppose we have a function \inltex|\cmda| that scans e
 In \inltex|\cmda|, we use the \inltex|\detokenize| command to output the verbatim of its argument without parsing.
 Because it is common to store characters in a control sequence, let us observe what happens when \inltex|\cmda| is called with a control sequence \inltex|\vala| as its argument (\lref{ex:trad-expan-ctrl}{5}).
 From the first line of output, it can be seen that the argument is still \inltex|\vala|, which means the character-wise operation in \inltex|\cmda| will not work when a control sequence is used as its input.
-\begin{latexsample*}[ex:trad-expan-ctrl]
+\begin{latexsample}[examplelabel=ex:trad-expan-ctrl]
 \def\cmda#1{%
   % do some character-wise operation with #1
   arg: \detokenize{#1} % output #1
@@ -153,7 +153,7 @@ From the first line of output, it can be seen that the argument is still \inltex
 \par\cmda{\vala}
 \par\expandafter\expandafter\expandafter\cmda\expandafter{\vala}
 \par\expandafter\expandafter\expandafter\cmda\expandafter{\valb}
-\end{latexsample*}
+\end{latexsample}
 \noindent In order for function calls to work properly in \LT{}, it is the user's responsibility to preprocess the function arguments so that they are in the expected form of the function.
 This procedure is known as \emph{expansion control}.
 One of the ways to conduct expansion control is to use the \TeX{} primitive \inltex|\expandafter|, whose usage is so complicated that it deserves its own tutorial \cite{bechtolsheim1988tutorial}.
@@ -327,11 +327,11 @@ The new expansion control mechanism of \liii\ is easier and more straightforward
 
 This tutorial is based on examples.
 To compile the examples, the minimum preamble required is:
-\begin{latexsample**}[ex:min-preamble]
+\begin{latexsample}[examplelabel=ex:min-preamble,noexec]
 \documentclass{article}
 \usepackage{tikz} % load TikZ for some TikZ examples
 \usepackage{expl3} % load latex3 packages
-\end{latexsample**}
+\end{latexsample}
 \noindent The example code should be placed between \inltex|\begin{document}| 
 and \inltex|\end{document}|. 
 All examples were tested with \TeX Live  2020 on Ubuntu 20.04.
@@ -346,7 +346,7 @@ The source code of this tutorial can be obtained from \url{https://github.com/xz
 
 Unlike many programming languages that enclose the function arguments with parentheses, \LaTeX\ does not require delimiters between the function and its arguments. 
 In the example below, we define 6 control sequences, where \inltex|\ta| and \inltex|\td| are functions, and the rest are variables.
-\begin{latexsample*}[ex:func-var-def]
+\begin{latexsample}[examplelabel=ex:func-var-def]
 \newcommand{\ta}[2]{[arg1={#1}, arg2={#2}]}
 \newcommand{\tb}{$\alpha$}
 \newcommand{\tc}{$\beta$}
@@ -354,7 +354,7 @@ In the example below, we define 6 control sequences, where \inltex|\ta| and \inl
 \newcommand{\te}{$\gamma$}
 \newcommand{\tf}{$\delta$}
 \ta\tb\tc\td\te\tf
-\end{latexsample*}
+\end{latexsample}
 \noindent On \lref{ex:func-var-def}{7}, we call functions \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables). 
 We output the value of \inltex|\tf| next.
 In appearance, \lref{ex:func-var-def}{7} is six control sequences placed next to each other.
@@ -717,8 +717,8 @@ The value of $\pi$. This can be input directly in a floating point expression as
 \section{Scope of Variables}\label{sec:var-scope}
 
 In \liii, the scope of value assignment is usually local.
-\exfullref{ex:group-demo} shows the difference between local and global assignment.
-In this example, \lref{ex:group-demo}{4}[9] are enclosed in a group.
+\cref{ex:group-demo} shows the difference between local and global assignment.
+In this example, \lref{ex:group-demo}{4-9} are enclosed in a group.
 Inside the group, the value of \inltex|\l_tmpa_tl| is locally assigned with \inltex|\tl_set:Nn|, while the value of \inltex|\g_tmpa_tl| is globally assigned with \inltex|\tl_gset:Nn|.
 Since the value assignment of \inltex|\l_tmpa_tl| is local, the scope of the assignment is constrained within the group.
 Therefore, when we use its value outside the group, we get the old value.
@@ -726,7 +726,7 @@ In contrast, the value assignment of \inltex|\g_tmpa_tl| is able to go beyond gr
 %TODO: cross-reference the right example
 % In example, we show... resursive functions
 
-\begin{latexsample}{Scope of value assignment}[ex:group-demo]
+\begin{latexsample}[examplelabel=ex:group-demo]
 \ExplSyntaxOn
 \tl_set:Nn \l_tmpa_tl {old}
 \tl_gset:Nn \g_tmpa_tl {old}
