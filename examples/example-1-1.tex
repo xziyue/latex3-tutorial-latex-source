@@ -1,0 +1,12 @@
+% This is Example 1.1 exported by main.tex
+% Do not modify this file directly; the changes will not be reflected in the source document
+% Export timestamp: 2024-01-11 20:19:44-08:00
+\def\cmda#1{%
+  % do some character-wise operation with #1
+  arg: \detokenize{#1} % output #1
+}
+\def\vala{val-a}
+\def\valb{\vala}
+\par\cmda{\vala}
+\par\expandafter\expandafter\expandafter\cmda\expandafter{\vala}
+\par\expandafter\expandafter\expandafter\cmda\expandafter{\valb}
