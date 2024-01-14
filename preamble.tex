@@ -104,17 +104,6 @@
     }
 }
 
-% user command to cross reference a line in the listing
-% #1: listing name
-% #2: line number
-% #3 (optional): would output a range of lines from #2 to #3 if present
-% \DeclareDocumentCommand{\lref}{mmo}{
-%     \IfValueTF{#3}{Lines}{Line}~\hyperlink{#1-#2}{
-%         \IfValueTF{#3}{#2-#3}{#2}
-%         @
-%         \LstUseLookup{#1}
-%     }
-% }
 
 \seq_new:N \l_lst_line_seg_seq
 \tl_new:N \l_lst_first_line_tl
@@ -141,15 +130,18 @@
 
 
 \bool_new:N \ExportCurrentCodeExample
+\bool_new:N \CurrentExampleHasTitle
 \let\SetBoolTrue\bool_gset_true:N
 \let\SetBoolFalse\bool_gset_false:N
+\let\BoolShow\bool_show:N
+\def\CurrentExampleRawTitle{}
 \ExplSyntaxOff
 \makeatother
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % basic style for examples
-\gdef\CurrentExampleTitle{}
+
 \tcbset{
   codesample/.style={
     enhanced,
@@ -179,25 +171,23 @@
     right=1mm,
     top=0.5mm,
     bottom=0.5mm,
-    before upper app={\SetBoolTrue\ExportCurrentCodeExample\SetLstRefLabel{}},
   }
 }
 
 
 \tcbset{
     noexec/.style={listing only},
-    examplelabel/.style args={#1}{
-        before upper app={\SetLstRefLabel{#1}},
+    examplelabel/.code args={#1}{
+        \SetLstRefLabel{#1}
     },
     exampletitle/.style args={#1}{
-        title={Example \thecodeexample: #1}
+        title={Example \thecodeexample: #1},
+        after app={\SetBoolTrue\CurrentExampleHasTitle\gdef\CurrentExampleRawTitle{#1}}
     },
     noexport/.code={
         \SetBoolFalse\ExportCurrentCodeExample
     }
 }
-
-
 
 \makeatletter
 \ExplSyntaxOn
@@ -210,21 +200,6 @@
     \bool_gset_true:N \g_lst_export_example_bool
 }
 
-\cs_set:Npn \__doc_write:Nn #1#2 {
-    \immediate\write#1{#2}
-}
-
-
-\cs_generate_variant:Nn \__doc_write:Nn {Nx}
-\cs_set_eq:NN \MyWriteA \__doc_write:Nn
-\cs_set_eq:NN \MyWriteB \__doc_write:Nx
-\cs_set_eq:NN \PCTSGN \c_percent_str
-
-\cs_set:Npn \__doc_open_out:Nn #1#2 {
-    \immediate\openout#1 #2\relax
-}
-\cs_generate_variant:Nn \__doc_open_out:Nn {Nx}
-\cs_set_eq:NN \MyOpenOut \__doc_open_out:Nx
 
 \tl_new:N \l_doc_tmpa_tl
 \tl_new:N \ExampleFilename
@@ -237,25 +212,36 @@
 \iow_new:N \g_lst_example_iow
 \ior_new:N \g_lst_example_ior
 \tl_new:N \l_lst_now_time_tl
+\def\CurrentExampleTitle{}
 
 \cs_set:Npn \@@DoLaTeXExample #1 {
 
     \refstepcounter{codeexample}
 
+    \SetBoolTrue\ExportCurrentCodeExample
+    \SetBoolFalse\CurrentExampleHasTitle
+    \SetLstRefLabel{}
+
     \tl_gset:Nx \CurrentExampleTitle {Example~\thecodeexample}
 
+
     % load the listing file
-    \exp_args:Nx \tcbinputlisting { 
+    \exp_args:Nx \tcbinputlisting {
         codesample,
         listing~file={temp-example.vrb},
         title={\exp_not:V \CurrentExampleTitle}
         \exp_not:V #1
     }
 
+    % add to contents
+    \bool_if:NT \CurrentExampleHasTitle
+    {
+        \addcontentsline{CodeExample}{subsection}{\protect\numberline{\thecodeexample}\CurrentExampleRawTitle}
+    }
+
     % add labels
     \tl_if_empty:NF \g_lst_label_tl
     {   
-        \iow_term:x {=== \g_lst_label_tl : \thecodeexample}
         \exp_args:NV \label \g_lst_label_tl
     }
 
@@ -266,13 +252,9 @@
         \iow_open:Nn \g_lst_example_iow {examples/example-\ExampleFilename.tex}
         \ior_open:Nn \g_lst_example_ior {temp-example.vrb}
 
-        \tl_if_empty:NTF \CurrentExampleTitle
-        {
-            \iow_now:Nx \g_lst_example_iow {\c_percent_str\space  This~is~Example~\thecodeexample\space ~exported~by~\jobname.tex}
-        }
-        {
-            \iow_now:Nx \g_lst_example_iow {\c_percent_str\space   This~is~exported~Example~\thecodeexample\space ~(\CurrentExampleTitle)~exported~by~\jobname.tex}
-        }
+    
+        \iow_now:Nx \g_lst_example_iow {\c_percent_str\space \CurrentExampleTitle}
+        \iow_now:Nx \g_lst_example_iow {\c_percent_str\space This~file~is~exported~by~\jobname.tex}
         \iow_now:Nx \g_lst_example_iow {\c_percent_str\space   Do~not~modify~this~file~directly;~the~changes~will~not~be~reflected~in~the~source~document}
 
         \tl_set:Nx \l_lst_now_time_tl {\DTMNow}
@@ -286,8 +268,6 @@
         \ior_close:N \g_lst_example_ior
         \iow_close:N \g_lst_example_iow
     }
-
-    \gdef\CurrentExampleTitle{}
 }
 
 \ExplSyntaxOff
@@ -327,52 +307,6 @@
 \makeatother
 
 
-% \newtcbinputlisting{\inputlatexsample}[2]{
-%   codesample,
-%   title=\GenExampleTitle{#1},
-%   listing file={#2}
-% }
-
-% \newcommand{\GenExampleTitle}[1]{%
-%     %\refstepcounter{codeexample}
-%     \hspace*{0.5em}
-%     Example \thecodeexample:~#1
-%     \addcontentsline{CodeExample}{subsection}{\protect\numberline{\thecodeexample}#1}
-% }
-
-% %TODO: fix the environment when exporting!
-
-% \else
-
-% \newcommand{\GenExampleTitle}[2]{%
-%     \refstepcounter{codeexample}
-%     \IfValueT{#2}{\label{#2}}
-%     \hspace*{0.5em}
-%     Example \thecodeexample:~#1
-%     \addcontentsline{CodeExample}{subsection}{\protect\numberline{\thecodeexample}#1}
-% }
-
-% \DeclareTCBListing{latexsample}{m!o}{
-%     codesample,
-%     title=\GenExampleTitle{#1}{#2},
-%     IfValueTF={#2}
-%     {
-%         before upper app={\EnableLstRef\SetLstRefLabel{#2}\LstPutLookup{#2}},
-%         after app={\DisableLstRef}
-%     }
-%     {}
-% }
-
-%\newtcblisting{latexsample}[1]{
-%  codesample,
-%  title=\GenExampleTitle{#1}
-%}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \ExplSyntaxOn
 \newcommand*{\GenAnonTitle}[1]{
     \refstepcounter{codeexample}
@@ -388,9 +322,6 @@
 \ExplSyntaxOff
 
 
-%\newtcblisting{latexsample*}{
-%  codesample
-%}
 
 % listing of any language
 \newtcblisting{codesample}[1]{
@@ -404,17 +335,6 @@
 \makeatletter
 % better URL line breaking
 \g@addto@macro{\UrlBreaks}{\UrlOrds}
-
-%\newcommand{\inlcolorbox}[2]{
-%    \bgroup
-%    %\setlength{\fboxsep}{0pt}
-%    \colorbox{blue!30}{#2}
-%    \egroup
-%}
-
-%\patchcmd{\minted@inputpyg@inline}{\colorbox}{\inlcolorbox}{}{\GenericError{}{cannot patch minted}{}{}}
-%\let\old@minted@inputpyg@inline\minted@inputpyg@inline
-%\renewcommand{cmd}{def}
 
 \crefname{codeexample}{Example}{Examples}
 
