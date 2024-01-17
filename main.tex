@@ -20,16 +20,10 @@
 \LT{} is widely used to generate high quality documents.
 It provides not only control over document content and style, but also the logic behind the document generation process.
 For many users, knowledge on the programming side of \LT{} can facilitate document generation.
-%When being viewed as a programming language, \LT{} is different from popular languages in various different ways.
-In this tutorial, we briefly describe background related to \LT{} programming.
+In this tutorial, we introduce programming in \LT{}.
 We focus on \LTT{}--a set of modern programming interfaces in \LT{} to help users write general purpose programs.
 \LTT{} contains functionalities such as boolean logic, integer/floating point arithmetic, data structures, and regular expressions.
 This is an example based \LTT{} tutorial that introduces readers to the commonly used components of \LTT{}.
-% The programming side of \LaTeX\ is often overlooked.
-% In many cases, the use of programming capabilities of \LaTeX\ can facilitate document editing and improve the quality of the compiled document.
-% \LaTeX3 is a set of modern programming interfaces provided by the \LaTeX\ kernel.
-% Compared to traditional \LaTeX\ programming, \LaTeX3 yields more standardized, readable, and robust code.
-% In this tutorial, we present a series of examples that help readers understand the commonly used modules of \LaTeX3.
 \end{abstract}
 
 \maketitle
@@ -40,16 +34,21 @@ This is an example based \LTT{} tutorial that introduces readers to the commonly
 
 \section{Introduction}
 
+\LT{} is widely known as a typesetting language.
+Many \LT{} users are familiar with \LT{}'s interface to control the document's content and style.
+It is often overlooked that \LT{} also provides generic programming interface to control the logic of the document generation process.
 
 
 
-There is no doubt that \LaTeX~is viewed as a typesetting language by most of the users.
-The programming aspect of \LaTeX~is often overlooked by many.
-In practice, many large and structured documents can benefit from the programming capabilities provided by \LaTeX. 
-Even understanding the most basic programming principles in \LaTeX~can greatly facilitate the efficiency of generating figures or tables that are made up of similar and repeated sub-structures.
-The infrastructure provided by \LaTeXe\ \cite{berry2017latex} is already Turing complete, which means its programming capabilities are identical to those of Python \cite{vanrossum2010python} and C \cite{ritchie1988c}.
-However, the syntax and conventions of \LaTeXe~are nonstandardized and obsolete compared to the mainstream programming languages now.
-This makes learning \LaTeXe~programming more difficult for today's \LaTeX~users.
+
+
+% There is no doubt that \LaTeX~is viewed as a typesetting language by most of the users.
+% The programming aspect of \LaTeX~is often overlooked by many.
+% In practice, many large and structured documents can benefit from the programming capabilities provided by \LaTeX. 
+% Even understanding the most basic programming principles in \LaTeX~can greatly facilitate the efficiency of generating figures or tables that are made up of similar and repeated sub-structures.
+% The infrastructure provided by \LaTeXe\ \cite{berry2017latex} is already Turing complete, which means its programming capabilities are identical to those of Python \cite{vanrossum2010python} and C \cite{ritchie1988c}.
+% However, the syntax and conventions of \LaTeXe~are nonstandardized and obsolete compared to the mainstream programming languages now.
+% This makes learning \LaTeXe~programming more difficult for today's \LaTeX~users.
 
 %Many people view \LaTeX\ as a typesetting language and overlook the importance of programming in document generation process. 
 %In reality, many large and structural documents can benefit from
@@ -61,11 +60,11 @@ This makes learning \LaTeXe~programming more difficult for today's \LaTeX~users.
 %of \LaTeX. This makes programming with \LaTeXe\ extremely daunting, 
 %even for seasoned computer programmers.
 
-In order to modernize the programming interfaces in \LaTeX, the \liii~programming interfaces are introduced \cite{mittelbach2020quo}.
-Unfortunately, the learning materials for this tool chain is scarce.
-One of the few resources available for new learners is \emph{The \liii\ Interfaces} \cite{l3interface}, which is a technical documentation that is difficult to for one to start with.
-Therefore, in this material we intend to provide an example based \liii\ tutorial for new \liii\ users with sufficient background in computer programming.
-That is, the reader is expected to understand basic structures (e.g., loops, conditional branches) as well as data types (e.g., integers, floating point numbers, strings) in computer programs. 
+% In order to modernize the programming interfaces in \LaTeX, the \liii~programming interfaces are introduced \cite{mittelbach2020quo}.
+% Unfortunately, the learning materials for this tool chain is scarce.
+% One of the few resources available for new learners is \emph{The \liii\ Interfaces} \cite{l3interface}, which is a technical documentation that is difficult to for one to start with.
+% Therefore, in this material we intend to provide an example based \liii\ tutorial for new \liii\ users with sufficient background in computer programming.
+% That is, the reader is expected to understand basic structures (e.g., loops, conditional branches) as well as data types (e.g., integers, floating point numbers, strings) in computer programs. 
 %It would be helpful if the reader also understands the basic principles of the C programming language \cite{ritchie1988c}.
 
 %To make programming in \LaTeX\ easier, the \liii\ programming interface
@@ -81,10 +80,10 @@ That is, the reader is expected to understand basic structures (e.g., loops, con
 %document quality after understanding \liii.
 
 
-Since the \liii~project has accumulated a huge code base over the years, it is infeasible to cover all of its functionalities in one tutorial.
-In this tutorial, we focus on the most frequently used components in \liii. 
-The complete documentation of \liii\  can be found in \cite{l3interface}. 
-In the upcoming section titles, if parentheses are present, then the content in the parentheses is the corresponding section number in the 2022-01-12 release of \cite{l3interface}.
+% Since the \liii~project has accumulated a huge code base over the years, it is infeasible to cover all of its functionalities in one tutorial.
+% In this tutorial, we focus on the most frequently used components in \liii. 
+% The complete documentation of \liii\  can be found in \cite{l3interface}. 
+% In the upcoming section titles, if parentheses are present, then the content in the parentheses is the corresponding section number in the 2022-01-12 release of \cite{l3interface}.
 
 \subsection{\LT{} as a programming language}
 
@@ -143,7 +142,7 @@ In the following example, suppose we have a function \inltex|\cmda| that scans e
 In \inltex|\cmda|, we use the \inltex|\detokenize| command to output the verbatim of its argument without parsing.
 Because it is common to store characters in a control sequence, let us observe what happens when \inltex|\cmda| is called with a control sequence \inltex|\vala| as its argument (\lref{ex:trad-expan-ctrl}{5}).
 From the first line of output, it can be seen that the argument is still \inltex|\vala|, which means the character-wise operation in \inltex|\cmda| will not work when a control sequence is used as its input.
-\begin{latexsample}[examplelabel=ex:trad-expan-ctrl,exampletitle={Expansion Control}]
+\begin{latexsample}[examplelabel=ex:trad-expan-ctrl,exampletitle={Expansion Control},noexport]
 \def\cmda#1{%
   % do some character-wise operation with #1
   arg: \detokenize{#1} % output #1
