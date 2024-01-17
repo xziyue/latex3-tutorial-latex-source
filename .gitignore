@@ -1,6 +1,7 @@
 *.tabular
 *.CodeExample
 main.pdf
+examples/
 USE_SHELL_ESCAPE
 MINTED_FINALIZE
 
