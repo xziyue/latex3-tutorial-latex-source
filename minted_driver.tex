@@ -1,0 +1,27 @@
+\ExplSyntaxOn
+\bool_if:NTF \g_doc_overleaf_mode_bool
+{
+    % overleaf mode
+    \iow_term:n {=====~Document~is~compiled~in~Overleaf~development~mode~=====}
+    \usepackage{minted}
+}
+{
+    % Makefile mode
+    \file_if_exist:nTF{USE_SHELL_ESCAPE}
+    {
+        \file_if_exist:nTF{MINTED_FINALIZE}
+        {
+            \iow_term:n {=====~Document~is~compiled~in~finalization~mode~=====}
+            \usepackage[finalizecache,cachedir={minted-frozen}]{minted}
+        }
+        {
+            \iow_term:n {=====~Document~is~compiled~in~development~mode~=====}
+            \usepackage{minted}
+        }
+    }
+    {
+        \iow_term:n {=====~Document~is~compiled~in~submission~mode~=====}
+        \usepackage[frozencache,cachedir={minted-frozen}]{minted}
+    }
+}
+\ExplSyntaxOff

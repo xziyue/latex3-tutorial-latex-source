@@ -20,21 +20,13 @@
 \usepackage[scale=0.9]{tgheros}
 
 \ExplSyntaxOn
-\file_if_exist:nTF{USE_SHELL_ESCAPE}
+
+% overleaf mode is considered debug mode
+\bool_new:N \g_doc_overleaf_mode_bool
+\bool_gset_false:N \g_doc_overleaf_mode_bool
+\cs_set:Npn \UseOverleafMode
 {
-    \file_if_exist:nTF{MINTED_FINALIZE}
-    {
-        \iow_term:n {=====~Document~is~compiled~in~finalization~mode~=====}
-        \usepackage[finalizecache,cachedir={minted-frozen}]{minted}
-    }
-    {
-        \iow_term:n {=====~Document~is~compiled~in~development~mode~=====}
-        \usepackage{minted}
-    }
-}
-{
-    \iow_term:n {=====~Document~is~compiled~in~submission~mode~=====}
-    \usepackage[frozencache,cachedir={minted-frozen}]{minted}
+    \bool_gset_true:N \g_doc_overleaf_mode_bool
 }
 \ExplSyntaxOff
 
