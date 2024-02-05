@@ -1,4 +1,13 @@
 \ExplSyntaxOn
+
+\makeatletter
+
+% temporary fix to support custom lexer...
+\tl_set:Nx \minted@optlistcl@g
+{
+    \exp_not:V \minted@optlistcl@g \space -x \space 
+}
+
 \bool_if:NTF \g_doc_overleaf_mode_bool
 {
     % overleaf mode
@@ -7,6 +16,8 @@
 }
 {
     % Makefile mode
+    % \renewcommand{\MintedPygmentize}{./my_pygmentize}
+    
     \file_if_exist:nTF{USE_SHELL_ESCAPE}
     {
         \file_if_exist:nTF{MINTED_FINALIZE}
@@ -24,4 +35,5 @@
         \usepackage[frozencache,cachedir={minted-frozen}]{minted}
     }
 }
+\makeatother
 \ExplSyntaxOff
