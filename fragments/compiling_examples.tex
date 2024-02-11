@@ -1,0 +1,17 @@
+% this section is placed in a separate file because it breaks Overleaf's syntax highlighting...
+
+\subsection{Compiling Examples}
+
+%This tutorial is based on examples.
+To compile the examples in this tutorial, the minimum preamble required is:
+\begin{latexsample}[examplelabel=ex:min-preamble,noexec]
+\documentclass{article}
+\usepackage{tikz} % load TikZ for some TikZ examples
+\usepackage{expl3} % load latex3 packages
+\end{latexsample}
+\noindent The example code should be placed between \inltex|\begin{document}| and \inltex|\end{document}|. 
+%\noindent The example code should be placed in the document body.
+All examples have been tested with \TeX Live 2023.
+For newer versions of \LaTeX{} compilers, there is no need to load the \verb|expl3| package explicitly (i.e., \lref{ex:min-preamble}{3} is optional).
+% \footnotetext{Every listing has a unique index, which is shown at the bottom right corner. A line in the listing is referenced by <listing index>:<line number>. A range of lines in the listing are referenced by <listing index>:<line number 1>-<line number 2>.}
+The source code of this tutorial and examples can be obtained from \url{https://github.com/xziyue/latex3-tutorial-latex-source}.

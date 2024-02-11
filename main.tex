@@ -8,8 +8,6 @@
 
 \title{A \LTT{} programming tutorial}
 \author{Ziyue Xiang}
-\address{Purdue University}
-\netaddress{ziyue.alan.xiang (at) gmail (dot) com}
 \personalURL{https://www.alanshawn.com}
 \ORCID{0000-0001-6054-5801}
 
@@ -39,10 +37,13 @@ This is an example based \LTT{} tutorial that introduces readers to the commonly
 \LT{} is widely known as a typesetting language.
 Many \LT{} users are familiar with \LT{}'s interface to control the document's content and style.
 It is often overlooked that \LT{} also provides generic programming interface to control the logic of the document generation process.
+In this tutorial, we introduce \LTT{}--a set of modern programming interfaces provided by \LT{} to help users implement various general purpose algorithms.
 
-
-
-
+This is an example based tutorial. 
+Examples are referenced using the following notation: \cref{ex:groups}.
+A line in an example is referenced using the following notation: \lref{ex:groups}{1}.
+Here, the @ symbol is used to separate the line number and the example number.
+A range of lines in an example is referenced using the following notation: \lref{ex:groups}{1-5}.
 
 % There is no doubt that \LaTeX~is viewed as a typesetting language by most of the users.
 % The programming aspect of \LaTeX~is often overlooked by many.
@@ -87,26 +88,50 @@ It is often overlooked that \LT{} also provides generic programming interface to
 % The complete documentation of \liii\  can be found in \cite{l3interface}. 
 % In the upcoming section titles, if parentheses are present, then the content in the parentheses is the corresponding section number in the 2022-01-12 release of \cite{l3interface}.
 
-\subsection{\LT{} as a programming language}
 
-\LT{} \emph{is} a programming language. 
-It is Turing completel just like popular generic programming languages such as Python \cite{vanrossum2010python} and C++ \cite{stroustrup2013cpp}. 
-\LT{} also provides support for boolean logic, arithmetic, data structures, and string processing.
-However, \LT{} is significantly different from existing programming languages in two major ways.
 
+\subsection{Important Concepts in \LT{}}\label{sec:important-concepts}
+
+\LT{} is a programming language. 
+It is Turing complete just like popular generic programming languages such as Python and C++, which means that they all have the same problem solving capabilities.
+\LT{} provides support for boolean logic, arithmetic, data structures, and string processing.
+Before introducing how to program in \LT{}, we want to describe three concepts that every \LT{} programmer should know.
+Some of these concepts are unique to \LT{} and cannot be found in popular programming languages.
+
+The first concept is category code.
 In many existing languages, valid function/variable names and meanings of characters are predefined and cannot be changed.
 In \LT{}, the user has the freedom to change them.
 For example, normally \verb|\| is used to start a control sequence, \verb|$| is used to toggle math mode, \verb|%| is used for comments, and Latin alphabets are used as control sequence names.
 However, with several lines of code, one can change the configurations so that \verb|@| is used to start a control sequence, \verb|+| is used to toggle math mode, \verb|#| is used for comments, and both Latin alphabets and Arabic numerals are used as control sequence names.
-To understand how this is possible, we need to introduce the concept of \emph{category code}.
-The category code is a hidden attribute associated with every character.
-In \cref{tab:cat-code}, we show the 16 category codes in \LT{} and example characters with given category codes in default \LT{} configuraiton.
+%To understand how this is possible, we need to introduce the concept of \emph{category code}.
+This is made possible by using category code.
+Category code is a hidden attribute associated with every character.
+In \cref{tab:cat-code}, we show the 16 category codes in \LT{} and example characters with given category codes in default \LT{} configuration.
 In \LT{}, the meaning of each character is determined by its category code instead of its character code. 
-For example, any character with category code 7 can be used to denote superscript.
-In default \LT{} configuration, the character \verb|^| is set to have character code 7 so that it can be used for superscript.
-The category code associated with each character can be changed. 
-A user can generate a character \verb|^| with category code 8, which means that it can be used to denote subscript.
-In \LT{}, two characters are considered equal if and only if their character codes are the same and their category codes are the same.
+% For example, any character with category code 7 can be used to denote superscript.
+% In default \LT{} configuration, the character \verb|^| is set to have character code 7 so that it can be used for superscript.
+% The category code associated with each character can be changed. 
+% A user can generate a character \verb|^| with category code 8, which means that it can be used to denote subscript.
+In \cref{ex:category-code}, we show the category code of three characters: \verb|^|, \verb|_|, and \verb|*|.
+The category code of \verb|^| and \verb|_| are 7 and 8, respectively. 
+That is the reason why they can be used to denoted superscript and subscript.
+In \lref{ex:category-code}{8}, we change the category code of \verb|*| to 7.
+Notice how it triggers subscript in math equations afterwards.
+\begin{latexsample}[examplelabel={ex:category-code},exampletitle={Category Code}]
+% show the category code of some characters
+\par The category code of \^{} is \the\catcode`^
+\par The category code of \_{} is \the\catcode`_
+\par The category code of * is \the\catcode`*
+% a match equation
+\par $a*b~a^b~a_b$
+% change the category code of * to 7
+\catcode`*=7
+% see what changes in the equation
+\par $a*b~a^b~a_b$
+\end{latexsample}
+\noindent 
+%Category code makes \LT{} different from many existing programming languages.
+It is worth noting that in \LT{}, two characters are considered equal if and only if their character codes are the same and their category codes are the same.
 
 
 \begin{table}[tb]
@@ -136,11 +161,37 @@ In \LT{}, two characters are considered equal if and only if their character cod
   \label{tab:cat-code}
 \end{table}
 
-Another major difference is the need of macro expansion control in \LT{}.
+
+The second concept is group.
+Groups in \LT{} are similar to scopes in other programming languages.
+By default, almost all changes (e.g., macro definition, category code assignment, font selection) in \LT{} are local, which means they only apply to the current group.
+These changes are not visible outside the group.
+In \LT{}, one way to create a new group is to use braces (\verb|{}|).
+In \cref{ex:groups}, we show the effect of groups.
+On \lref{ex:groups}{2}, we define the macro \inltex|\abc|.
+On \lref{ex:groups}{6}, we update the definition of \inltex|\abc|.
+Notice how the updated definition only applies to the group enclosed by \lref{ex:groups}{4-8}.
+Similar principle is also reflected by fonts: the \inltex|\normalfont| command on \lref{ex:groups}{5} only affects the contents within the group.
+\begin{latexsample}[examplelabel={ex:groups},exampletitle={Groups}]
+\itshape
+\def\abc{abc }%
+\abc%
+{%
+  \normalfont%
+  \def\abc{def }%
+  \abc%
+}%
+\abc%
+\end{latexsample}
+\noindent In \LT{}, the user can also make changes that are global, meaning that these changes will be visible everywhere.
+It is vital for \LT{} users to determine if a change should be local or global.
+
+
+The third concept is macro expansion control.
 Fundamentally, \LT{} is a simple macro language that works by replacing patterns according to a set of defined macro functions.
 The \LT{} compiler will not attempt to generate an Abstract Syntax Tree (AST) for the \LT{} source, which means it has very little understanding over its input compared to other languages' compilers that rely on ASTs.
 One of the main consequences of such simplification is \LT{} compilers are less powerful in terms of function calls, because it has limited insight over the function arguments.
-In the following example, suppose we have a function \inltex|\cmda| that scans each character in its argument \verb|#1| and apply some character-wise operation. 
+In \cref{ex:trad-expan-ctrl}, suppose we have a function \inltex|\cmda| that scans each character in its argument \verb|#1| and apply some character-wise operation. 
 In \inltex|\cmda|, we use the \inltex|\detokenize| command to output the verbatim of its argument without parsing.
 Because it is common to store characters in a control sequence, let us observe what happens when \inltex|\cmda| is called with a control sequence \inltex|\vala| as its argument (\lref{ex:trad-expan-ctrl}{5}).
 From the first line of output, it can be seen that the argument is still \inltex|\vala|, which means the character-wise operation in \inltex|\cmda| will not work when a control sequence is used as its input.
@@ -156,211 +207,200 @@ From the first line of output, it can be seen that the argument is still \inltex
 \par\expandafter\expandafter\expandafter\cmda\expandafter{\valb}
 \end{latexsample}
 \noindent In order for function calls to work properly in \LT{}, it is the user's responsibility to preprocess the function arguments so that they are in the expected form of the function.
-This procedure is known as \emph{expansion control}.
+This procedure is known as expansion control.
 One of the ways to conduct expansion control is to use the \TeX{} primitive \inltex|\expandafter|, whose usage is so complicated that it deserves its own tutorial \cite{bechtolsheim1988tutorial}.
 On \lref{ex:trad-expan-ctrl}{8}, we demonstrate how to use \inltex|\expandafter| so that \inltex|\cmda| can correctly access the characters stored in \inltex|\vala|.
 This approach does not work for all scenarios: notice how it fails when we use \inltex|\valb| as the input.
 
-\LTT{} has provided user friendly interfaces to help \LT{} programmers from various backgrounds cope with these differences.
+\LTT{} has provided user friendly interfaces to help \LT{} programmers from various backgrounds cope with the differences of \LT{}.
 For more low-level details about \TeX{}/\LT{}, one is referred to \cite{knuth1984texbook,berry2017latex}.
 
-\subsection{Motivations of \liii}
+% \subsection{Motivations of \liii}
 
-As mentioned above, \LaTeXe~is already Turing complete and serves as the building blocks of many existing packages. In this section, we describe the problems of traditional \LaTeX~programming, which justifies the reason why \liii~is developed despite already having the powerful \LaTeXe~and many other existing packages.
+% As mentioned above, \LaTeXe~is already Turing complete and serves as the building blocks of many existing packages. In this section, we describe the problems of traditional \LaTeX~programming, which justifies the reason why \liii~is developed despite already having the powerful \LaTeXe~and many other existing packages.
 
-\paragraph{Nonuniform interface} 
+% \paragraph{Nonuniform interface} 
 
-Outside \liii, the interfaces provided by traditional \LaTeX~are not standardized. They suffer from the following disadvantages.
+% Outside \liii, the interfaces provided by traditional \LaTeX~are not standardized. They suffer from the following disadvantages.
 
-% 1: function/variable naming
-% 2: overlapping/scattered packages
-% 3: numerical computations
+% % 1: function/variable naming
+% % 2: overlapping/scattered packages
+% % 3: numerical computations
 
-Firstly, the mechanism of \LaTeX~can affect the readability of traditional \LaTeX~code. 
-In \LaTeX, functions and variables are all declared using control sequences (see Chapter 3 of \cite{knuth1984texbook}).
-When a function is invoked, it is expected to execute a series of predefined procedures. Variables are used to store values only.
-In \LaTeX, we can declare functions that absorb one or multiple arguments.
-Sometimes arguments are stored in variables.
-Since both functions and its arguments can be both control sequences, it is difficult to distinguish between them. 
-This is likely to make reading traditional \LaTeX\ source code difficult.
-%Unlike many other programming languages that enclose the arguments with parentheses, \LaTeX~does not require delimiters between the function and its arguments. 
-%In the example below, we define 6 control sequences, where \inltex|\ta| and \inltex|\td| are functions, and the rest are variables.
-%\begin{latexsample*}[ex:func-var-def]
-%\newcommand{\ta}[2]{[arg1={#1}, arg2={#2}]}
-%\newcommand{\tb}{$\alpha$}
-%\newcommand{\tc}{$\beta$}
-%\newcommand{\td}[1]{[arg3={#1}]}
-%\newcommand{\te}{$\gamma$}
-%\newcommand{\tf}{$\delta$}
-%\ta\tb\tc\td\te\tf
-%\end{latexsample*}
-%\noindent On line \lref{ex:func-var-def}{7}\footnotemark, we call functions \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables), as well as output the value of \inltex|\tf|.
-%In appearance, line 7 is six control sequences placed next to each other.
-%It is very difficult to understand the code unless the programmer finds out which control sequences are functions and how many arguments each function uses.
-%This makes the source code of some \LaTeXe\ packages challenging to read.
+% Firstly, the mechanism of \LaTeX~can affect the readability of traditional \LaTeX~code. 
+% In \LaTeX, functions and variables are all declared using control sequences (see Chapter 3 of \cite{knuth1984texbook}).
+% When a function is invoked, it is expected to execute a series of predefined procedures. Variables are used to store values only.
+% In \LaTeX, we can declare functions that absorb one or multiple arguments.
+% Sometimes arguments are stored in variables.
+% Since both functions and its arguments can be both control sequences, it is difficult to distinguish between them. 
+% This is likely to make reading traditional \LaTeX\ source code difficult.
+% %Unlike many other programming languages that enclose the arguments with parentheses, \LaTeX~does not require delimiters between the function and its arguments. 
+% %In the example below, we define 6 control sequences, where \inltex|\ta| and \inltex|\td| are functions, and the rest are variables.
+% %\begin{latexsample*}[ex:func-var-def]
+% %\newcommand{\ta}[2]{[arg1={#1}, arg2={#2}]}
+% %\newcommand{\tb}{$\alpha$}
+% %\newcommand{\tc}{$\beta$}
+% %\newcommand{\td}[1]{[arg3={#1}]}
+% %\newcommand{\te}{$\gamma$}
+% %\newcommand{\tf}{$\delta$}
+% %\ta\tb\tc\td\te\tf
+% %\end{latexsample*}
+% %\noindent On line \lref{ex:func-var-def}{7}\footnotemark, we call functions \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables), as well as output the value of \inltex|\tf|.
+% %In appearance, line 7 is six control sequences placed next to each other.
+% %It is very difficult to understand the code unless the programmer finds out which control sequences are functions and how many arguments each function uses.
+% %This makes the source code of some \LaTeXe\ packages challenging to read.
 
-%\footnotetext{Every listing has a unique index, which is shown at the bottom right corner. A line in the listing is referenced by <listing index>:<line number>.}
+% %\footnotetext{Every listing has a unique index, which is shown at the bottom right corner. A line in the listing is referenced by <listing index>:<line number>.}
 
-Secondly, in traditional \LaTeX~the implementation of many fundamental programming capabilities are provided by external packages.
-%As a result, the functionalities of multiple packages may overlap. 
-For example, to compare the equality of two strings, we can use \inltex|\ifthenelse| and \inltex|\equal| from \verb|ifthen| package \cite{pkg:ifthen};
-we can use \inltex|\pdfstrcmp| from \verb|pdftexcmds| package \cite{pkg:pdftexcmds};
-we can also use \inltex|\IfStrEq| from \verb|xstring| package \cite{pkg:xstring}. 
-The use of multiple similar packages is likely to cause redundancy and compatibility issues.
-The lack of a centralized documentation and comparison for these similar packages also increases the learning cost of traditional \LaTeX\ programming.
-%Therefore, \liii\ is to provide a set of unified and standardized interfaces for all possible \LaTeX\ variable types.
+% Secondly, in traditional \LaTeX~the implementation of many fundamental programming capabilities are provided by external packages.
+% %As a result, the functionalities of multiple packages may overlap. 
+% For example, to compare the equality of two strings, we can use \inltex|\ifthenelse| and \inltex|\equal| from \verb|ifthen| package \cite{pkg:ifthen};
+% we can use \inltex|\pdfstrcmp| from \verb|pdftexcmds| package \cite{pkg:pdftexcmds};
+% we can also use \inltex|\IfStrEq| from \verb|xstring| package \cite{pkg:xstring}. 
+% The use of multiple similar packages is likely to cause redundancy and compatibility issues.
+% The lack of a centralized documentation and comparison for these similar packages also increases the learning cost of traditional \LaTeX\ programming.
+% %Therefore, \liii\ is to provide a set of unified and standardized interfaces for all possible \LaTeX\ variable types.
 
-\paragraph{Expansion control} 
+% \paragraph{Expansion control} 
 
-% two situations: when trying to store something in a variable
-% when passing arguments to a function
-% only concerns arguments
+% % two situations: when trying to store something in a variable
+% % when passing arguments to a function
+% % only concerns arguments
 
-Unlike generic programming languages, \LaTeX\ does not have support for types.
-Programming components such as variables, functions and function arguments are all treated in the same way.
-Therefore, \LaTeX~programmers need to more precisely control how variables are defined and how functions are called. 
-These techniques are known as expansion control. 
-Expansion control in traditional \LaTeX~is achieved by using the \inltex|\expandafter| command, which is difficult to use because the number of \inltex|\expandafter| command calls required may scale exponentially \cite{bechtolsheim1988tutorial}.
+% Unlike generic programming languages, \LaTeX\ does not have support for types.
+% Programming components such as variables, functions and function arguments are all treated in the same way.
+% Therefore, \LaTeX~programmers need to more precisely control how variables are defined and how functions are called. 
+% These techniques are known as expansion control. 
+% Expansion control in traditional \LaTeX~is achieved by using the \inltex|\expandafter| command, which is difficult to use because the number of \inltex|\expandafter| command calls required may scale exponentially \cite{bechtolsheim1988tutorial}.
 
-\liii~aims at mitigating these inconveniences in traditional \LaTeX\ programming.
-It provides a uniform interface for \LaTeX~programmers, where functions and variables are separated from each other. 
-It defines standardized infrastructure for many programming tasks such as string processing, numerical calculation, regular expression matching, etc.
-The new expansion control mechanism of \liii\ is easier and more straightforward to use.
+% \liii~aims at mitigating these inconveniences in traditional \LaTeX\ programming.
+% It provides a uniform interface for \LaTeX~programmers, where functions and variables are separated from each other. 
+% It defines standardized infrastructure for many programming tasks such as string processing, numerical calculation, regular expression matching, etc.
+% The new expansion control mechanism of \liii\ is easier and more straightforward to use.
 
-%Expansion control is mostly required in two  scenarios. 
-%Firstly, it is needed when one is defining variables. 
-%Suppose we are trying to generate a random integer and save it in the variable \inltex|\myrandint|, as shown in the example below. 
-%To generate a random integer, we can use the function \inltex|\int_rand:nn|. 
-%This is a \liii\ function that contains a colon (:) in its function name. 
-%We will describe the function naming rules in \liii\ later. 
-%For now, we just need to know \inltex|\int_rand:nn| takes two arguments, which are the lower bound and upper bound of the random integer, respectively. 
-%In line \lref{ex:gen-save-rand-int}{4}, we wish to save the generated random integer in \inltex|\myrandint|. 
-%In line \lref{ex:gen-save-rand-int}{6}[8], we output the random integer stored in the variable three times. 
-%It can be seen that the value stored in \inltex|\myrandint| changes every time, which is undesirable. 
-%If we use the \inltex|\meaning| command to examine the definition of \inltex|\myrandint|, we can see that \inltex|\myrandint| contains the \inltex|\int_rand:nn| command call instead of the generated random number.
-%\begin{latexsample*}[ex:gen-save-rand-int]
-%\ExplSyntaxOn % enter LaTeX3 mode
-%% set the random seed for reproducibility
-%\sys_gset_rand_seed:n {0}
-%\newcommand{\myrandint}{\int_rand:nn {1}{100}}
-%\ExplSyntaxOff % exit LaTeX3 mode
-%\par the random number is: \myrandint
-%\par the random number is: \myrandint
-%\par the random number is: \myrandint
-%\par \meaning\myrandint
-%\end{latexsample*}
-%
-%Fundamentally, \TeX\ works by doing: commands are substituted by their definition,
-%which is subsequently replaced by definition's definition, until 
-%something irreplaceable is reached (e.g. text or \TeX\ primitives). 
-%This process is called \emph{expansion}. The mechanism of expansion
-%may sound simple and straightforward. However, it usually requires
-%a lot of manual fine-tuning in practice.
-%
-%Consider the example below. We know that the \inltex|\uppercase| macro
-%capitalize English letters, which renders the first output line in all 
-%caps. But if we store some text in \inltex|\myname| and then apply
-%\inltex|\uppercase| to the command, we can see that the output is
-%\emph{not} turned into uppercase letters.
-%
-%\begin{latexsample*}
-%\par\uppercase{Alan Xiang}
-%\newcommand*{\myname}{Alan Xiang}
-%\par\uppercase{\myname}
-%\end{latexsample*}
-%
-%Why would this happen? Let us dig into how \inltex|\uppercase| works. 
-%The \inltex|\uppercase| macro scans each token\footnotemark inside its argument 
-%group one by one. If an English letter is encountered, its uppercase 
-%form is left in the output stream. If a command is encountered, it 
-%will not try to apply \inltex|\uppercase| to the content of the command. 
-%Instead, the command itself will be placed into the output stream. 
-%In this case, \inltex|\myname| will be left untouched in the output, 
-%which is subsequently expanded to its original definition.
+% %Expansion control is mostly required in two  scenarios. 
+% %Firstly, it is needed when one is defining variables. 
+% %Suppose we are trying to generate a random integer and save it in the variable \inltex|\myrandint|, as shown in the example below. 
+% %To generate a random integer, we can use the function \inltex|\int_rand:nn|. 
+% %This is a \liii\ function that contains a colon (:) in its function name. 
+% %We will describe the function naming rules in \liii\ later. 
+% %For now, we just need to know \inltex|\int_rand:nn| takes two arguments, which are the lower bound and upper bound of the random integer, respectively. 
+% %In line \lref{ex:gen-save-rand-int}{4}, we wish to save the generated random integer in \inltex|\myrandint|. 
+% %In line \lref{ex:gen-save-rand-int}{6}[8], we output the random integer stored in the variable three times. 
+% %It can be seen that the value stored in \inltex|\myrandint| changes every time, which is undesirable. 
+% %If we use the \inltex|\meaning| command to examine the definition of \inltex|\myrandint|, we can see that \inltex|\myrandint| contains the \inltex|\int_rand:nn| command call instead of the generated random number.
+% %\begin{latexsample*}[ex:gen-save-rand-int]
+% %\ExplSyntaxOn % enter LaTeX3 mode
+% %% set the random seed for reproducibility
+% %\sys_gset_rand_seed:n {0}
+% %\newcommand{\myrandint}{\int_rand:nn {1}{100}}
+% %\ExplSyntaxOff % exit LaTeX3 mode
+% %\par the random number is: \myrandint
+% %\par the random number is: \myrandint
+% %\par the random number is: \myrandint
+% %\par \meaning\myrandint
+% %\end{latexsample*}
+% %
+% %Fundamentally, \TeX\ works by doing: commands are substituted by their definition,
+% %which is subsequently replaced by definition's definition, until 
+% %something irreplaceable is reached (e.g. text or \TeX\ primitives). 
+% %This process is called \emph{expansion}. The mechanism of expansion
+% %may sound simple and straightforward. However, it usually requires
+% %a lot of manual fine-tuning in practice.
+% %
+% %Consider the example below. We know that the \inltex|\uppercase| macro
+% %capitalize English letters, which renders the first output line in all 
+% %caps. But if we store some text in \inltex|\myname| and then apply
+% %\inltex|\uppercase| to the command, we can see that the output is
+% %\emph{not} turned into uppercase letters.
+% %
+% %\begin{latexsample*}
+% %\par\uppercase{Alan Xiang}
+% %\newcommand*{\myname}{Alan Xiang}
+% %\par\uppercase{\myname}
+% %\end{latexsample*}
+% %
+% %Why would this happen? Let us dig into how \inltex|\uppercase| works. 
+% %The \inltex|\uppercase| macro scans each token\footnotemark inside its argument 
+% %group one by one. If an English letter is encountered, its uppercase 
+% %form is left in the output stream. If a command is encountered, it 
+% %will not try to apply \inltex|\uppercase| to the content of the command. 
+% %Instead, the command itself will be placed into the output stream. 
+% %In this case, \inltex|\myname| will be left untouched in the output, 
+% %which is subsequently expanded to its original definition.
 
-%(More details about tokens can be found in and Chapter 7 of \cite{knuth1984texbook})
-%
-%\footnotetext{Tokens are smallest units that \TeX\ compilers work 
-%with. For now, we can consider a token to be either a character 
-%or command. For more about \TeX\ tokens, see \cite{overleaf-token}.}
-%
-%What if we also want to capitalize the content of \inltex|\myname| as 
-%well? To achieve this, we need to fine-tune the expansion process by 
-%changing the \emph{order} of expansion. That is, to expand 
-%\inltex|\myname| before \inltex|\uppercase|. In this way, the 
-%\inltex|\uppercase| command will receive the content of 
-%\inltex|\myname| in the form of English letters, which allows 
-%capitalization to function correctly.
-%
-%In \LaTeX, the classic way of controlling the order of expansion is
-%via the \inltex|\expandafter| macro, which it is notoriously
-%difficult to use. According to \emph{A Tutorial on \cs{expandafter}} 
-%\cite{bechtolsheim1988tutorial}, to reverse the expansion of a series
-%of $n$ tokens, the $i$th token has to be preceded by $2^{n-i}-1$
-%\inltex|\expandafter|s. The exponential growth of the number of 
-%\inltex|\expandafter|s greatly reduces the readability of source code
-%and increases the chances of mistakes. 
-%For example, in Joseph Wright's answer to an expansion-related
-%question on \TeX\ StackExchange \cite{tex-se-expanding}, a total of 26 
-%\inltex|\expandafter|s are used to reorder the expansion of merely 4
-%arguments.  To avoid this annoyance, one of the key features
-%of \liii\ is to provide simple and reliable expansion control.
-%
-%
-%
-%\paragraph{Modernized experience} \TeX\ was first designed in the late 1970s, when
-%computer hardware and programming languages were prototypes compared to
-%their contemporary counterparts. As a result, \TeX\ and \LaTeX\ contain
-%quirky usages that may seem odd for programmers today. For example, to
-%multiply a counter variable by 3, one writes 
-%\inltex|\multiply|\inltex|\counter| \inltex|by| \inltex|3|; to invoke the \verb|date| command via
-%the terminal, one writes \inltex|\immediate\write18{date}|. 
-%It can be seen that these syntaxes are either outdated or perplexing. 
-%In a fairly popular language nowadays 
-%(e.g. Python), these two tasks can be done by \inlpy|counter*=3|
-%and \inlpy|os.system('date')|, whose code possesses superior
-%simplicity and interpretability. \liii\ attempts to modernize 
-%the \LaTeX\ language by adapting to modern-language-like syntaxes
-%and introducing a naming system that makes \LaTeX\ code more
-%readable.
-
-\subsection{Compiling Examples}
-
-This tutorial is based on examples.
-To compile the examples, the minimum preamble required is:
-\begin{latexsample}[examplelabel=ex:min-preamble,noexec]
-\documentclass{article}
-\usepackage{tikz} % load TikZ for some TikZ examples
-\usepackage{expl3} % load latex3 packages
-\end{latexsample}
-\noindent The example code should be placed between \inltex|\begin{document}| 
-and \inltex|\end{document}|. 
-All examples were tested with \TeX Live  2020 on Ubuntu 20.04.
-For newer versions of \LaTeX~compilers, there is no need to load the \verb|expl3| package explicitly (i.e., \lref{ex:min-preamble}{3}\footnotemark~is optional).
-
-\footnotetext{Every listing has a unique index, which is shown at the bottom right corner. A line in the listing is referenced by <listing index>:<line number>. A range of lines in the listing are referenced by <listing index>:<line number 1>-<line number 2>.}
-
-The source code of this tutorial can be obtained from \url{https://github.com/xziyue/latex3-tutorial-latex-source}.
+% %(More details about tokens can be found in and Chapter 7 of \cite{knuth1984texbook})
+% %
+% %\footnotetext{Tokens are smallest units that \TeX\ compilers work 
+% %with. For now, we can consider a token to be either a character 
+% %or command. For more about \TeX\ tokens, see \cite{overleaf-token}.}
+% %
+% %What if we also want to capitalize the content of \inltex|\myname| as 
+% %well? To achieve this, we need to fine-tune the expansion process by 
+% %changing the \emph{order} of expansion. That is, to expand 
+% %\inltex|\myname| before \inltex|\uppercase|. In this way, the 
+% %\inltex|\uppercase| command will receive the content of 
+% %\inltex|\myname| in the form of English letters, which allows 
+% %capitalization to function correctly.
+% %
+% %In \LaTeX, the classic way of controlling the order of expansion is
+% %via the \inltex|\expandafter| macro, which it is notoriously
+% %difficult to use. According to \emph{A Tutorial on \cs{expandafter}} 
+% %\cite{bechtolsheim1988tutorial}, to reverse the expansion of a series
+% %of $n$ tokens, the $i$th token has to be preceded by $2^{n-i}-1$
+% %\inltex|\expandafter|s. The exponential growth of the number of 
+% %\inltex|\expandafter|s greatly reduces the readability of source code
+% %and increases the chances of mistakes. 
+% %For example, in Joseph Wright's answer to an expansion-related
+% %question on \TeX\ StackExchange \cite{tex-se-expanding}, a total of 26 
+% %\inltex|\expandafter|s are used to reorder the expansion of merely 4
+% %arguments.  To avoid this annoyance, one of the key features
+% %of \liii\ is to provide simple and reliable expansion control.
+% %
+% %
+% %
+% %\paragraph{Modernized experience} \TeX\ was first designed in the late 1970s, when
+% %computer hardware and programming languages were prototypes compared to
+% %their contemporary counterparts. As a result, \TeX\ and \LaTeX\ contain
+% %quirky usages that may seem odd for programmers today. For example, to
+% %multiply a counter variable by 3, one writes 
+% %\inltex|\multiply|\inltex|\counter| \inltex|by| \inltex|3|; to invoke the \verb|date| command via
+% %the terminal, one writes \inltex|\immediate\write18{date}|. 
+% %It can be seen that these syntaxes are either outdated or perplexing. 
+% %In a fairly popular language nowadays 
+% %(e.g. Python), these two tasks can be done by \inlpy|counter*=3|
+% %and \inlpy|os.system('date')|, whose code possesses superior
+% %simplicity and interpretability. \liii\ attempts to modernize 
+% %the \LaTeX\ language by adapting to modern-language-like syntaxes
+% %and introducing a naming system that makes \LaTeX\ code more
+% %readable.
 
 
-\section{\liii\ Naming Conventions (I.1.1)}
+\input{fragments/compiling_examples}
 
-Unlike many programming languages that enclose the function arguments with parentheses, \LaTeX\ does not require delimiters between the function and its arguments. 
-In the example below, we define 6 control sequences, where \inltex|\ta| and \inltex|\td| are functions, and the rest are variables.
-\begin{latexsample}[examplelabel=ex:func-var-def]
-\newcommand{\ta}[2]{[arg1={#1}, arg2={#2}]}
-\newcommand{\tb}{$\alpha$}
-\newcommand{\tc}{$\beta$}
-\newcommand{\td}[1]{[arg3={#1}]}
-\newcommand{\te}{$\gamma$}
-\newcommand{\tf}{$\delta$}
-\ta\tb\tc\td\te\tf
-\end{latexsample}
-\noindent On \lref{ex:func-var-def}{7}, we call functions \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables). 
-We output the value of \inltex|\tf| next.
-In appearance, \lref{ex:func-var-def}{7} is six control sequences placed next to each other.
-It is difficult to understand the code unless the programmer finds out which control sequences are functions and how many arguments each function absorbs.
-To improve readability, \liii\ introduces a special naming convention where functions and variables are clearly distinguishable. In addition, programmers can gather more information from function and variable names such as the number of function arguments, the type of variables, and the scope of variables. 
+\section{\LTT{} Naming Conventions}
+
+As mentioned in \cref{sec:important-concepts}, \LT{} is a macro language.
+Macros can be used as variables to store data.
+They can also be used as functions to apply operations on their arguments.
+The duality of macros can make \LT{} source code very puzzling to read, because it is difficult to determine if a control sequence in the source code is a variable or a function.
+% Unlike many programming languages that enclose the function arguments with parentheses, \LaTeX\ does not require delimiters between the function and its arguments. 
+% In the example below, we define 6 control sequences, where \inltex|\ta| and \inltex|\td| are functions, and the rest are variables.
+% \begin{latexsample}[examplelabel=ex:func-var-def]
+% \newcommand{\ta}[2]{[arg1={#1}, arg2={#2}]}
+% \newcommand{\tb}{$\alpha$}
+% \newcommand{\tc}{$\beta$}
+% \newcommand{\td}[1]{[arg3={#1}]}
+% \newcommand{\te}{$\gamma$}
+% \newcommand{\tf}{$\delta$}
+% \ta\tb\tc\td\te\tf
+% \end{latexsample}
+% \noindent On \lref{ex:func-var-def}{7}, we call functions \inltex|\ta| and \inltex|\td| with their respective arguments (stored in variables). 
+% We output the value of \inltex|\tf| next.
+% In appearance, \lref{ex:func-var-def}{7} is six control sequences placed next to each other.
+% It is difficult to understand the code unless the programmer finds out which control sequences are functions and how many arguments each function absorbs.
+To improve readability, \LT{} introduces a special naming system for macros so that functions and variables are clearly distinguishable based on names. 
+The naming system also encodes additional information in the macros, such as the number of function arguments, the type of variables, and the scope of variables. 
 
 %In Python or C++, if we see \inlpy|a(b);|, we can 
 %tell \inlpy|a| is a function and \inlpy|b| is its 
@@ -384,30 +424,28 @@ To improve readability, \liii\ introduces a special naming convention where func
 %to look at the low-level design of \LaTeX\ and find out 
 %how we can use non-English characters in command names.
 
+% \subsection{Category Codes and Command Names}
 
+% In \LaTeX, every input character can be classified into 16 categories. 
+% Each category can be identified by an integer ranging from 0 to 15, which is known as the \emph{category code}.
+% More details about category codes can be obtained from \cite{overleaf-catcode}.
+% We focus on one of the sixteen categories, which is known as ``letter''.
+% In most cases, command names in \LaTeX\ can only be made up of characters from the ``letter'' category.
+% Because the ``letter'' category only contains the lowercase and uppercase versions of the 26 English alphabets by default, command names are comprised of these 52 characters exclusively under the initial \LaTeX\ setup.
+% By extending the ``letter'' category, it is possible to add more permissible characters to command names.
+% For example, the \inltex|\makeatletter| command changes the category of \texttt{@} to ``letter'', which allows the character to be used in command names \cite{texse:makeatletter}. 
+% Many packages use the \texttt{@} character in their internal command names to maintain the integrity of defined commands.
+% Since typical users can only access commands whose names are made up of English alphabets, this technique can prevent internal commands from being overwritten accidentally.
+% The technique is also used in \liii\ to separate \liii\ from other \LaTeX\ programming conventions.
+% In \liii, two new characters are introduced into the command names, namely \texttt{\_} (underscore) and \texttt{:} (semicolon).
 
-\subsection{Category Codes and Command Names}
-
-In \LaTeX, every input character can be classified into 16 categories. 
-Each category can be identified by an integer ranging from 0 to 15, which is known as the \emph{category code}.
-More details about category codes can be obtained from \cite{overleaf-catcode}.
-We focus on one of the sixteen categories, which is known as ``letter''.
-In most cases, command names in \LaTeX\ can only be made up of characters from the ``letter'' category.
-Because the ``letter'' category only contains the lowercase and uppercase versions of the 26 English alphabets by default, command names are comprised of these 52 characters exclusively under the initial \LaTeX\ setup.
-By extending the ``letter'' category, it is possible to add more permissible characters to command names.
-For example, the \inltex|\makeatletter| command changes the category of \texttt{@} to ``letter'', which allows the character to be used in command names \cite{texse:makeatletter}. 
-Many packages use the \texttt{@} character in their internal command names to maintain the integrity of defined commands.
-Since typical users can only access commands whose names are made up of English alphabets, this technique can prevent internal commands from being overwritten accidentally.
-The technique is also used in \liii\ to separate \liii\ from other \LaTeX\ programming conventions.
-In \liii, two new characters are introduced into the command names, namely \texttt{\_} (underscore) and \texttt{:} (semicolon).
-
-The command \inltex|\ExplSyntaxOn| allows one to enter \liii\ programming mode.
-It changes the category code of underscore and semicolon to ``letter''.
-%The command \inltex|\ExplSyntaxOn| changes the category code of the two characters to ``letter'' and allows one to enter \liii\ programming mode. 
-It also changes the category code associated with white space and line break characters so that they are ignored in \liii\ mode.
-Therefore, a white space should be explicitly entered with \verb|~| or \verb|\ | in \liii\ mode.
-%To exit \liii\ mode, one can use the command \inltex|\ExplSyntaxOff|.
-The command \inltex|\ExplSyntaxOff| is used to exit \liii\ mode.
+% The command \inltex|\ExplSyntaxOn| allows one to enter \liii\ programming mode.
+% It changes the category code of underscore and semicolon to ``letter''.
+% %The command \inltex|\ExplSyntaxOn| changes the category code of the two characters to ``letter'' and allows one to enter \liii\ programming mode. 
+% It also changes the category code associated with white space and line break characters so that they are ignored in \liii\ mode.
+% Therefore, a white space should be explicitly entered with \verb|~| or \verb|\ | in \liii\ mode.
+% %To exit \liii\ mode, one can use the command \inltex|\ExplSyntaxOff|.
+% The command \inltex|\ExplSyntaxOff| is used to exit \liii\ mode.
 
 
 
@@ -483,14 +521,34 @@ The command \inltex|\ExplSyntaxOff| is used to exit \liii\ mode.
 %\end{latexsample}
 
 
+\subsection{\LTT{} Mode}
+
+
+To program using \LTT{}, one must first enter the \LTT{} mode.
+In \LTT{} mode, the category codes of characters are changed for better programming experience.
+The difference between \LTT{} mode and default \LT{} mode are summarized as follows:
+\begin{enumerate}
+    \item The category codes of \verb|_| and \verb|:| are set to 11 (letter), which allows them to be used in command names.
+    \item The category codes of white space characters and newline characters are set to 9 (ignored), which causes \LTT{} code to ignore all spaces and line breaks.
+\end{enumerate}
+The command \inltex|\ExplSyntaxOn| is used to enter \LTT{} mode; the command \inltex|\ExplSyntaxOff| is used to exit \LTT{} mode.
+
+In \LTT{} mode, we cannot use \verb|_| to denote subscript anymore because its category code has been changed to 11. Instead, a constant \inltex|\c_math_subscript_token| is defined in \LTT{} for this purpose.
+There are several ways to typeset the ignored white space and newline characters in \LTT{} mode.
+White spaces can be entered using \verb|~|, \verb|\ | (escaping space), or \verb|\space| depending on the scenario.
+New lines can be triggered using the \inltex|\par| command.
+
+
 \subsection{Names of Variables}\label{sec:name-of-variables}
 
-In \liii, the naming of variables and functions are different, which allows one to distinguish the two more easily. 
-A \liii\ variable can be public or private depending on the semantics.
-The name of each \liii\ variable is made up of four parts: \texttt{scope}, \texttt{module}, \texttt{description}, and \texttt{type}. 
+In \LTT{}, the naming of variables and functions are different, which allows one to distinguish the two more easily. 
+A \LTT{} variable can be public or private depending on semantics: public variables can be accessed by package users and private variables can only be accessed by package authors.
+The name of each \LTT{} variable consists of four parts: \texttt{scope}, \texttt{module}, \texttt{description}, and \texttt{type}. 
 We will describe the meaning of each part later.
 
-The name of a public variable should follow:
+
+\vspace*{0.5\baselineskip}
+\par\noindent The name of a public variable should follow:
 \begin{center}
 \texttt{\string\<scope>\_<module>\_<description>\_<type>}
 \end{center}
@@ -498,14 +556,15 @@ The name of a private variable should follow:
 \begin{center}
 \texttt{\string\<scope>\_\_<module>\_<description>\_<type>}
 \end{center}
-Private variables have an extra underscore between the \texttt{scope} part and the \texttt{module} part.
+Private variable names have an extra underscore between \texttt{scope} and \texttt{module}.
 
-The meaning of each part is shown as follows.
+\vspace*{0.5\baselineskip}
+\par\noindent The detail of each part is described as follows.
 \begin{itemize}
-\item \texttt{scope}: a single letter identifying the scope of the variable; see \cref{sec:var-scope} for more details
+\item \texttt{scope}: a single letter identifying the scope of the variable
 \begin{itemize}
-\item \texttt{l}: local variable
-\item \texttt{g}: global variable
+\item \texttt{l}: local variable (i.e., to be accessed within current group)
+\item \texttt{g}: global variable (i.e., to be accessed beyond current group)
 \item \texttt{c}: constant
 \end{itemize}
 \item \texttt{module}: the name of the module where the variable is defined
