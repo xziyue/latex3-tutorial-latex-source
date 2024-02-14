@@ -204,7 +204,7 @@ New lines can be triggered using the \inltex|\par| command.
 
 \subsection{Names of Variables}\label{sec:name-of-variables}
 
-In \LTT{}, the naming of variables and functions are different, which allows one to distinguish the two more easily. 
+In \LTT{}, the naming of variables and functions are different so that they are easily distinguishable. 
 A \LTT{} variable can be public or private depending on semantics: public variables can be accessed by package users and private variables can only be accessed by package authors.
 The name of each \LTT{} variable consists of four parts: \texttt{scope}, \texttt{module}, \texttt{description}, and \texttt{type}. 
 We will describe the meaning of each part later.
@@ -234,7 +234,7 @@ Private variable names have an extra underscore between \texttt{scope} and \text
 \item \texttt{description}: the description of the variable
 \item \texttt{type}: the variable type; some common types are shown in \cref{tbl:var-type}.
 \end{itemize}
-The \texttt{description} part can contain multiple segments separated by underscore(s). 
+The \texttt{description} part can contain multiple segments separated by underscores. 
 Some valid variables names are shown below.
 \begin{itemize}
 \item \inltex|\g_doc_variable_int|
@@ -244,13 +244,10 @@ Some valid variables names are shown below.
 \item \inltex|\c_left_brace_str|
 \end{itemize}
 
-Since the category code of underscore has been changed to ``letter'' under \liii\ mode, it can no longer be used to denoted subscript in math equations.
-One can use the predefined \liii\ constant \inltex|\c_math_subscript_token| to represent subscripts when programming in \liii.
 
 \begin{table}[htpb]
 \centering
-\scriptsize
-\begin{tabular}{>{\ttfamily\centering}p{0.15\linewidth}p{0.4\linewidth}}
+\begin{tabular}{>{\ttfamily\centering}p{0.15\linewidth}p{0.7\linewidth}}
 \toprule
 \multicolumn{1}{c}{Type} & Description\\ \midrule
 clist & comma separated list\\
@@ -267,26 +264,33 @@ ior & IO read\\
 iow & IO write\\ \bottomrule
 \end{tabular}
 %TODO: insert reference
-\caption{Commonly used variable types and their descriptions. See ?? for more information about variable types.}
+\caption{Commonly used variable types and their descriptions. Typically every \LTT{} module introduces one or more types.}
 \label{tbl:var-type}
 \end{table}
 
 \subsection{Names of Functions}
 
-To increase the readability of \liii\ code, a function name in \liii\ includes information about the arguments that it absorbs. The name of a public \liii\ function should follow:
+To increase the readability, a function name in \LTT{} includes additional information about the arguments that it absorbs. 
+
+\vspace*{0.5\baselineskip}
+\par\noindent
+The name of a public \LTT{} function should follow:
 \begin{center}
 \texttt{\string\<module>\_<description>:<arg-spec>}
 \end{center}
-The name of a private \liii\ function should follow:
+The name of a private \LTT{} function should follow:
 \begin{center}
 \texttt{\string\_\_<module>\_<description>:<arg-spec>}
 \end{center}
-The semicolon is only used in \liii\ function names.
+The semicolon is only used in \LTT{} function names, not in variable names.
+
+\vspace*{0.5\baselineskip}
+\par\noindent
 The meaning of each part is described as follows.
 \begin{itemize}
 \item \texttt{module}: the name of the module where the function is defined
 \item \texttt{description}: the description of the function
-\item \texttt{arg-spec}: the argument specifications--it is made up of zero or more English letters describing the type of every function argument, where each letter specifies the type of an argument; some common argument specification letters are shown in \cref{tbl:arg-spec-type}.
+\item \texttt{arg-spec}: the argument specifications--it is made up of zero or more Latin alphabets describing the type of every function argument; each letter specifies the type of an argument (see \cref{tbl:arg-spec-type})
 \end{itemize}
 Some valid function names are shown below.
 \begin{itemize}
@@ -298,10 +302,11 @@ Some valid function names are shown below.
 
 \begin{table}[htpb]
 \centering
-\scriptsize
-\begin{tabular}{>{\ttfamily\centering}cm{0.6\linewidth}}
+\small
+\setlength\extrarowheight{3pt}
+\begin{tabular}{>{\ttfamily\centering}cm{0.7\linewidth}}
 \toprule
-\multicolumn{1}{c}{\texttt{arg-spec} Letter} & Description\\ \midrule
+\multicolumn{1}{c}{\makecell{\texttt{arg-spec}\\ Letter}} & Description\\ \midrule
 n & A token list argument\\
 N & A single token argument\\
 V & An argument passed by value\\
@@ -310,7 +315,9 @@ x & A token list argument expanded recursively\\
 T & A true branch in conditional statements\\
 F & A false branch in conditional statements\\
 p & A parameter list\\
-c & A token list argument that is fully expanded and treated as a command name\\ \bottomrule
+c & A token list argument that is fully expanded and treated as a command name\\
+w & Weird arguments (the ones that do not fall in other categories)\\
+\bottomrule
 \end{tabular}
 %TODO: insert reference and delete Section
 \caption{Commonly used argument specification letters and their descriptions. More details are described in Section \textcolor{red}{???}.}
@@ -319,50 +326,46 @@ c & A token list argument that is fully expanded and treated as a command name\\
 
 %TODO: think about how to deal with token and token lists
 
-\subsection{The Use of \liii\ Naming Conventions}
+\subsection{The Use of \LTT{} Naming Conventions}
 
-The \liii\ naming conventions are essentially suggestions. 
-In reality, the \LaTeX\ compiler does not check if the code is written according to \liii\ naming conventions.
-However, using the naming conventions can greatly improve the readability of one's code.
+The \LTT{} naming conventions are voluntary. 
+In general, \LTT{} does not check if the code follows \LTT{} naming conventions.
+However, it is recommended that every \LTT{} programmer strictly follow these conventions to improve the readability and compatibility their code.
 %TODO: insert reference and delete Section
-In Section \textcolor{red}{???}, we can also see that \liii's expansion control mechanism sometimes requires functions to be defined using \liii\ naming conventions.
-Almost all \liii\ packages are written using the naming conventions.
-Therefore, it is recommended that all \liii\ users follow the \liii\ naming conventions strictly.
+In Section \textcolor{red}{???}, it can also be seen that \LTT{}'s expansion control mechanism sometimes requires functions to be named after \LTT{} conventions.
 
-\section{Understanding \liii\ Documentation (I.1.2)}
 
-Currently, most information about \liii\ is compiled in \cite{l3interface}. 
-It is mainly a technical documentation on \liii\ functions, scratch variables, and constants. 
-We describe briefly how \cite{l3interface} documents these concepts.
+\section{Understanding \LTT{} Documentation (I.1.2)}
+
+Currently, most information about \LTT{} is in \cite{l3interface}. 
+It is essentially an itemized documentation on \LTT{} functions, scratch variables, and constants. 
+We briefly describe how these items are presented in \cite{l3interface}.
 \begin{itemize}
-\item \liii\ functions: the majority of the contents in \cite{l3interface} are about \liii\ functions.
+\item \LTT{} functions: the majority of the contents in \cite{l3interface} are about \LTT{} functions.
 In \cite{l3interface}, each function is documented using a block similar to the one shown in  \cref{fig:l3-doc-func-example}.
-The color background is added in the figure to help understand the block, it does not exist in the original document.
-
+The colored background is added in the figure to help understand the block.
 The yellow part in \cref{fig:l3-doc-func-example} indicates the basic forms and the variants of the function. 
-The first and third line in the yellow part are the basic forms for local and global assignment (see \cref{sec:var-scope}), respectively.
+The first and third line in the yellow part are the basic forms for local and global assignment, respectively.
 The second line shows the function variants for local assignment; the fourth line shows the function variants for global assignment.
 %TODO: insert reference and delete Section
 More details about function variants will be introduced in Section \textcolor{red}{???}.
-The cyan part in \cref{fig:l3-doc-func-example} shows the basic usage of the function, where the meaning of each function argument is described.
+The cyan part in \cref{fig:l3-doc-func-example} shows the basic usage of the function, where the meaning of each function argument is shown.
 The magenta part in \cref{fig:l3-doc-func-example} shows the detailed description of the function.
 
-\item Scratch variables: similar to the C programming language \cite{ritchie1988c}, variables in \liii\ need to be defined before use. 
-\liii\ has predefined a set of empty variables for convenience.
-These variables are known as scratch variables.
-In \liii, each package will usually define several scratch variables.
+\item Scratch variables: variables in \LTT{} need to be defined before use. 
+\LTT{} has predefined a set of empty variables for convenience, which are known as scratch variables.
+In \LTT{}, each module will usually define several scratch variables.
 They are documented in specific sections, similar to the one demonstrated in \cref{fig:l3-scratch-var-example}.
 The left hand side of \cref{fig:l3-scratch-var-example} shows the predefined scratch variables; the right hand side shows the description of the variables.
-It is recommended not to use scratch variables, especially in large projects or generic packages.
-This reduces the chances of collision.
+It is recommended to not use scratch variables (especially in large projects or generic packages), which can reduce the chances of variable collision.
 
-\item Constants: \liii\ defines a large number of constants such as the value of $\pi$, the value of $e$, special characters, etc. 
+\item Constants: \LTT{} defines a large number of constants such as the value of $\pi$, the value of $e$, special characters, etc. 
 They are documented in specific sections, similar to the one demonstrated in \cref{fig:l3-constant-example}.
 The left hand side of \cref{fig:l3-constant-example} shows the command name of the constant; the right hand side shows the description of the constant.
 
 \end{itemize}
 
-\begin{figure*}[htpb]
+\begin{figure*}[tb]
 \centering
 \mdfdefinestyle{plainmdbox}{topline=false,leftline=false,rightline=false,bottomline=false}
 \begin{minipage}[t]{0.52\linewidth}
@@ -390,12 +393,12 @@ The left hand side of \cref{fig:l3-constant-example} shows the command name of t
 Sets <\textit{tl var}> to contain <\textit{tokens}>, removing any previous content from the variable.
 \end{mdframed}
 \end{minipage}
-\caption{An example of function documentation excerpted from Section IV.15.2 of \protect\cite{l3interface}. 
-Color background is added in this figure to help understand the documentation.}
+\caption{An example of function documentation excerpted from \LTT{} documentation. 
+Colored background is added in this figure to help understand the documentation.}
 \label{fig:l3-doc-func-example}
 \end{figure*}
 
-\begin{figure*}
+\begin{figure*}[tb]
 \centering
 \begin{minipage}[t]{0.15\linewidth}
 \begin{tabular}{l}
@@ -410,11 +413,11 @@ Scratch token lists for local assignment.
 These are never used by the kernel code, and so are safe for use with any \liii--defined function.
 However, they may be overwritten by other non-kernel code and so should only be used for short-term storage.
 \end{minipage}
-\caption{An example of scratch variables excerpted from Section IV.15.8 of \protect\cite{l3interface}.}
+\caption{An example of scratch variables excerpted from \LTT{} documentation.}
 \label{fig:l3-scratch-var-example}
 \end{figure*}
 
-\begin{figure*}
+\begin{figure*}[tb]
 \centering
 \begin{minipage}[t]{0.15\linewidth}
 \begin{tabular}{l}
@@ -425,48 +428,74 @@ However, they may be overwritten by other non-kernel code and so should only be 
 \begin{minipage}[t]{0.83\linewidth}
 The value of $\pi$. This can be input directly in a floating point expression as \texttt{pi}.
 \end{minipage}
-\caption{An example of scratch variables excerpted from Section IV.28.6 of \protect\cite{l3interface}.}
+\caption{An example of scratch variables excerpted from \LTT{} documentation.}
 \label{fig:l3-constant-example}
 \end{figure*}
 
 
 \section{Variables and Functions}
 
+In this section, we introduce the definition and usage of variables and functions in \LTT{}.
+
+\noindent \textbf{Variables.}
+Each \LTT{} type is associated with a set of dedicated functions for defining, modifying, and accessing variables.
+Most \LTT{} types provide the following functions for managing variables:
+\begin{itemize}
+    \item \verb|new| functions to define a new variable (e.g., \inltex|\tl_new:N|, \inltex|\int_new:N|)
+    \item \verb|set| functions to set a variable locally (e.g., \inltex|\tl_set:Nn|, \inltex|\int_set:Nn|)
+    \item \verb|gset| functions to set a variable globally (e.g., \inltex|\tl_gset:Nn|, \inltex|\int_gset:Nn|)
+    \item \verb|item| functions to extract an element from data containers by index or key (e.g., \inltex|\tl_item:Nn|, \inltex|\seq_item:Nn|, \inltex|\prop_item:Nn|)
+    \item \verb|get| functions to get a specific element from data containers by index (e.g., \inltex|\seq_get_left:N|, \inltex|\seq_get_right:N|)
+    \item \verb|use| functions to put the value of a variable into the document (e.g., \inltex|\tl_use:N|, \inltex|\seq_use:Nn|)
+    \item \verb|show| functions to output the value of a variable to the terminal for debug purposes (e.g., \inltex|\tl_show:N|, \inltex|\seq_show:N|)
+\end{itemize}
+Note that not all \LTT{} modules follow this convention. In general, to use a variable in \LTT{}, one should follow these steps:
+\begin{enumerate}
+    \item Determine the correct variable type and call the corresponding definition function
+    \item Determine the scope, visibility (private/public), and description of the variable and name it using \LTT{} naming conventions
+    \item Use functions in the variable's module to operate on the variable
+\end{enumerate}
 
 
-\appendix
-
-
-\section{Scope of Variables}\label{sec:var-scope}
-
-In \liii, the scope of value assignment is usually local.
-\cref{ex:group-demo} shows the difference between local and global assignment.
-In this example, \lref{ex:group-demo}{4-9} are enclosed in a group.
-Inside the group, the value of \inltex|\l_tmpa_tl| is locally assigned with \inltex|\tl_set:Nn|, while the value of \inltex|\g_tmpa_tl| is globally assigned with \inltex|\tl_gset:Nn|.
-Since the value assignment of \inltex|\l_tmpa_tl| is local, the scope of the assignment is constrained within the group.
-Therefore, when we use its value outside the group, we get the old value.
-In contrast, the value assignment of \inltex|\g_tmpa_tl| is able to go beyond group boundaries.
-%TODO: cross-reference the right example
-% In example, we show... resursive functions
-
-\begin{latexsample}[examplelabel=ex:group-demo]
+\begin{latexsample}[examplelabel={ex:var-example},exampletitle={Using Variables}]
 \ExplSyntaxOn
-\tl_set:Nn \l_tmpa_tl {old}
-\tl_gset:Nn \g_tmpa_tl {old}
-\group_begin:
-\tl_set:Nn \l_tmpa_tl {new} % set value locally
-\tl_gset:Nn \g_tmpa_tl {new} % set value globally
-\par In~group:~\tl_use:N \l_tmpa_tl
-\par In~group:~\tl_use:N \g_tmpa_tl
-\group_end:
-\par Outside~group:~\tl_use:N \l_tmpa_tl
-\par Outside~group:~\tl_use:N \g_tmpa_tl
+% define a new integer varaible
+\int_new:N \l_my_integer_int
+% set the integer value to be the result of an integer expression
+\int_set:Nn \l_my_integer_int {2*(3+1)}
+% output the integer value
+The~integer~is~\int_use:N \l_my_integer_int
 \ExplSyntaxOff
 \end{latexsample}
 
-In \cref{sec:name-of-variables}, it is described that the scope of variables should be encoded as the first letter (prefix) of variable names.
-If a variable is to be assigned using \verb|set| functions, we can consider it to be local and use \verb|l| as the prefix.
-If a variable is to be assigned using \verb|gset| functions, we can consider it to be global and use \verb|g| as the prefix.
+\noindent\textbf{Functions.}
+In \LTT{}, functions are defined using the \inltex|\cs_new:Npn| function.
+Although related functions such as \inltex|\cs_new_protected:Npn|, \inltex|\cs_new_nopar:Npn|, and \inltex|\cs_new_protected_nopar:Npn| exist, we only use \inltex|\cs_new:Npn| in this tutorial since it should be used in most scenarios. 
+Readers are encouraged to read the \LTT{} documentation for more information about the related functions.
+In general, to define a function, one should follow these steps:
+\begin{enumerate}
+    \item Determine the number of function arguments and the argument specification of each argument; in most cases, the argument specification is either \verb|N| or \verb|n|
+    \item Determine the scope, visibility (private/public), and description of the function and name it using \LTT{} naming conventions
+\end{enumerate}
+\LTT{} also provides useful utility functions such as \inltex|\cs_set_eq:NN| for copying the definition of functions, and \inltex|\cs_meaning:N|, \inltex|\cs_show:N| for displaying the definition of functions.
+
+\begin{latexsample}[examplelabel={ex:func-example},exampletitle={Using Functions}]
+\ExplSyntaxOn
+% define a new function that accepts two n-type arguments
+\cs_new:Npn \l_my_func:nn #1#2
+{
+    [arg1=#1][arg2=#2]
+}
+% call the function with two arguments
+\par\l_my_func:nn {first} {second}
+% show the definition of the function
+\par\cs_meaning:N \l_my_func:nn
+% copy the definition of the new function
+\cs_set_eq:NN \l_my_func_copy:nn \l_my_func:nn
+% show the definition of the copied function
+\par\cs_meaning:N \l_my_func_copy:nn
+\ExplSyntaxOff
+\end{latexsample}
 
 \bibliographystyle{tugboat}
 \bibliography{main.bib}
