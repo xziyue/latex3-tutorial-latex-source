@@ -17,6 +17,7 @@
 \usepackage{array}
 \usepackage{xcolor}
 \usepackage{datetime2}
+\usepackage{listings}
 \usepackage[scale=0.9]{tgheros}
 
 \ExplSyntaxOn
@@ -43,10 +44,6 @@
 \newcommand*{\LTT}{\texorpdfstring{\LaTeX3}{LaTeX3}}
 \let\liii\LTT
 
-% other code highliting setup
-\newmintinline[inltex]{tex_lexer.py:Tex3Lexer}{breaklines, breakanywhere, fontfamily=DejaVuSansMono-TLF,style=colorful}
-\newmintinline[inlpy]{python}{fontfamily=DejaVuSansMono-TLF,style=colorful}
-\newmintinline[inlpl]{text}{}
 
 % set the style of the list of examples
 % https://tex.stackexchange.com/questions/86711/tcolorbox-list-of-listings
@@ -132,37 +129,36 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % basic style for examples
+% options for controlling which listing engine to use
+\ExplSyntaxOn
+\bool_new:N \g_doc_use_minted_bool
+\bool_gset_false:N \g_doc_use_minted_bool
+\cs_new:Npn \UseMintedHighlighting
+{
+    \bool_gset_true:N \g_doc_use_minted_bool
+}
+\cs_new:Npn \MintedHighlightingTF #1#2
+{
+    \bool_if:NTF \g_doc_use_minted_bool 
+    {#1} {#2}
+}
+\ExplSyntaxOff
 
 \tcbset{
-  codesample/.style={
-    enhanced,
-    breakable,
-    beforeafter skip=3ex,
-    listing engine=minted,
-    minted language=tex_lexer.py:Tex3Lexer,
-    fontlower=\sffamily\small,
-    minted options={
-      fontsize=\fontsize{9}{9},
-      autogobble,
-      breaklines,
-      breakanywhere,
-      obeytabs,
-      tabsize=2,
-      linenos,
-      numbersep=2mm,
-      xleftmargin=4mm,
-      fontfamily=DejaVuSansMono-TLF,
-      style=colorful
-    },
-    fonttitle=\normalfont,
-    colback=white,
-    colframe=black!60,
-    boxrule=0.8pt,
-    left=1mm,
-    right=1mm,
-    top=0.5mm,
-    bottom=0.5mm,
-  }
+    commonstyle/.style={
+        enhanced,
+        breakable,
+        beforeafter skip=3ex,
+        fontlower=\sffamily\small,
+        fonttitle=\normalfont,
+        colback=white,
+        colframe=black!60,
+        boxrule=0.8pt,
+        left=1mm,
+        right=1mm,
+        top=0.5mm,
+        bottom=0.5mm,
+    }
 }
 
 
@@ -293,10 +289,7 @@
 
 \@namedef{latexsample}{\FV@EnvironmentNew{}{latexsample}}%
 \@namedef{endlatexsample}{\@nameuse{FVE@latexsample}}%
-
-
 \makeatother
-
 
 \ExplSyntaxOn
 \newcommand*{\GenAnonTitle}[1]{
@@ -309,24 +302,73 @@
         Example~\thecodeexample: 
     }
 }
-
 \ExplSyntaxOff
-
-
-
-% listing of any language
-\newtcblisting{codesample}[1]{
-  codesample,
-  listing only,
-  minted language=#1
-}
-
 
 
 \makeatletter
 % better URL line breaking
 \g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
 
 \crefname{codeexample}{Example}{Examples}
 
-\makeatother
+\AtBeginDocument
+{
+    % define listing related macros
+    \MintedHighlightingTF
+    {
+        \newmintinline[inltex]{tex_lexer.py:Tex3Lexer}{breaklines, breakanywhere, fontfamily=DejaVuSansMono-TLF,style=colorful}
+        \newmintinline[inlpy]{python}{fontfamily=DejaVuSansMono-TLF,style=colorful}
+        \newmintinline[inlpl]{text}{}
+
+        \tcbset{
+            codesample/.style={
+                commonstyle,
+                listing engine=minted,
+                minted language=tex_lexer.py:Tex3Lexer,
+                minted options={
+                fontsize=\fontsize{9}{9},
+                autogobble,
+                breaklines,
+                breakanywhere,
+                obeytabs,
+                tabsize=2,
+                linenos,
+                numbersep=2mm,
+                xleftmargin=4mm,
+                fontfamily=DejaVuSansMono-TLF,
+                style=colorful
+                }
+            }
+        }
+
+        % listing of any language
+        \newtcblisting{codesample}[1]{
+            codesample,
+            listing only,
+            minted language=#1
+        }
+    }
+    {
+        % \tcbset{
+        %     codesample/.style={
+        %         commonstyle,
+        %         listing engine=minted,
+        %         minted language=tex_lexer.py:Tex3Lexer,
+        %         minted options={
+        %         fontsize=\fontsize{9}{9},
+        %         autogobble,
+        %         breaklines,
+        %         breakanywhere,
+        %         obeytabs,
+        %         tabsize=2,
+        %         linenos,
+        %         numbersep=2mm,
+        %         xleftmargin=4mm,
+        %         fontfamily=DejaVuSansMono-TLF,
+        %         style=colorful
+        %         }
+        %     }
+        % }
+    }
+}
