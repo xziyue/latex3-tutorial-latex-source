@@ -258,38 +258,6 @@
     }
 }
 
-
-
-% % change fancyvrb environment so that we can use our own key-val options
-% \def\@@CurLaTeXExArgs{}
-% \def\FV@EnvironmentNew#1#2{%
-%   \def\FV@KeyValues{#1}%
-%   \def\@@CurLaTeXExArgs{}
-%   \catcode`\^^M=\active
-%   \@ifnextchar[%
-%     {\catcode`\^^M=5 \FV@GetKeyValues{\let\@@CurLaTeXExArgs\FV@KeyValues\def\FV@KeyValues{#1}\@nameuse{FVB@#2}}}%
-%     {\catcode`\^^M=5 \@nameuse{FVB@#2}}}
-
-% \def\FVB@latexsample{%
-%   \@bsphack
-%   \begingroup
-%     \FV@UseKeyValues
-%     \FV@DefineWhiteSpace
-%     \def\FV@Space{\space}%
-%     \FV@DefineTabOut
-%     \def\FV@ProcessLine{\immediate\write\FV@OutFile}%
-%     \immediate\openout\FV@OutFile temp-example.vrb\relax
-%     \let\FV@FontScanPrep\relax
-% %% DG/SR modification begin - May. 18, 1998 (to avoid problems with ligatures)
-%     \let\@noligs\relax
-% %% DG/SR modification end
-%     \FV@Scan}
-% \def\FVE@latexsample{\immediate\closeout\FV@OutFile\endgroup\@esphack\@@DoLaTeXExample\@@CurLaTeXExArgs}
-
-
-% \@namedef{latexsample}{\FV@EnvironmentNew{}{latexsample}}%
-% \@namedef{endlatexsample}{\@nameuse{FVE@latexsample}}%
-
 \DeclareDocumentEnvironment{latexsample}{O{}}{
     \XSIMfilewritestart{\jobname-latexsample.vrb}
 }
@@ -298,7 +266,6 @@
     \group_begin:
     \doc_include_latex_example:n {#1}
     \group_end:
-
 }
 \ExplSyntaxOff
 \makeatother
