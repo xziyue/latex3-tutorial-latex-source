@@ -51,12 +51,14 @@ The following notations are used as references to different objects in the tutor
 \subsection{Important Concepts in \LT{}}\label{sec:important-concepts}
 
 \LT{} is a programming language. 
-It is Turing complete just like popular generic programming languages such as Python and C++, which means that they all have the same problem solving capabilities.
-\LT{} provides support for boolean logic, arithmetic, data structures, and string processing.
+It is Turing complete just like well-known generic programming languages such as Python and C++, which means that they all have the same problem solving capabilities.
+\LT{} provides library support for boolean logic, arithmetic, data structures, and string processing.
 Before introducing how to program in \LT{}, we want to describe three concepts that every \LT{} programmer should know.
 Some of these concepts are unique to \LT{} and cannot be found in popular programming languages.
 
-The first concept is \textbf{category code}.
+
+%The first concept is \textbf{category code}.
+\par\medskip\noindent\textbf{Category Code.}
 In many existing languages, valid function/variable names and meanings of characters are predefined and cannot be changed.
 In \LT{}, the user has the freedom to change them.
 For example, normally \verb|\| is used to start a control sequence, \verb|$| is used to toggle math mode, \verb|%| is used for comments, and Latin alphabets are used as control sequence names.
@@ -120,7 +122,8 @@ It is worth noting that in \LT{}, two characters are considered equal if and onl
 \end{table}
 
 
-The second concept is \textbf{group}.
+\par\medskip\noindent\textbf{Groups.}
+%The second concept is \textbf{group}.
 Groups in \LT{} are similar to scopes in other programming languages.
 By default, almost all changes (e.g., macro definition, category code assignment, font selection) in \LT{} are local, which means they only apply to the current group.
 These changes are not visible outside the group.
@@ -145,7 +148,8 @@ Similar principle is also reflected by fonts: the \inltex|\normalfont| command o
 It is vital for \LT{} users to determine if a change should be local or global.
 
 
-The third concept is \textbf{macro expansion control}.
+%The third concept is \textbf{macro expansion control}.
+\par\medskip\noindent\textbf{Macro Expansion Control.}
 Fundamentally, \LT{} is a simple macro language that works by replacing patterns according to a set of defined macro functions.
 The \LT{} compiler will not attempt to generate an Abstract Syntax Tree (AST) for the \LT{} source, which means it has very little understanding over its input compared to other languages' compilers that rely on ASTs.
 One of the main consequences of such simplification is \LT{} compilers are less powerful in terms of function calls, because it has limited insight over the function arguments.
