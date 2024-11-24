@@ -12,7 +12,7 @@
 \ORCID{0000-0001-6054-5801}
 
 
-\ExportExamples
+%\ExportExamples
 %\UseMintedHighlighting
 
 \begin{document}
@@ -20,10 +20,10 @@
 \begin{abstract}
 \LT{} is widely used to generate high quality documents.
 It provides not only control over document content and style, but also the logic behind the document generation process.
-For many users, knowledge on the programming side of \LT{} can facilitate document generation.
-In this tutorial, we introduce programming in \LT{}.
+For many users, knowledge on low-level logic control (i.e., the programming side) of \LT{} can facilitate document generation.
+In this tutorial, we introduce how to program in \LT{}.
 We focus on \LTT{}--a set of modern programming interfaces in \LT{} to help users write general purpose programs.
-\LTT{} contains functionalities such as boolean logic, integer/floating point arithmetic, data structures, and regular expressions.
+\LTT{} contains functionalities such as boolean logic, integer/floating point arithmetic, data structures, string process, and regular expressions.
 This is an example based \LTT{} tutorial that introduces readers to the commonly used components of \LTT{}.
 \end{abstract}
 
@@ -41,10 +41,12 @@ It is often overlooked that \LT{} also provides generic programming interface to
 In this tutorial, we introduce \LTT{}--a set of modern programming interfaces provided by \LT{} to help users implement various general purpose algorithms.
 
 This is an example based tutorial. 
-Examples are referenced using the following notation: \cref{ex:groups}.
-A line in an example is referenced using the following notation: \lref{ex:groups}{1}.
-Here, the @ symbol is used to separate the line number and the example number.
-A range of lines in an example is referenced using the following notation: \lref{ex:groups}{1-5}.
+The following notations are used as references to different objects in the tutorial.
+\begin{itemize}
+  \item ``\cref{ex:groups}'' is used as a reference to an example.
+  \item ``\lref{ex:groups}{1}'' is used as a reference to a line in an example. Here, the @ symbol is used to separate the line number and the example number.
+  \item ``\lref{ex:groups}{1-5}'' is used as a reference to a range of lines in an example.
+\end{itemize}
 
 \subsection{Important Concepts in \LT{}}\label{sec:important-concepts}
 
@@ -54,7 +56,7 @@ It is Turing complete just like popular generic programming languages such as Py
 Before introducing how to program in \LT{}, we want to describe three concepts that every \LT{} programmer should know.
 Some of these concepts are unique to \LT{} and cannot be found in popular programming languages.
 
-The first concept is category code.
+The first concept is \textbf{category code}.
 In many existing languages, valid function/variable names and meanings of characters are predefined and cannot be changed.
 In \LT{}, the user has the freedom to change them.
 For example, normally \verb|\| is used to start a control sequence, \verb|$| is used to toggle math mode, \verb|%| is used for comments, and Latin alphabets are used as control sequence names.
@@ -118,7 +120,7 @@ It is worth noting that in \LT{}, two characters are considered equal if and onl
 \end{table}
 
 
-The second concept is group.
+The second concept is \textbf{group}.
 Groups in \LT{} are similar to scopes in other programming languages.
 By default, almost all changes (e.g., macro definition, category code assignment, font selection) in \LT{} are local, which means they only apply to the current group.
 These changes are not visible outside the group.
@@ -143,7 +145,7 @@ Similar principle is also reflected by fonts: the \inltex|\normalfont| command o
 It is vital for \LT{} users to determine if a change should be local or global.
 
 
-The third concept is macro expansion control.
+The third concept is \textbf{macro expansion control}.
 Fundamentally, \LT{} is a simple macro language that works by replacing patterns according to a set of defined macro functions.
 The \LT{} compiler will not attempt to generate an Abstract Syntax Tree (AST) for the \LT{} source, which means it has very little understanding over its input compared to other languages' compilers that rely on ASTs.
 One of the main consequences of such simplification is \LT{} compilers are less powerful in terms of function calls, because it has limited insight over the function arguments.
