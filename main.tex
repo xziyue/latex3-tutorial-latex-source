@@ -341,22 +341,22 @@ However, it is recommended that every \LTT{} programmer strictly follow these co
 In Section \textcolor{red}{???}, it can also be seen that \LTT{}'s expansion control mechanism sometimes requires functions to be named after \LTT{} conventions.
 
 
-\section{Understanding \LTT{} Documentation (I.1.2)}
+\section{Understanding \LTT{} Documentation}
 
 Currently, most information about \LTT{} is in \cite{l3interface}. 
-It is essentially an itemized documentation on \LTT{} functions, scratch variables, and constants. 
+It is essentially technical documentation on \LTT{} functions, scratch variables, and constants. 
 We briefly describe how these items are presented in \cite{l3interface}.
 \begin{itemize}
 \item \LTT{} functions: the majority of the contents in \cite{l3interface} are about \LTT{} functions.
 In \cite{l3interface}, each function is documented using a block similar to the one shown in  \cref{fig:l3-doc-func-example}.
 The colored background is added in the figure to help understand the block.
-The yellow part in \cref{fig:l3-doc-func-example} indicates the basic forms and the variants of the function. 
+The green part in \cref{fig:l3-doc-func-example} indicates the basic forms and the variants of the function. 
 The first and third line in the yellow part are the basic forms for local and global assignment, respectively.
 The second line shows the function variants for local assignment; the fourth line shows the function variants for global assignment.
 %TODO: insert reference and delete Section
 More details about function variants will be introduced in Section \textcolor{red}{???}.
-The cyan part in \cref{fig:l3-doc-func-example} shows the basic usage of the function, where the meaning of each function argument is shown.
-The magenta part in \cref{fig:l3-doc-func-example} shows the detailed description of the function.
+The blue part in \cref{fig:l3-doc-func-example} shows the basic usage of the function, where the meaning of each function argument is shown.
+The red part in \cref{fig:l3-doc-func-example} shows the detailed description of the function.
 
 \item Scratch variables: variables in \LTT{} need to be defined before use. 
 \LTT{} has predefined a set of empty variables for convenience, which are known as scratch variables.
@@ -375,7 +375,7 @@ The left hand side of \cref{fig:l3-constant-example} shows the command name of t
 \centering
 \mdfdefinestyle{plainmdbox}{topline=false,leftline=false,rightline=false,bottomline=false}
 \begin{minipage}[t]{0.52\linewidth}
-\begin{mdframed}[backgroundcolor=yellow!50, style=plainmdbox]
+\begin{mdframed}[backgroundcolor=green!30, style=plainmdbox]
 \begin{tabular}{l}
 \toprule
 \inlpl|\tl_set:Nn|\\
@@ -387,7 +387,7 @@ The left hand side of \cref{fig:l3-constant-example} shows the command name of t
 \end{minipage}
 \begin{minipage}{0.4\linewidth}
 \vspace*{3em}
-\begin{mdframed}[backgroundcolor=cyan!50, style=plainmdbox]
+\begin{mdframed}[backgroundcolor=blue!30, style=plainmdbox]
 \inlpl|\tl_set:Nn| {\ttfamily<\textsl{tl var}> \{<\textsl{tokens}>\}}
 \end{mdframed}
 \end{minipage}\\
@@ -395,7 +395,7 @@ The left hand side of \cref{fig:l3-constant-example} shows the command name of t
 \phantom{}
 \end{minipage}
 \begin{minipage}{0.82\linewidth}
-\begin{mdframed}[backgroundcolor=magenta!50, style=plainmdbox]
+\begin{mdframed}[backgroundcolor=red!30, style=plainmdbox]
 Sets <\textit{tl var}> to contain <\textit{tokens}>, removing any previous content from the variable.
 \end{mdframed}
 \end{minipage}
@@ -443,7 +443,7 @@ The value of $\pi$. This can be input directly in a floating point expression as
 
 In this section, we introduce the definition and usage of variables and functions in \LTT{}.
 
-\noindent \textbf{Variables.}
+\par\medskip\noindent\textbf{Variables.}
 Each \LTT{} type is associated with a set of dedicated functions for defining, modifying, and accessing variables.
 Most \LTT{} types provide the following functions for managing variables:
 \begin{itemize}
@@ -474,7 +474,7 @@ The~integer~is~\int_use:N \l_my_integer_int
 \ExplSyntaxOff
 \end{latexsample}
 
-\noindent\textbf{Functions.}
+\par\medskip\noindent\textbf{Functions.}
 In \LTT{}, functions are defined using the \inltex|\cs_new:Npn| function.
 Although related functions such as \inltex|\cs_new_protected:Npn|, \inltex|\cs_new_nopar:Npn|, and \inltex|\cs_new_protected_nopar:Npn| exist, we only use \inltex|\cs_new:Npn| in this tutorial since it should be used in most scenarios. 
 Readers are encouraged to read the \LTT{} documentation for more information about the related functions.
@@ -483,7 +483,7 @@ In general, to define a function, one should follow these steps:
     \item Determine the number of function arguments and the argument specification of each argument; in most cases, the argument specification is either \verb|N| or \verb|n|
     \item Determine the scope, visibility (private/public), and description of the function and name it using \LTT{} naming conventions
 \end{enumerate}
-\LTT{} also provides useful utility functions such as \inltex|\cs_set_eq:NN| for copying the definition of functions, and \inltex|\cs_meaning:N|, \inltex|\cs_show:N| for displaying the definition of functions.
+\LTT{} also provides useful utility functions such as \inltex|\cs_set_eq:NN| for copying the definition of functions; and \inltex|\cs_meaning:N|, \inltex|\cs_show:N| for displaying the definition of functions.
 
 \begin{latexsample}[examplelabel={ex:func-example},exampletitle={Using Functions}]
 \ExplSyntaxOn
