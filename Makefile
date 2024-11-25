@@ -14,7 +14,7 @@ clean: clean_signals clean_examples
 	rm -f main.pdf *.out *aux *bbl *blg *log *toc *.ptb *.tod *.fls *.fdb_latexmk *.lof *.vrb
 	rm -rf _minted-main/
 
-dev: clean_signals clean_examples
+dev: clean
 	touch USE_SHELL_ESCAPE
 	$(TEX_BUILD_CMD) --shell-escape
 
@@ -23,7 +23,7 @@ finalize: clean
 	touch MINTED_FINALIZE
 	$(TEX_BUILD_CMD) --shell-escape
 
-build: clean_signals
+build: clean
 	$(TEX_BUILD_CMD)
 
 
