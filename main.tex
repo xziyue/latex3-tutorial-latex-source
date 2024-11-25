@@ -58,7 +58,8 @@ Some of these concepts are unique to \LT{} and cannot be found in popular progra
 
 
 %The first concept is \textbf{category code}.
-\par\medskip\noindent\textbf{Category Code.}
+\subsubsection{Category Code}
+%\par\medskip\noindent\textbf{Category Code.}
 In many existing languages, valid function/variable names and meanings of characters are predefined and cannot be changed.
 In \LT{}, the user has the freedom to change them.
 For example, normally \verb|\| is used to start a control sequence, \verb|$| is used to toggle math mode, \verb|%| is used for comments, and Latin alphabets are used as control sequence names.
@@ -122,7 +123,8 @@ It is worth noting that in \LT{}, two characters are considered equal if and onl
 \end{table}
 
 
-\par\medskip\noindent\textbf{Groups.}
+\subsubsection{Groups}
+%\par\medskip\noindent\textbf{Groups.}
 %The second concept is \textbf{group}.
 Groups in \LT{} are similar to scopes in other programming languages.
 By default, almost all changes (e.g., macro definition, category code assignment, font selection) in \LT{} are local, which means they only apply to the current group.
@@ -149,14 +151,15 @@ It is vital for \LT{} users to determine if a change should be local or global.
 
 
 %The third concept is \textbf{macro expansion control}.
-\par\medskip\noindent\textbf{Macro Expansion Control.}
+%\par\medskip\noindent\textbf{Macro Expansion Control.}
+\subsubsection{Macro Expansion Control (MPC)}\label{sec:intro-macro-expansion-control}
 Fundamentally, \LT{} is a simple macro language that works by replacing patterns according to a set of defined macro functions.
 The \LT{} compiler will not attempt to generate an Abstract Syntax Tree (AST) for the \LT{} source, which means it has very little understanding over its input compared to other languages' compilers that rely on ASTs.
 One of the main consequences of such simplification is \LT{} compilers are less powerful in terms of function calls, because it has limited insight over the function arguments.
 In \cref{ex:trad-expan-ctrl}, suppose we have a function \inltex|\cmda| that scans each character in its argument \verb|#1| and apply some character-wise operation. 
-In \inltex|\cmda|, we use the \inltex|\detokenize| command to output the verbatim of its argument without parsing.
-Because it is common to store characters in a control sequence, let us observe what happens when \inltex|\cmda| is called with a control sequence \inltex|\vala| as its argument (\lref{ex:trad-expan-ctrl}{5}).
-From the first line of output, it can be seen that the argument is still \inltex|\vala|, which means the character-wise operation in \inltex|\cmda| will not work when a control sequence is used as its input.
+In \inltex|\cmda|, we use the \inltex|\detokenize| command to output the argument as-is without any further processing.
+Because it is common to store characters in a control sequence, let us observe what happens when \inltex|\cmda| is called with a control sequence \inltex|\vala| as its argument (\lref{ex:trad-expan-ctrl}{7}).
+From the first line of output, it can be seen that the argument is still \inltex|\vala|, which means the character-wise operation in \inltex|\cmda| will not work because the input is the control sequence \inltex|\cmda| itself instead of the characters stored in it.
 \begin{latexsample}[examplelabel=ex:trad-expan-ctrl,exampletitle={Expansion Control},noexport]
 \def\cmda#1{%
   % do some character-wise operation with #1
@@ -168,13 +171,13 @@ From the first line of output, it can be seen that the argument is still \inltex
 \par\expandafter\expandafter\expandafter\cmda\expandafter{\vala}
 \par\expandafter\expandafter\expandafter\cmda\expandafter{\valb}
 \end{latexsample}
-\noindent In order for function calls to work properly in \LT{}, it is the user's responsibility to preprocess the function arguments so that they are in the expected form of the function.
+\noindent In order for function calls to work properly in \LT{}, it is the user's responsibility to prepare the function arguments so that they are in the expected form of the function.
 This procedure is known as expansion control.
 One of the ways to conduct expansion control is to use the \TeX{} primitive \inltex|\expandafter|, whose usage is so complicated that it deserves its own tutorial \cite{bechtolsheim1988tutorial}.
 On \lref{ex:trad-expan-ctrl}{8}, we demonstrate how to use \inltex|\expandafter| so that \inltex|\cmda| can correctly access the characters stored in \inltex|\vala|.
 This approach does not work for all scenarios: notice how it fails when we use \inltex|\valb| as the input.
 
-\LTT{} has provided user friendly interfaces to help \LT{} programmers from various backgrounds cope with the differences of \LT{}.
+\LTT{} has provided user friendly interfaces to help \LT{} programmers from different backgrounds cope with the unique mechanisms of \LT{}.
 For more low-level details about \TeX{}/\LT{}, one is referred to \cite{knuth1984texbook,berry2017latex}.
 
 \input{fragments/compiling_examples}
@@ -326,7 +329,7 @@ w & Weird arguments (the ones that do not fall in other categories)\\
 \bottomrule
 \end{tabular}
 %TODO: insert reference and delete Section
-\caption{Commonly used argument specification letters and their descriptions. More details are described in Section \textcolor{red}{???}.}
+\caption{Commonly used argument specification letters and their descriptions. More details are described in \refplaceholder.}
 \label{tbl:arg-spec-type}
 \end{table}
 
@@ -351,10 +354,11 @@ We briefly describe how these items are presented in \cite{l3interface}.
 In \cite{l3interface}, each function is documented using a block similar to the one shown in  \cref{fig:l3-doc-func-example}.
 The colored background is added in the figure to help understand the block.
 The green part in \cref{fig:l3-doc-func-example} indicates the basic forms and the variants of the function. 
-The first and third line in the yellow part are the basic forms for local and global assignment, respectively.
+The first and third line in the green part are the basic forms for local and global assignment, respectively.
 The second line shows the function variants for local assignment; the fourth line shows the function variants for global assignment.
 %TODO: insert reference and delete Section
-More details about function variants will be introduced in Section \textcolor{red}{???}.
+Function variants are used to control the expansion of macros. 
+More details about them will be introduced in \refplaceholder.
 The blue part in \cref{fig:l3-doc-func-example} shows the basic usage of the function, where the meaning of each function argument is shown.
 The red part in \cref{fig:l3-doc-func-example} shows the detailed description of the function.
 
@@ -365,7 +369,7 @@ They are documented in specific sections, similar to the one demonstrated in \cr
 The left hand side of \cref{fig:l3-scratch-var-example} shows the predefined scratch variables; the right hand side shows the description of the variables.
 It is recommended to not use scratch variables (especially in large projects or generic packages), which can reduce the chances of variable collision.
 
-\item Constants: \LTT{} defines a large number of constants such as the value of $\pi$, the value of $e$, special characters, etc. 
+\item Constants: \LTT{} defines many constants such as the value of $\pi$, the value of $e$, special characters, etc. 
 They are documented in specific sections, similar to the one demonstrated in \cref{fig:l3-constant-example}.
 The left hand side of \cref{fig:l3-constant-example} shows the command name of the constant; the right hand side shows the description of the constant.
 
@@ -461,7 +465,7 @@ Note that not all \LTT{} modules follow this convention. In general, to use a va
     \item Determine the scope, visibility (private/public), and description of the variable and name it using \LTT{} naming conventions
     \item Use functions in the variable's module to operate on the variable
 \end{enumerate}
-
+An example of using variables is shown in \cref{ex:var-example}.
 
 \begin{latexsample}[examplelabel={ex:var-example},exampletitle={Using Variables}]
 \ExplSyntaxOn
@@ -482,26 +486,45 @@ In general, to define a function, one should follow these steps:
 \begin{enumerate}
     \item Determine the number of function arguments and the argument specification of each argument; in most cases, the argument specification is either \verb|N| or \verb|n|
     \item Determine the scope, visibility (private/public), and description of the function and name it using \LTT{} naming conventions
+    \item Provide the function definition in the function body
 \end{enumerate}
-\LTT{} also provides useful utility functions such as \inltex|\cs_set_eq:NN| for copying the definition of functions; and \inltex|\cs_meaning:N|, \inltex|\cs_show:N| for displaying the definition of functions.
+An example of using functions is shown in \cref{ex:func-example}.
 
 \begin{latexsample}[examplelabel={ex:func-example},exampletitle={Using Functions}]
-\ExplSyntaxOn
-% define a new function that accepts two n-type arguments
-\cs_new:Npn \l_my_func:nn #1#2
-{
-    [arg1=#1][arg2=#2]
-}
-% call the function with two arguments
-\par\l_my_func:nn {first} {second}
-% show the definition of the function
-\par\cs_meaning:N \l_my_func:nn
-% copy the definition of the new function
-\cs_set_eq:NN \l_my_func_copy:nn \l_my_func:nn
-% show the definition of the copied function
-\par\cs_meaning:N \l_my_func_copy:nn
-\ExplSyntaxOff
+  \ExplSyntaxOn
+  % define a new function that accepts two n-type arguments
+  \cs_new:Npn \l_my_func:nn #1#2
+  {
+      [arg1=#1][arg2=#2]
+  }
+  % call the function with two arguments
+  \par\l_my_func:nn {first} {second}
+  % show the definition of the function
+  \par\cs_meaning:N \l_my_func:nn
+  % copy the definition of the new function
+  \cs_set_eq:NN \l_my_func_copy:nn \l_my_func:nn
+  % show the definition of the copied function
+  \par\cs_meaning:N \l_my_func_copy:nn
+  \ExplSyntaxOff
 \end{latexsample}
+
+\LTT{} also provides useful utility functions such as \inltex|\cs_set_eq:NN| for copying the definition of functions; and \inltex|\cs_meaning:N|, \inltex|\cs_show:N| for displaying the definition of functions (for debugging).
+
+\section{Macro Expansion Control (MPC) in \LTT{}}
+In \cref{sec:intro-macro-expansion-control}, we briefly introduce the concept of MPC.
+Here, we elaborate on how it is done in \LTT{}.
+
+\subsection{MPC Method 1: Using Function Variants}
+
+\begin{latexsample}[examplelabel={ex:mpc-use-variant},exampletitle={Using the Correct Function Variant}]
+  \ExplSyntaxOn
+  % define our own variable that stores characters
+  \tl_new:N \l_my_char_var_tl
+  \tl_set:Nn \l_my_char_var_tl {abcdefg}
+  \tl_to_str:n {\l_my_char_var_tl}
+  \ExplSyntaxOff
+\end{latexsample}
+
 
 \bibliographystyle{tugboat}
 \bibliography{main.bib}

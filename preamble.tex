@@ -23,7 +23,9 @@
 
 \ExplSyntaxOn
 
-% overleaf mode is considered debug mode
+% overleaf mode control
+% since we cannot use make to generate the document in overleaf,
+% the minted behavior on overleaf will be changed to be the same as `make dev'
 \bool_new:N \g_doc_overleaf_mode_bool
 \bool_gset_false:N \g_doc_overleaf_mode_bool
 \cs_set:Npn \UseOverleafMode
@@ -151,7 +153,7 @@
         breakable,
         beforeafter skip=3ex,
         fontlower=\sffamily\small,
-        fonttitle=\normalfont,
+        fonttitle=\small\normalfont,
         colback=white,
         colframe=black!60,
         boxrule=0.8pt,
@@ -391,3 +393,5 @@
         }
     }
 }
+
+\newcommand{\refplaceholder}{\textcolor{red}{\textbf{???}}}
