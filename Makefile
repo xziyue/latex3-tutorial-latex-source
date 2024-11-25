@@ -2,7 +2,7 @@ TEXBIN=latexmk
 TEX_SRC=main.tex
 TEX_BUILD_CMD=$(TEXBIN) -synctex=1 -interaction=nonstopmode -file-line-error -pdf $(TEX_SRC) -f
 
-.DEFAULT_GOAL:=dev
+.DEFAULT_GOAL:=build
 
 clean_signals:
 	rm -f USE_SHELL_ESCAPE MINTED_FINALIZE

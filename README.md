@@ -9,6 +9,16 @@ A LaTeX version of this tutorial can be modified by the LaTeX community.
 - `\ExportExamples`: if activated, the examples will be exported to `./examples`
 - `\UseMintedHighlighting`: if activated, the `minted` package will be used for syntax highlighting
 
+
+## Building
+
+- Development build: `make dev`
+  - In development build, the `minted` cache is always regenerated
+- Finalize build:
+  - In finalize build, the `minted` cache will be frozen
+- Default build: `make`
+  - In default build, the frozen `minted` cache will be used
+
 ## Example Environment (latexsample)
 
 By default, the `latexsample` environment will generate an anonymous LaTeX example that is executed and exported.
