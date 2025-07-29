@@ -13,7 +13,7 @@
 
 
 %\ExportExamples
-%\UseMintedHighlighting
+\UseMintedHighlighting
 
 \begin{document}
 
@@ -152,7 +152,7 @@ It is vital for \LT{} users to determine if a change should be local or global.
 
 %The third concept is \textbf{macro expansion control}.
 %\par\medskip\noindent\textbf{Macro Expansion Control.}
-\subsubsection{Macro Expansion Control (MPC)}\label{sec:intro-macro-expansion-control}
+\subsubsection{Macro Expansion Control (MEC)}\label{sec:intro-macro-expansion-control}
 Fundamentally, \LT{} is a simple macro language that works by replacing patterns according to a set of defined macro functions.
 The \LT{} compiler will not attempt to generate an Abstract Syntax Tree (AST) for the \LT{} source, which means it has very little understanding over its input compared to other languages' compilers that rely on ASTs.
 One of the main consequences of such simplification is \LT{} compilers are less powerful in terms of function calls, because it has limited insight over the function arguments.
@@ -207,7 +207,7 @@ The command \inltex|\ExplSyntaxOn| is used to enter \LTT{} mode; the command \in
 
 In \LTT{} mode, we cannot use \verb|_| to denote subscript anymore because its category code has been changed to 11. Instead, a constant \inltex|\c_math_subscript_token| is defined in \LTT{} for this purpose.
 There are several ways to typeset the ignored white space and newline characters in \LTT{} mode.
-White spaces can be entered using \verb|~|, \verb|\ | (escaping space), or \verb|\space| depending on the scenario.
+White spaces can be entered using \verb|~|, \verb|\ | (escaping space), or \inltex|\space| depending on the scenario.
 New lines can be triggered using the \inltex|\par| command.
 
 
@@ -222,11 +222,23 @@ We will describe the meaning of each part later.
 \vspace*{0.5\baselineskip}
 \par\noindent The name of a public variable should follow:
 \begin{center}
+\MintedHighlightingTF{%
+\input{_minted-main/default.pygstyle}
+\ttfamily
+\PYG{n+nv}{\PYGZbs{}}\PYG{n+nc}{<scope>}\PYG{n+nv}{\_}\PYG{n+kn}{<module>}\PYG{n+nv}{\_}\PYG{n+nv}{<description>}\PYG{n+nv}{\_}\PYG{k+kt}{<type>}
+}{%
 \texttt{\string\<scope>\_<module>\_<description>\_<type>}
+}
 \end{center}
 The name of a private variable should follow:
 \begin{center}
+\MintedHighlightingTF{%
+\input{_minted-main/default.pygstyle}
+\ttfamily
+\PYG{n+nv}{\PYGZbs{}}\PYG{n+nc}{<scope>}\PYG{n+nv}{\_\_}\PYG{n+kn}{<module>}\PYG{n+nv}{\_}\PYG{n+nv}{<description>}\PYG{n+nv}{\_}\PYG{k+kt}{<type>}
+}{%
 \texttt{\string\<scope>\_\_<module>\_<description>\_<type>}
+}
 \end{center}
 Private variable names have an extra underscore between \texttt{scope} and \texttt{module}.
 
@@ -285,11 +297,23 @@ To increase the readability, a function name in \LTT{} includes additional infor
 \par\noindent
 The name of a public \LTT{} function should follow:
 \begin{center}
+\MintedHighlightingTF{%
+\input{_minted-main/default.pygstyle}
+\ttfamily
+\PYG{n+nf}{\PYGZbs{}}\PYG{n+kn}{<module>}\PYG{n+nf}{\_}\PYG{n+nf}{<description>}\PYG{s+dl}{:}\PYG{n+na}{<arg-spec>}
+}{%
 \texttt{\string\<module>\_<description>:<arg-spec>}
+}
 \end{center}
 The name of a private \LTT{} function should follow:
 \begin{center}
+\MintedHighlightingTF{%
+\input{_minted-main/default.pygstyle}
+\ttfamily
+\PYG{n+nf}{\PYGZbs{}}\PYG{n+nf}{\_\_}\PYG{n+kn}{<module>}\PYG{n+nf}{\_}\PYG{n+nf}{<description>}\PYG{s+dl}{:}\PYG{n+na}{<arg-spec>}
+}{%
 \texttt{\string\_\_<module>\_<description>:<arg-spec>}
+}
 \end{center}
 The semicolon is only used in \LTT{} function names, not in variable names.
 
@@ -515,15 +539,15 @@ An example of using functions is shown in \cref{ex:func-example}.
 % The difference is that \inltex|\cs_new:Npn| will define the function globally across group boundaries, and it will raise an error if the function is already defined; while \inltex|\cs_set:Npn| will only define the function locally within the group and overwrite the existing function definition without errors.
 % Therefore, \inltex|\cs_set:Npn| is also used in this tutorial to avoid compilation errors when redefining functions.
 
-\section{Macro Expansion Control (MPC) in \LTT{}}\label{sec:macro-expansion-control}
-In \cref{sec:intro-macro-expansion-control}, we briefly introduce the concept of Macro Expansion Control (MPC).
+\section{Macro Expansion Control (MEC) in \LTT{}}\label{sec:macro-expansion-control}
+In \cref{sec:intro-macro-expansion-control}, we briefly introduce the concept of Macro Expansion Control (MEC).
 Here, we elaborate on how it is done in \LTT{}.
 
 
-\begin{latexsample}[examplelabel={ex:mpc-func},exampletitle={Example Function Used in Section \ref{sec:macro-expansion-control}}]
+\begin{latexsample}[examplelabel={ex:mec-func},exampletitle={Example Function Used in Section \ref{sec:macro-expansion-control}}]
   \ExplSyntaxOn
   % the example function used in this section
-  \cs_new:Npn \my_mpc_func:nn #1#2
+  \cs_new:Npn \my_mec_func:nn #1#2
   {
       \par uppercase:~\uppercase{#1}~|~\uppercase{#2}
       \par verbatim:~\tl_to_str:n {#1}~|~\tl_to_str:n {#2}
@@ -532,16 +556,16 @@ Here, we elaborate on how it is done in \LTT{}.
 \end{latexsample}
 
 
-\subsection{MPC Method 1: Using Function Variants}
+\subsection{MEC Method 1: Using Function Variants}
 
-\begin{latexsample}[examplelabel={ex:mpc-use-variant},exampletitle={Using the Correct Function Variant}]
+\begin{latexsample}[examplelabel={ex:mec-use-variant},exampletitle={Using the Correct Function Variant}]
   \ExplSyntaxOn
   % % define our own variable that stores characters
   % \tl_new:N \l_my_char_var_tl
   % \tl_set:Nn \l_my_char_var_tl {abcdefg}
   % \tl_to_str:n {\l_my_char_var_tl}
   \def\somecmd{abcd}
-  \my_mpc_func:nn {abcd} {\somecmd}
+  \my_mec_func:nn {abcd} {\somecmd}
   \ExplSyntaxOff
 \end{latexsample}
 

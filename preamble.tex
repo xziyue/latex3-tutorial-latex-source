@@ -20,6 +20,7 @@
 \usepackage{listings}
 \usepackage{xsimverb}
 \usepackage[scale=0.9]{tgheros}
+\usepackage{DejaVuSansMono}
 
 \ExplSyntaxOn
 
@@ -298,8 +299,8 @@
     % define listing related macros
     \MintedHighlightingTF
     {
-        \newmintinline[inltex]{tex_lexer.py:Tex3Lexer}{breaklines, breakanywhere, fontfamily=DejaVuSansMono-TLF,style=colorful}
-        \newmintinline[inlpy]{python}{fontfamily=DejaVuSansMono-TLF,style=colorful}
+        \newmintinline[inltex]{tex_lexer.py:Tex3Lexer}{breaklines, breakanywhere, fontfamily=DejaVuSansMono-TLF,style=default}
+        \newmintinline[inlpy]{python}{fontfamily=DejaVuSansMono-TLF,style=default}
         \newmintinline[inlpl]{text}{}
 
         \tcbset{
@@ -318,7 +319,7 @@
                 numbersep=2mm,
                 xleftmargin=4mm,
                 fontfamily=DejaVuSansMono-TLF,
-                style=colorful
+                style=default
                 }
             }
         }
