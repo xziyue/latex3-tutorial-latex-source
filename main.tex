@@ -163,7 +163,7 @@ From the first line of output, it can be seen that the argument is still \inltex
 \begin{latexsample}[examplelabel=ex:trad-expan-ctrl,exampletitle={Expansion Control},noexport]
 \def\cmda#1{%
   % do some character-wise operation with #1
-  arg: \detokenize{#1} % output #1
+  arg: \detokenize{#1} % output #1 as-is
 }
 \def\vala{val-a}
 \def\valb{\vala}
@@ -533,7 +533,7 @@ An example of using functions is shown in \cref{ex:func-example}.
 \end{latexsample}
 
 
-\LTT{} also provides useful utility functions such as \inltex|\cs_new_eq:NN| for copying the definition of functions; and \inltex|\cs_meaning:N|, \inltex|\cs_show:N| for displaying the definition of functions (for debugging).
+\LTT{} also provides useful utility functions such as \inltex|\cs_new_eq:NN| for copying the definition of functions; and \inltex|\cs_meaning:N|, \inltex|\cs_show:N| for displaying the definition of functions, which can be helpful for debugging.
 
 % In the examples of this tutorial, we also use \inltex|\cs_set:Npn| to define new functions.
 % The difference is that \inltex|\cs_new:Npn| will define the function globally across group boundaries, and it will raise an error if the function is already defined; while \inltex|\cs_set:Npn| will only define the function locally within the group and overwrite the existing function definition without errors.
@@ -542,9 +542,12 @@ An example of using functions is shown in \cref{ex:func-example}.
 \section{Macro Expansion Control (MEC) in \LTT{}}\label{sec:macro-expansion-control}
 In \cref{sec:intro-macro-expansion-control}, we briefly introduce the concept of Macro Expansion Control (MEC).
 Here, we elaborate on how it is done in \LTT{}.
+In this section, we will demonstrate how to perform MEC in \LTT{} with the example function \inltex|\my_mec_func:nn| defined in \cref{ex:mec-func}.
+This function accepts two arguments and attempts to output the uppercase version of the two arguments and their verbatim representation.
+Here, the \inltex|\tl_to_str:n| function is similar to the \inltex|\detokenize| macro used previously, which outputs the argument as-is without further processing.
+In this example, we also define variables that will be used subsequently.
 
-
-\begin{latexsample}[examplelabel={ex:mec-func},exampletitle={Example Function Used in Section \ref{sec:macro-expansion-control}}]
+\begin{latexsample}[examplelabel={ex:mec-func},exampletitle={Example Function Used in Section \ref{sec:macro-expansion-control}},noexec,silentexec,noexport]
   \ExplSyntaxOn
   % the example function used in this section
   \cs_new:Npn \my_mec_func:nn #1#2
@@ -552,22 +555,40 @@ Here, we elaborate on how it is done in \LTT{}.
       \par uppercase:~\uppercase{#1}~|~\uppercase{#2}
       \par verbatim:~\tl_to_str:n {#1}~|~\tl_to_str:n {#2}
   }
+  % Also, define some convenience variables
+  \tl_new:N \l_my_char_var_tl
+  \tl_gset:Nn \l_my_char_var_tl {abcdefg}
+  \tl_new:N \l_my_char_var_var_tl
+  \tl_gset:Nn \l_my_char_var_var_tl {\l_my_char_var_tl}
   \ExplSyntaxOff
 \end{latexsample}
+
+Let us observe the behavior when the function is called without MEC, which is shown in \cref{ex:no-mec}.
+\begin{latexsample}[examplelabel={ex:no-mec},exampletitle={Using the Function Without MEC},noexport]
+  \ExplSyntaxOn
+  % call the function without MEC
+  \my_mec_func:nn {abcdefg} {\l_my_char_var_tl}
+  \ExplSyntaxOff
+\end{latexsample}
+\noindent It can be seen that the content of \inltex|\l_my_char_var_tl| cannot be converted to uppercase.
+From verbatim output, we can see that the \inltex|\uppercase| function is applied to variable \inltex|\l_my_char_var_tl| itself instead of the characters stored in it, which prevents it from working as expected.
 
 
 \subsection{MEC Method 1: Using Function Variants}
 
 \begin{latexsample}[examplelabel={ex:mec-use-variant},exampletitle={Using the Correct Function Variant}]
   \ExplSyntaxOn
-  % % define our own variable that stores characters
-  % \tl_new:N \l_my_char_var_tl
-  % \tl_set:Nn \l_my_char_var_tl {abcdefg}
-  % \tl_to_str:n {\l_my_char_var_tl}
-  \def\somecmd{abcd}
-  \my_mec_func:nn {abcd} {\somecmd}
+  \cs_generate_variant:Nn \my_mec_func:nn {nV}
+  \my_mec_func:nV {abcdefg} \l_my_char_var_tl
   \ExplSyntaxOff
 \end{latexsample}
+
+
+\subsection{MEC Method 2: Using \texttt{\textbackslash{}exp\_args:N} Functions}
+
+
+
+\subsection{Prevention of Expansion}
 
 
 \bibliographystyle{tugboat}

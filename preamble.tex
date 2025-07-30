@@ -123,6 +123,7 @@
 
 \bool_new:N \ExportCurrentCodeExample
 \bool_new:N \CurrentExampleHasTitle
+\bool_new:N \ExecuteCurrentExample
 \let\SetBoolTrue\bool_gset_true:N
 \let\SetBoolFalse\bool_gset_false:N
 \let\BoolShow\bool_show:N
@@ -177,6 +178,9 @@
     },
     noexport/.code={
         \SetBoolFalse\ExportCurrentCodeExample
+    },
+    silentexec/.code={
+        \SetBoolTrue\ExecuteCurrentExample
     }
 }
 
@@ -215,13 +219,18 @@
 
     \tl_gset:Nx \CurrentExampleTitle {Example~\thecodeexample}
 
-
     % load the listing file
+    \SetBoolFalse\ExecuteCurrentExample
     \exp_args:Nx \tcbinputlisting {
         codesample,
         listing~file={\jobname-latexsample.vrb},
         title={\exp_not:V \CurrentExampleTitle},
         #1
+    }
+
+    \bool_if:NT \ExecuteCurrentExample
+    {
+        \input{\jobname-latexsample.vrb}
     }
 
     % add to contents
