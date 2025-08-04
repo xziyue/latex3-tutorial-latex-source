@@ -584,7 +584,7 @@ To achieve our goal, we need to use the \inlpl|V| argument type, which captures 
 That is, we need to alter the type of the second argument to generate a function variant \inltex|\my_mec_func:nV| and pass the variable \inltex|\l_my_char_var_tl| as its second argument.
 In \LTT{}, the \inltex|\cs_generate_variant:Nn| function can be used to generate a new function variant based on an existing function, where the argument types of the new function variant is specified in the second argument.
 An example is shown as follows.
-\begin{latexsample}[examplelabel={ex:mec-use-variant},exampletitle={Using the Correct Function Variant}]
+\begin{latexsample}[examplelabel={ex:mec-use-variant},exampletitle={Using Function Variants}]
   \ExplSyntaxOn
   % generate function variant \my_mec_func:nV based on \my_mec_func:nn
   \cs_generate_variant:Nn \my_mec_func:nn {nV}
@@ -596,7 +596,7 @@ An example is shown as follows.
 Sometimes, we may want to recursively expand the content of a variable.
 This can be achieved by using the \inlpl|x| argument type.
 See \cref{ex:mec-use-variant-x} for details.
-\begin{latexsample}[examplelabel={ex:mec-use-variant-x},exampletitle={Using \noexpand{\textbf{x}} Argument Type}]
+\begin{latexsample}[examplelabel={ex:mec-use-variant-x},exampletitle={Using \texttt{x} Argument Type}]
   \ExplSyntaxOn
   % first, define a nested variable
   \tl_new:N \l_my_char_var_var_tl
