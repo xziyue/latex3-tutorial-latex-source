@@ -256,7 +256,7 @@ Private variable names have an extra underscore between \texttt{scope} and \text
 \item \texttt{type}: the variable type; some common types are shown in \cref{tbl:var-type}.
 \end{itemize}
 The \texttt{description} part can contain multiple segments separated by underscores. 
-Some valid variables names are shown below.
+Some valid variables names are shown here.
 \begin{itemize}
 \item \inltex|\g_doc_variable_int|
 \item \inltex|\l_doc_bg_color_r_fp|
@@ -325,7 +325,7 @@ The meaning of each part is described as follows.
 \item \texttt{description}: the description of the function
 \item \texttt{arg-spec}: the argument specifications--it is made up of zero or more Latin alphabets describing the type of every function argument; each letter specifies the type of an argument (see \cref{tbl:arg-spec-type})
 \end{itemize}
-Some valid function names are shown below.
+Some valid function names are shown here.
 \begin{itemize}
 \item \inltex|\group_begin:|
 \item \inltex|\tl_put_right:Nn|
@@ -555,34 +555,69 @@ In this example, we also define variables that will be used subsequently.
       \par uppercase:~\uppercase{#1}~|~\uppercase{#2}
       \par verbatim:~\tl_to_str:n {#1}~|~\tl_to_str:n {#2}
   }
-  % Also, define some convenience variables
+  % Also, define variables that will be used later
   \tl_new:N \l_my_char_var_tl
   \tl_gset:Nn \l_my_char_var_tl {abcdefg}
-  \tl_new:N \l_my_char_var_var_tl
-  \tl_gset:Nn \l_my_char_var_var_tl {\l_my_char_var_tl}
   \ExplSyntaxOff
 \end{latexsample}
 
-Let us observe the behavior when the function is called without MEC, which is shown in \cref{ex:no-mec}.
+Suppose we want to output the uppercase version of the content stored in \inltex|\l_my_char_var_tl|.
+Let us observe what would happen without MEC, which is shown in \cref{ex:no-mec}.
 \begin{latexsample}[examplelabel={ex:no-mec},exampletitle={Using the Function Without MEC},noexport]
   \ExplSyntaxOn
   % call the function without MEC
   \my_mec_func:nn {abcdefg} {\l_my_char_var_tl}
   \ExplSyntaxOff
 \end{latexsample}
-\noindent It can be seen that the content of \inltex|\l_my_char_var_tl| cannot be converted to uppercase.
+\noindent It can be seen that the content of \inltex|\l_my_char_var_tl| is not converted to uppercase, 
 From verbatim output, we can see that the \inltex|\uppercase| function is applied to variable \inltex|\l_my_char_var_tl| itself instead of the characters stored in it, which prevents it from working as expected.
 
 
 \subsection{MEC Method 1: Using Function Variants}
 
+From \cref{ex:no-mec}, we already know that the function \inltex|\my_mec_func:nn| does not work as expected because the variable \inltex|\l_my_char_var_tl| itself is passed to \inltex|\uppercase| directly.
+We want to pass the content of \inltex|\l_my_char_var_tl| to \inltex|\uppercase| instead.
+The function name of \inltex|\my_mec_func:nn| suggests that it accepts two arguments of type \inlpl|n|.
+From \cref{tbl:arg-spec-type}, we can see that \inltex|n| means the argument is a token list.
+In general, \inlpl|N| and \inlpl|n| arguments are passed to the function as-is.
+To achieve our goal, we need to use the \inlpl|V| argument type, which captures the value of the variable instead of the variable itself.
+That is, we need to alter the type of the second argument to generate a function variant \inltex|\my_mec_func:nV| and pass the variable \inltex|\l_my_char_var_tl| as its second argument.
+In \LTT{}, the \inltex|\cs_generate_variant:Nn| function can be used to generate a new function variant based on an existing function, where the argument types of the new function variant is specified in the second argument.
+An example is shown as follows.
 \begin{latexsample}[examplelabel={ex:mec-use-variant},exampletitle={Using the Correct Function Variant}]
   \ExplSyntaxOn
+  % generate function variant \my_mec_func:nV based on \my_mec_func:nn
   \cs_generate_variant:Nn \my_mec_func:nn {nV}
+  % now the second argument is passed by value
   \my_mec_func:nV {abcdefg} \l_my_char_var_tl
   \ExplSyntaxOff
 \end{latexsample}
 
+Sometimes, we may want to recursively expand the content of a variable.
+This can be achieved by using the \inlpl|x| argument type.
+See \cref{ex:mec-use-variant-x} for details.
+\begin{latexsample}[examplelabel={ex:mec-use-variant-x},exampletitle={Using \noexpand{\textbf{x}} Argument Type}]
+  \ExplSyntaxOn
+  % first, define a nested variable
+  \tl_new:N \l_my_char_var_var_tl
+  \tl_gset:Nn \l_my_char_var_var_tl {\l_my_char_var_tl}
+  % try to use pass the nested variable by value to capitalize its content
+  % this will not work
+  \my_mec_func:nV {abcdefg} \l_my_char_var_var_tl
+  % to obtain the content of nested variables, we need to use 'x' argument type, which expands the argument recursively
+  \cs_generate_variant:Nn \my_mec_func:nn {nx}
+  % now the content of the nested variable is capitalized
+  % note that we need to put \l_my_char_var_var_tl in a token list because 'x' argument type expects so
+  \my_mec_func:nx {abcdefg} {\l_my_char_var_var_tl}
+  \ExplSyntaxOff
+\end{latexsample}
+
+
+% \begin{latexsample}[exampletitle={Using the Correct Function Variant}]
+%   \ExplSyntaxOn
+%   \my_mec_func:nn {abcdefg} {\l_my_char_var_tl}
+%   \ExplSyntaxOff
+% \end{latexsample}
 
 \subsection{MEC Method 2: Using \texttt{\textbackslash{}exp\_args:N} Functions}
 
