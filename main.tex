@@ -623,17 +623,44 @@ This can be tedious when there are many combinations to consider.
 The \inltex|\exp_args:N| functions are a series of predefined functions in \LTT{} that can be used to alter the argument types of an existing function without generating new function variants.
 Suppose there is a function with 3 arguments \inltex|\my_example_func:nnn|, and one would like to change the argument types of the 1st, 2nd, and 3rd arguments to \inlpl|X|, \inlpl|Y|, and \inlpl|Z|, respectively.
 With \inltex|\cs_generate_variant:Nn|, this is the typical usage:
-\begin{latexsample}[notitle, noexec]
+\begin{latexsample}[notitle, noexec, nobeforeafter]
 \cs_generate_variant:Nn \my_example_func:nnn {XYZ}
 % call \my_example_func:XYZ
 \my_example_func:XYZ {arg1} {arg2} {arg3}
 \end{latexsample}
+
 \noindent With \inltex|\exp_args:N| functions, this can be done as follows:
-\begin{latexsample}[notitle, noexec]
+\begin{latexsample}[notitle, noexec, nobeforeafter]
 \exp_args:NXYZ \my_example_func:nnn {arg1} {arg2} {arg3}
 \end{latexsample}
+
 \noindent It can be seen that there is no need to generate new function variants.
 One can simply add \inltex|\exp_args:NXYZ| before the function call, and the argument types will be changed accordingly.
+
+In \cref{ex:mec-use-exp-args}, we demonstrate how to use \inltex|\exp_args:N| functions to achieve the same effect as in \cref{ex:mec-use-variant-v} and \cref{ex:mec-use-variant-x}.
+\begin{latexsample}[examplelabel={ex:mec-use-exp-args},exampletitle={Using \texttt{\textbackslash{}exp\_args:N} Functions}]
+  \ExplSyntaxOn
+  % the first argument is still `n' type
+  % the second argument is passed by value
+  \exp_args:NnV \my_mec_func:nn {abcdefg} \l_my_char_var_tl
+  % the first argument is still `n' type
+  % the second argument is expanded recursively
+  \exp_args:Nnx \my_mec_func:nn {abcdefg} {\l_my_char_var_var_tl}
+  \ExplSyntaxOff
+\end{latexsample}
+\noindent \inltex|\exp_args:N| functions can be used to partially modify the first argument(s) of a function.
+This is demonstrated in \cref{ex:mec-use-exp-args-partial}, where \inltex|\exp_args:NV| is used on a function of two arguments.
+In this case, only the first argument is modified to be of type \inlpl|V|, while the rest remains unchanged.
+\begin{latexsample}[examplelabel={ex:mec-use-exp-args-partial},exampletitle={Using \texttt{\textbackslash{}exp\_args:N} Functions Partially}]
+  \ExplSyntaxOn
+  % partially modify the first argument to `V' type while keeping the rest unchanged
+  \exp_args:NV \my_mec_func:nn \l_my_char_var_tl {\l_my_char_var_tl}
+  \ExplSyntaxOff
+\end{latexsample}
+
+Although \inltex|\exp_args:N| functions are convenient, the predefined ones are only limited to controlling the expansion of up to 4 arguments.
+When the number of arguments is large, the predefined \inltex|\exp_args:N| functions may not cover all argument type combinations.
+If that is the case, one can use the more complicated \inltex|\cs_generate_variant:Nn| method; or use \inltex|\exp_args_generate:n| to generate the desired \inltex|\exp_args:N| function.
 
 \subsection{Prevention of Expansion}
 
