@@ -208,7 +208,7 @@ The command \inltex|\ExplSyntaxOn| is used to enter \LTT{} mode; the command \in
 In \LTT{} mode, we cannot use \verb|_| to denote subscript anymore because its category code has been changed to 11. Instead, a constant \inltex|\c_math_subscript_token| is defined in \LTT{} for this purpose.
 There are several ways to typeset the ignored white space and newline characters in \LTT{} mode.
 White spaces can be entered using \verb|~|, \verb|\ | (escaping space), or \inltex|\space| depending on the scenario.
-New lines can be triggered using the \inltex|\par| command.
+New lines can be inserted using the \inltex|\par| command.
 
 
 \subsection{Names of Variables}\label{sec:name-of-variables}
@@ -462,7 +462,7 @@ However, they may be overwritten by other non-kernel code and so should only be 
 \begin{minipage}[t]{0.83\linewidth}
 The value of $\pi$. This can be input directly in a floating point expression as \texttt{pi}.
 \end{minipage}
-\caption{An example of scratch variables excerpted from \LTT{} documentation.}
+\caption{An example of constant variables excerpted from \LTT{} documentation.}
 \label{fig:l3-constant-example}
 \end{figure*}
 
@@ -573,7 +573,7 @@ Let us observe what would happen without MEC, which is shown in \cref{ex:no-mec}
 From verbatim output, we can see that the \inltex|\uppercase| function is applied to variable \inltex|\l_my_char_var_tl| itself instead of the characters stored in it, which prevents it from working as expected.
 
 
-\subsection{MEC Method 1: Using Function Variants}
+\subsection{MEC Method 1: Using Function Variants}\label{sec:mec-method-1}
 
 From \cref{ex:no-mec}, we already know that the function \inltex|\my_mec_func:nn| does not work as expected because the variable \inltex|\l_my_char_var_tl| itself is passed to \inltex|\uppercase| directly.
 We want to pass the content of \inltex|\l_my_char_var_tl| to \inltex|\uppercase| instead.
@@ -583,8 +583,8 @@ In general, \inlpl|N| and \inlpl|n| arguments are passed to the function as-is.
 To achieve our goal, we need to use the \inlpl|V| argument type, which captures the value of the variable instead of the variable itself.
 That is, we need to alter the type of the second argument to generate a function variant \inltex|\my_mec_func:nV| and pass the variable \inltex|\l_my_char_var_tl| as its second argument.
 In \LTT{}, the \inltex|\cs_generate_variant:Nn| function can be used to generate a new function variant based on an existing function, where the argument types of the new function variant is specified in the second argument.
-An example is shown as follows.
-\begin{latexsample}[examplelabel={ex:mec-use-variant},exampletitle={Using Function Variants}]
+An example is shown in \cref{ex:mec-use-variant-v}.
+\begin{latexsample}[examplelabel={ex:mec-use-variant-v},exampletitle={Using \texttt{V} Argument Type}]
   \ExplSyntaxOn
   % generate function variant \my_mec_func:nV based on \my_mec_func:nn
   \cs_generate_variant:Nn \my_mec_func:nn {nV}
@@ -595,7 +595,7 @@ An example is shown as follows.
 
 Sometimes, we may want to recursively expand the content of a variable.
 This can be achieved by using the \inlpl|x| argument type.
-See \cref{ex:mec-use-variant-x} for details.
+See \cref{ex:mec-use-variant-x} for an example.
 \begin{latexsample}[examplelabel={ex:mec-use-variant-x},exampletitle={Using \texttt{x} Argument Type}]
   \ExplSyntaxOn
   % first, define a nested variable
@@ -613,15 +613,27 @@ See \cref{ex:mec-use-variant-x} for details.
 \end{latexsample}
 
 
-% \begin{latexsample}[exampletitle={Using the Correct Function Variant}]
-%   \ExplSyntaxOn
-%   \my_mec_func:nn {abcdefg} {\l_my_char_var_tl}
-%   \ExplSyntaxOff
-% \end{latexsample}
 
 \subsection{MEC Method 2: Using \texttt{\textbackslash{}exp\_args:N} Functions}
 
 
+The MEC method described in \cref{sec:mec-method-1} requires one to generate a separate function variant for each combination of argument types.
+This can be tedious when there are many combinations to consider.
+\LTT{} provides another simpler way to conduct MEC using \inltex|\exp_args:N| functions.
+The \inltex|\exp_args:N| functions are a series of predefined functions in \LTT{} that can be used to alter the argument types of an existing function without generating new function variants.
+Suppose there is a function with 3 arguments \inltex|\my_example_func:nnn|, and one would like to change the argument types of the 1st, 2nd, and 3rd arguments to \inlpl|X|, \inlpl|Y|, and \inlpl|Z|, respectively.
+With \inltex|\cs_generate_variant:Nn|, this is the typical usage:
+\begin{latexsample}[notitle, noexec]
+\cs_generate_variant:Nn \my_example_func:nnn {XYZ}
+% call \my_example_func:XYZ
+\my_example_func:XYZ {arg1} {arg2} {arg3}
+\end{latexsample}
+\noindent With \inltex|\exp_args:N| functions, this can be done as follows:
+\begin{latexsample}[notitle, noexec]
+\exp_args:NXYZ \my_example_func:nnn {arg1} {arg2} {arg3}
+\end{latexsample}
+\noindent It can be seen that there is no need to generate new function variants.
+One can simply add \inltex|\exp_args:NXYZ| before the function call, and the argument types will be changed accordingly.
 
 \subsection{Prevention of Expansion}
 

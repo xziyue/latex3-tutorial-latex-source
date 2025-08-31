@@ -124,6 +124,7 @@
 \bool_new:N \ExportCurrentCodeExample
 \bool_new:N \CurrentExampleHasTitle
 \bool_new:N \ExecuteCurrentExample
+\bool_new:N \CurrentExampleNoTitle
 \let\SetBoolTrue\bool_gset_true:N
 \let\SetBoolFalse\bool_gset_false:N
 \let\BoolShow\bool_show:N
@@ -207,6 +208,8 @@
 \iow_new:N \g_lst_example_iow
 \ior_new:N \g_lst_example_ior
 \tl_new:N \l_lst_now_time_tl
+\tl_new:N \l_latex_example_tmpa_tl
+\tl_new:N \l_latex_example_tmpb_tl
 \def\CurrentExampleTitle{}
 
 \cs_set:Npn \doc_include_latex_example:n #1 {
@@ -215,18 +218,41 @@
 
     \SetBoolTrue\ExportCurrentCodeExample
     \SetBoolFalse\CurrentExampleHasTitle
+    \SetBoolFalse\CurrentExampleNoTitle
     \SetLstRefLabel{}
+
+    \clist_map_inline:nn {#1}
+    {
+        \str_set:Nx \l_latex_example_tmpa_tl { \tl_trim_spaces:n {##1} }
+        \exp_args:NV \str_if_eq:nnT \l_latex_example_tmpa_tl {notitle} {
+            \SetBoolTrue\CurrentExampleNoTitle
+            \clist_map_break:
+        }
+    }
 
     \tl_gset:Nx \CurrentExampleTitle {Example~\thecodeexample}
 
     % load the listing file
     \SetBoolFalse\ExecuteCurrentExample
-    \exp_args:Nx \tcbinputlisting {
-        codesample,
-        listing~file={\jobname-latexsample.vrb},
-        title={\exp_not:V \CurrentExampleTitle},
-        \exp_not:n {#1}
+    \bool_if:NTF \CurrentExampleNoTitle
+    {
+        \exp_args:Nx \tcbinputlisting {
+            codesample,
+            listing~file={\jobname-latexsample.vrb},
+            \exp_not:n {#1}
+        }
+        \SetBoolFalse\CurrentExampleHasTitle
+        \SetBoolFalse\ExportCurrentCodeExample
     }
+    {
+        \exp_args:Nx \tcbinputlisting {
+            codesample,
+            listing~file={\jobname-latexsample.vrb},
+            title={\exp_not:V \CurrentExampleTitle},
+            \exp_not:n {#1}
+        }
+    }
+
 
     \bool_if:NT \ExecuteCurrentExample
     {

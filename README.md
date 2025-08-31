@@ -27,5 +27,6 @@ By default, the `latexsample` environment will generate an anonymous LaTeX examp
   - `examplelabel={label}`: specifies the label of the example
   - `exampletitle={title}`: specifies the title of the example
   - `noexec`: do not execute the example
+  - `silentexec`: execute the code but do not show results in document
   - `noexport`: do not export the example
- 
+  - `notitle`: anonymous example (turns off export automatically)
