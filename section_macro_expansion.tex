@@ -1,0 +1,129 @@
+\section{Macro Expansion Control (MEC) in \LTT{}}\label{sec:macro-expansion-control}
+In \cref{sec:intro-macro-expansion-control}, we briefly introduce the concept of Macro Expansion Control (MEC).
+Here, we elaborate on how it is done in \LTT{}.
+In this section, we will demonstrate how to perform MEC in \LTT{} with the example function \inltex|\my_mec_func:nn| defined in \cref{ex:mec-func}.
+This function accepts two arguments and attempts to output the uppercase version of the two arguments and their verbatim representation.
+Here, the \inltex|\tl_to_str:n| function is similar to the \inltex|\detokenize| macro used previously, which outputs the argument as-is without further processing.
+In this example, we also define variables that will be used subsequently.
+
+\begin{latexsample}[examplelabel={ex:mec-func},exampletitle={Example Function Used in Section \ref{sec:macro-expansion-control}},noexec,silentexec,noexport]
+  \ExplSyntaxOn
+  % the example function used in this section
+  \cs_new:Npn \my_mec_func:nn #1#2
+  {
+      \par uppercase:~\uppercase{#1}~|~\uppercase{#2}
+      \par verbatim:~\tl_to_str:n {#1}~|~\tl_to_str:n {#2}
+  }
+  % Also, define variables that will be used later
+  \tl_new:N \l_my_char_var_tl
+  \tl_gset:Nn \l_my_char_var_tl {abcdefg}
+  \ExplSyntaxOff
+\end{latexsample}
+
+Suppose we want to output the uppercase version of the content stored in \inltex|\l_my_char_var_tl|.
+Let us observe what would happen without MEC, which is shown in \cref{ex:no-mec}.
+\begin{latexsample}[examplelabel={ex:no-mec},exampletitle={Using the Function Without MEC},noexport]
+  \ExplSyntaxOn
+  % call the function without MEC
+  \my_mec_func:nn {abcdefg} {\l_my_char_var_tl}
+  \ExplSyntaxOff
+\end{latexsample}
+\noindent It can be seen that the content of \inltex|\l_my_char_var_tl| is not converted to uppercase, 
+From verbatim output, we can see that the \inltex|\uppercase| function is applied to variable \inltex|\l_my_char_var_tl| itself instead of the characters stored in it, which prevents it from working as expected.
+
+
+\subsection{MEC Method 1: Using Function Variants}\label{sec:mec-method-1}
+
+From \cref{ex:no-mec}, we already know that the function \inltex|\my_mec_func:nn| does not work as expected because the variable \inltex|\l_my_char_var_tl| itself is passed to \inltex|\uppercase| directly.
+We want to pass the content of \inltex|\l_my_char_var_tl| to \inltex|\uppercase| instead.
+The function name of \inltex|\my_mec_func:nn| suggests that it accepts two arguments of type \inlpl|n|.
+From \cref{tbl:arg-spec-type}, we can see that \inltex|n| means the argument is a token list.
+In general, \inlpl|N| and \inlpl|n| arguments are passed to the function as-is.
+To achieve our goal, we need to use the \inlpl|V| argument type, which captures the value of the variable instead of the variable itself.
+That is, we need to alter the type of the second argument to generate a function variant \inltex|\my_mec_func:nV| and pass the variable \inltex|\l_my_char_var_tl| as its second argument.
+In \LTT{}, the \inltex|\cs_generate_variant:Nn| function can be used to generate a new function variant based on an existing function, where the argument types of the new function variant is specified in the second argument.
+An example is shown in \cref{ex:mec-use-variant-v}.
+\begin{latexsample}[examplelabel={ex:mec-use-variant-v},exampletitle={Using \texttt{V} Argument Type}]
+  \ExplSyntaxOn
+  % generate function variant \my_mec_func:nV based on \my_mec_func:nn
+  \cs_generate_variant:Nn \my_mec_func:nn {nV}
+  % now the second argument is passed by value
+  \my_mec_func:nV {abcdefg} \l_my_char_var_tl
+  \ExplSyntaxOff
+\end{latexsample}
+
+Sometimes, we may want to recursively expand the content of a variable.
+This can be achieved by using the \inlpl|x| argument type.
+See \cref{ex:mec-use-variant-x} for an example.
+\begin{latexsample}[examplelabel={ex:mec-use-variant-x},exampletitle={Using \texttt{x} Argument Type}]
+  \ExplSyntaxOn
+  % first, define a nested variable
+  \tl_new:N \l_my_char_var_var_tl
+  \tl_gset:Nn \l_my_char_var_var_tl {\l_my_char_var_tl}
+  % try to use pass the nested variable by value to capitalize its content
+  % this will not work
+  \my_mec_func:nV {abcdefg} \l_my_char_var_var_tl
+  % to obtain the content of nested variables, we need to use 'x' argument type, which expands the argument recursively
+  \cs_generate_variant:Nn \my_mec_func:nn {nx}
+  % now the content of the nested variable is capitalized
+  % note that we need to put \l_my_char_var_var_tl in a token list because 'x' argument type expects so
+  \my_mec_func:nx {abcdefg} {\l_my_char_var_var_tl}
+  \ExplSyntaxOff
+\end{latexsample}
+
+
+
+\subsection{MEC Method 2: Using \texttt{\textbackslash{}exp\_args:N} Functions}
+
+
+The MEC method described in \cref{sec:mec-method-1} requires one to generate a separate function variant for each combination of argument types.
+This can be tedious when there are many combinations to consider.
+\LTT{} provides another simpler way to conduct MEC using \inltex|\exp_args:N| functions.
+The \inltex|\exp_args:N| functions are a series of predefined functions in \LTT{} that can be used to alter the argument types of an existing function without generating new function variants.
+Suppose there is a function with 3 arguments \inltex|\my_example_func:nnn|, and one would like to change the argument types of the 1st, 2nd, and 3rd arguments to \inlpl|X|, \inlpl|Y|, and \inlpl|Z|, respectively.
+With \inltex|\cs_generate_variant:Nn|, this is the typical usage:
+\begin{latexsample}[notitle, noexec, nobeforeafter]
+\cs_generate_variant:Nn \my_example_func:nnn {XYZ}
+% call \my_example_func:XYZ
+\my_example_func:XYZ {arg1} {arg2} {arg3}
+\end{latexsample}
+
+\noindent With \inltex|\exp_args:N| functions, this can be done as follows:
+\begin{latexsample}[notitle, noexec, nobeforeafter]
+\exp_args:NXYZ \my_example_func:nnn {arg1} {arg2} {arg3}
+\end{latexsample}
+
+\noindent It can be seen that there is no need to generate new function variants.
+One can simply add \inltex|\exp_args:NXYZ| before the function call, and the argument types will be changed accordingly.
+
+In \cref{ex:mec-use-exp-args}, we demonstrate how to use \inltex|\exp_args:N| functions to achieve the same effect as in \cref{ex:mec-use-variant-v} and \cref{ex:mec-use-variant-x}.
+\begin{latexsample}[examplelabel={ex:mec-use-exp-args},exampletitle={Using \texttt{\textbackslash{}exp\_args:N} Functions}]
+  \ExplSyntaxOn
+  % the first argument is still `n' type
+  % the second argument is passed by value
+  \exp_args:NnV \my_mec_func:nn {abcdefg} \l_my_char_var_tl
+  % the first argument is still `n' type
+  % the second argument is expanded recursively
+  \exp_args:Nnx \my_mec_func:nn {abcdefg} {\l_my_char_var_var_tl}
+  \ExplSyntaxOff
+\end{latexsample}
+\noindent \inltex|\exp_args:N| functions can be used to partially modify the first argument(s) of a function.
+This is demonstrated in \cref{ex:mec-use-exp-args-partial}, where \inltex|\exp_args:NV| is used on a function of two arguments.
+In this case, only the first argument is modified to be of type \inlpl|V|, while the rest remains unchanged.
+\begin{latexsample}[examplelabel={ex:mec-use-exp-args-partial},exampletitle={Using \texttt{\textbackslash{}exp\_args:N} Functions Partially}]
+  \ExplSyntaxOn
+  % partially modify the first argument to `V' type while keeping the rest unchanged
+  \exp_args:NV \my_mec_func:nn \l_my_char_var_tl {\l_my_char_var_tl}
+  \ExplSyntaxOff
+\end{latexsample}
+
+Although \inltex|\exp_args:N| functions are convenient, the predefined ones are only limited to controlling the expansion of up to 4 arguments.
+When the number of arguments is large, the predefined \inltex|\exp_args:N| functions may not cover all argument type combinations.
+If that is the case, one can use the more complicated \inltex|\cs_generate_variant:Nn| method; or use \inltex|\exp_args_generate:n| to generate the desired \inltex|\exp_args:N| function.
+
+
+\subsection{Prevention of Expansion}
+
+
+\subsection{Dealing with Starred Functions}
+

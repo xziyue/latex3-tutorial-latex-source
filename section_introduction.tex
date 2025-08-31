@@ -1,0 +1,148 @@
+\section{Introduction}
+
+\LT{} is widely known as a typesetting language.
+Many \LT{} users are familiar with \LT{}'s interface to control the document's content and style.
+It is often overlooked that \LT{} also provides generic programming interface to control the logic of the document generation process.
+In this tutorial, we introduce \LTT{}--a set of modern programming interfaces provided by \LT{} to help users implement various general purpose algorithms.
+
+This is an example based tutorial. 
+The following notations are used as references to different objects in the tutorial.
+\begin{itemize}
+  \item ``\cref{ex:groups}'' is used as a reference to an example.
+  \item ``\lref{ex:groups}{1}'' is used as a reference to a line in an example. Here, the @ symbol is used to separate the line number and the example number.
+  \item ``\lref{ex:groups}{1-5}'' is used as a reference to a range of lines in an example.
+\end{itemize}
+
+\subsection{Important Concepts in \LT{}}\label{sec:important-concepts}
+
+\LT{} is a programming language. 
+It is Turing complete just like well-known generic programming languages such as Python and C++, which means that they all have the same problem solving capabilities.
+\LT{} provides library support for boolean logic, arithmetic, data structures, and string processing.
+Before introducing how to program in \LT{}, we want to describe three concepts that every \LT{} programmer should know.
+Some of these concepts are unique to \LT{} and cannot be found in popular programming languages.
+
+
+%The first concept is \textbf{category code}.
+\subsubsection{Category Code}
+%\par\medskip\noindent\textbf{Category Code.}
+In many existing languages, valid function/variable names and meanings of characters are predefined and cannot be changed.
+In \LT{}, the user has the freedom to change them.
+For example, normally \verb|\| is used to start a control sequence, \verb|$| is used to toggle math mode, \verb|%| is used for comments, and Latin alphabets are used as control sequence names.
+However, with several lines of code, one can change the configurations so that \verb|@| is used to start a control sequence, \verb|+| is used to toggle math mode, \verb|#| is used for comments, and both Latin alphabets and Arabic numerals are used as control sequence names.
+%To understand how this is possible, we need to introduce the concept of \emph{category code}.
+This is made possible by using category code.
+Category code is a hidden attribute associated with every character.
+In \cref{tab:cat-code}, we show the 16 category codes in \LT{} and example characters with given category codes in default \LT{} configuration.
+In \LT{}, the meaning of each character is determined by its category code instead of its character code. 
+% For example, any character with category code 7 can be used to denote superscript.
+% In default \LT{} configuration, the character \verb|^| is set to have character code 7 so that it can be used for superscript.
+% The category code associated with each character can be changed. 
+% A user can generate a character \verb|^| with category code 8, which means that it can be used to denote subscript.
+In \cref{ex:category-code}, we show the category code of three characters: \verb|^|, \verb|_|, and \verb|*|.
+The category code of \verb|^| and \verb|_| are 7 and 8, respectively. 
+That is the reason why they can be used to denoted superscript and subscript.
+In \lref{ex:category-code}{8}, we change the category code of \verb|*| to 7.
+Notice how it triggers subscript in math equations afterwards.
+\begin{latexsample}[examplelabel={ex:category-code},exampletitle={Category Code}]
+% show the category code of some characters
+\par The category code of \^{} is \the\catcode`^
+\par The category code of \_{} is \the\catcode`_
+\par The category code of * is \the\catcode`*
+% a match equation
+\par $a*b~a^b~a_b$
+% change the category code of * to 7
+\catcode`*=7
+% see what changes in the equation
+\par $a*b~a^b~a_b$
+\end{latexsample}
+\noindent 
+%Category code makes \LT{} different from many existing programming languages.
+It is worth noting that in \LT{}, two characters are considered equal if and only if their character codes are the same and their category codes are the same.
+
+
+\begin{table}[tb]
+  \centering
+  \footnotesize
+  \begin{tabular}{|c|>{\centering\arraybackslash}m{0.3\linewidth}|>{\centering\arraybackslash}m{0.3\linewidth}|}
+    \hline
+    \makecell{Category\\Code} & Description & \makecell{Example\\Character(s)} \\ \hline
+    0 & Start a control sequence  & \verb|'\'| \\ \hline
+    1 & Start a group & \verb|'{'| \\ \hline
+    2 & End a group & \verb|'}'| \\ \hline
+    3 & Toggle math mode & \verb|'$'| \\ \hline
+    4 & Alignment tab & \verb|'&'| \\ \hline
+    5 & End of line & ASCII(13) \\ \hline
+    6 & Macro parameter & \verb|'#'| \\ \hline
+    7 & Superscript & \verb|'^'| \\ \hline
+    8 & Subscript & \verb|'_'| \\ \hline
+    9 & Ignored character & ASCII(0) \\ \hline
+    10 & White space (spacer) & ASCII(32), ASCII(9) \\ \hline
+    11 & Letter & \verb|'a'|, \ldots, \verb|'z'|, \verb|'A'|, \ldots, \verb|'Z'|\\ \hline
+    12 & Other & \verb|'0'|, \ldots, \verb|'9'|, \verb|';'|, \verb|','|, \verb|'?'|, \ldots\\ \hline
+    13 & Active (used as commands) & \verb|'~'|, \ldots\\ \hline
+    14 & Comment & \verb|%| \\ \hline
+    15 & Invalid & ASCII(127) \\ \hline
+  \end{tabular}
+  \caption{List of the 16 category codes in \LT{} and example characters with given category codes under standard \LT{} configuration. Printable characters are surrounded with single quotes; unprintable characters are represented using ASCII codes.}
+  \label{tab:cat-code}
+\end{table}
+
+
+\subsubsection{Groups}
+%\par\medskip\noindent\textbf{Groups.}
+%The second concept is \textbf{group}.
+Groups in \LT{} are similar to scopes in other programming languages.
+By default, almost all changes (e.g., macro definition, category code assignment, font selection) in \LT{} are local, which means they only apply to the current group.
+These changes are not visible outside the group.
+In \LT{}, one way to create a new group is to use braces (\verb|{}|).
+In \cref{ex:groups}, we show the effect of groups.
+On \lref{ex:groups}{2}, we define the macro \inltex|\abc|.
+On \lref{ex:groups}{6}, we update the definition of \inltex|\abc|.
+Notice how the updated definition only applies to the group enclosed by \lref{ex:groups}{4-8}.
+Similar principle is also reflected by fonts: the \inltex|\normalfont| command on \lref{ex:groups}{5} only affects the contents within the group.
+\begin{latexsample}[examplelabel={ex:groups},exampletitle={Groups}]
+\itshape
+\def\abc{abc }%
+\abc%
+{%
+  \normalfont%
+  \def\abc{def }%
+  \abc%
+}%
+\abc%
+\end{latexsample}
+\noindent In \LT{}, the user can also make changes that are global, meaning that these changes will be visible everywhere.
+It is vital for \LT{} users to determine if a change should be local or global.
+
+
+%The third concept is \textbf{macro expansion control}.
+%\par\medskip\noindent\textbf{Macro Expansion Control.}
+\subsubsection{Macro Expansion Control (MEC)}\label{sec:intro-macro-expansion-control}
+Fundamentally, \LT{} is a simple macro language that works by replacing patterns according to a set of defined macro functions.
+The \LT{} compiler will not attempt to generate an Abstract Syntax Tree (AST) for the \LT{} source, which means it has very little understanding over its input compared to other languages' compilers that rely on ASTs.
+One of the main consequences of such simplification is \LT{} compilers are less powerful in terms of function calls, because it has limited insight over the function arguments.
+In \cref{ex:trad-expan-ctrl}, suppose we have a function \inltex|\cmda| that scans each character in its argument \verb|#1| and apply some character-wise operation. 
+In \inltex|\cmda|, we use the \inltex|\detokenize| command to output the argument as-is without any further processing.
+Because it is common to store characters in a control sequence, let us observe what happens when \inltex|\cmda| is called with a control sequence \inltex|\vala| as its argument (\lref{ex:trad-expan-ctrl}{7}).
+From the first line of output, it can be seen that the argument is still \inltex|\vala|, which means the character-wise operation in \inltex|\cmda| will not work because the input is the control sequence \inltex|\cmda| itself instead of the characters stored in it.
+\begin{latexsample}[examplelabel=ex:trad-expan-ctrl,exampletitle={Expansion Control},noexport]
+\def\cmda#1{%
+  % do some character-wise operation with #1
+  arg: \detokenize{#1} % output #1 as-is
+}
+\def\vala{val-a}
+\def\valb{\vala}
+\par\cmda{\vala}
+\par\expandafter\expandafter\expandafter\cmda\expandafter{\vala}
+\par\expandafter\expandafter\expandafter\cmda\expandafter{\valb}
+\end{latexsample}
+\noindent In order for function calls to work properly in \LT{}, it is the user's responsibility to prepare the function arguments so that they are in the expected form of the function.
+This procedure is known as expansion control.
+One of the ways to conduct expansion control is to use the \TeX{} primitive \inltex|\expandafter|, whose usage is so complicated that it deserves its own tutorial \cite{bechtolsheim1988tutorial}.
+On \lref{ex:trad-expan-ctrl}{8}, we demonstrate how to use \inltex|\expandafter| so that \inltex|\cmda| can correctly access the characters stored in \inltex|\vala|.
+This approach does not work for all scenarios: notice how it fails when we use \inltex|\valb| as the input.
+
+\LTT{} has provided user friendly interfaces to help \LT{} programmers from different backgrounds cope with the unique mechanisms of \LT{}.
+For more low-level details about \TeX{}/\LT{}, one is referred to \cite{knuth1984texbook,berry2017latex}.
+
+\input{fragments/compiling_examples}

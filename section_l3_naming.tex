@@ -1,0 +1,184 @@
+\section{\LTT{} Naming Conventions}
+
+As mentioned in \cref{sec:important-concepts}, \LT{} is a macro language.
+Macros can be used as variables to store data.
+They can also be used as functions to apply operations on their arguments.
+The duality of macros can make \LT{} source code very puzzling to read, because it is difficult to determine if a control sequence in the source code is a variable or a function.
+
+To improve readability, \LT{} introduces a special naming system for macros so that functions and variables are clearly distinguishable based on names. 
+The naming system also encodes additional information in the macros, such as the number of function arguments, the type of variables, and the scope of variables. 
+
+
+\subsection{\LTT{} Mode}
+
+
+To program using \LTT{}, one must first enter the \LTT{} mode.
+In \LTT{} mode, the category codes of characters are changed for better programming experience.
+The difference between \LTT{} mode and default \LT{} mode are summarized as follows:
+\begin{enumerate}
+    \item The category codes of \verb|_| and \verb|:| are set to 11 (letter), which allows them to be used in command names.
+    \item The category codes of white space characters and newline characters are set to 9 (ignored), which causes \LTT{} code to ignore all spaces and line breaks.
+\end{enumerate}
+The command \inltex|\ExplSyntaxOn| is used to enter \LTT{} mode; the command \inltex|\ExplSyntaxOff| is used to exit \LTT{} mode.
+
+In \LTT{} mode, we cannot use \verb|_| to denote subscript anymore because its category code has been changed to 11. Instead, a constant \inltex|\c_math_subscript_token| is defined in \LTT{} for this purpose.
+There are several ways to typeset the ignored white space and newline characters in \LTT{} mode.
+White spaces can be entered using \verb|~|, \verb|\ | (escaping space), or \inltex|\space| depending on the scenario.
+New lines can be inserted using the \inltex|\par| command.
+
+
+\subsection{Names of Variables}\label{sec:name-of-variables}
+
+In \LTT{}, the naming of variables and functions are different so that they are easily distinguishable. 
+A \LTT{} variable can be public or private depending on semantics: public variables can be accessed by package users and private variables can only be accessed by package authors.
+The name of each \LTT{} variable consists of four parts: \texttt{scope}, \texttt{module}, \texttt{description}, and \texttt{type}. 
+We will describe the meaning of each part later.
+
+
+\vspace*{0.5\baselineskip}
+\par\noindent The name of a public variable should follow:
+\begin{center}
+\MintedHighlightingTF{%
+\input{_minted-main/default.pygstyle}
+\ttfamily
+\PYG{n+nv}{\PYGZbs{}}\PYG{n+nc}{<scope>}\PYG{n+nv}{\_}\PYG{n+kn}{<module>}\PYG{n+nv}{\_}\PYG{n+nv}{<description>}\PYG{n+nv}{\_}\PYG{k+kt}{<type>}
+}{%
+\texttt{\string\<scope>\_<module>\_<description>\_<type>}
+}
+\end{center}
+The name of a private variable should follow:
+\begin{center}
+\MintedHighlightingTF{%
+\input{_minted-main/default.pygstyle}
+\ttfamily
+\PYG{n+nv}{\PYGZbs{}}\PYG{n+nc}{<scope>}\PYG{n+nv}{\_\_}\PYG{n+kn}{<module>}\PYG{n+nv}{\_}\PYG{n+nv}{<description>}\PYG{n+nv}{\_}\PYG{k+kt}{<type>}
+}{%
+\texttt{\string\<scope>\_\_<module>\_<description>\_<type>}
+}
+\end{center}
+Private variable names have an extra underscore between \texttt{scope} and \texttt{module}.
+
+\vspace*{0.5\baselineskip}
+\par\noindent The detail of each part is described as follows.
+\begin{itemize}
+\item \texttt{scope}: a single letter identifying the scope of the variable
+\begin{itemize}
+\item \texttt{l}: local variable (i.e., to be accessed within current group)
+\item \texttt{g}: global variable (i.e., to be accessed beyond current group)
+\item \texttt{c}: constant
+\end{itemize}
+\item \texttt{module}: the name of the module where the variable is defined
+\item \texttt{description}: the description of the variable
+\item \texttt{type}: the variable type; some common types are shown in \cref{tbl:var-type}.
+\end{itemize}
+The \texttt{description} part can contain multiple segments separated by underscores. 
+Some valid variables names are shown here.
+\begin{itemize}
+\item \inltex|\g_doc_variable_int|
+\item \inltex|\l_doc_bg_color_r_fp|
+\item \inltex|\l_doc_bg_color_g_fp|
+\item \inltex|\l__mypkg_tmpa_seq|
+\item \inltex|\c_left_brace_str|
+\end{itemize}
+
+
+\begin{table}[htpb]
+\centering
+\begin{tabular}{>{\ttfamily\centering}p{0.15\linewidth}p{0.7\linewidth}}
+\toprule
+\multicolumn{1}{c}{Type} & Description\\ \midrule
+clist & comma separated list\\
+dim & dimension\\
+fp & floating point number\\
+int & integer\\
+seq & sequence\\
+str & string\\
+tl & token list\\
+bool & boolean\\
+regex & regular expression\\
+prop & property list\\
+ior & IO read\\
+iow & IO write\\ \bottomrule
+\end{tabular}
+%TODO: insert reference
+\caption{Commonly used variable types and their descriptions. Typically every \LTT{} module introduces one or more types.}
+\label{tbl:var-type}
+\end{table}
+
+\subsection{Names of Functions}
+
+To increase the readability, a function name in \LTT{} includes additional information about the arguments that it absorbs. 
+
+\vspace*{0.5\baselineskip}
+\par\noindent
+The name of a public \LTT{} function should follow:
+\begin{center}
+\MintedHighlightingTF{%
+\input{_minted-main/default.pygstyle}
+\ttfamily
+\PYG{n+nf}{\PYGZbs{}}\PYG{n+kn}{<module>}\PYG{n+nf}{\_}\PYG{n+nf}{<description>}\PYG{s+dl}{:}\PYG{n+na}{<arg-spec>}
+}{%
+\texttt{\string\<module>\_<description>:<arg-spec>}
+}
+\end{center}
+The name of a private \LTT{} function should follow:
+\begin{center}
+\MintedHighlightingTF{%
+\input{_minted-main/default.pygstyle}
+\ttfamily
+\PYG{n+nf}{\PYGZbs{}}\PYG{n+nf}{\_\_}\PYG{n+kn}{<module>}\PYG{n+nf}{\_}\PYG{n+nf}{<description>}\PYG{s+dl}{:}\PYG{n+na}{<arg-spec>}
+}{%
+\texttt{\string\_\_<module>\_<description>:<arg-spec>}
+}
+\end{center}
+The semicolon is only used in \LTT{} function names, not in variable names.
+
+\vspace*{0.5\baselineskip}
+\par\noindent
+The meaning of each part is described as follows.
+\begin{itemize}
+\item \texttt{module}: the name of the module where the function is defined
+\item \texttt{description}: the description of the function
+\item \texttt{arg-spec}: the argument specifications--it is made up of zero or more Latin alphabets describing the type of every function argument; each letter specifies the type of an argument (see \cref{tbl:arg-spec-type})
+\end{itemize}
+Some valid function names are shown here.
+\begin{itemize}
+\item \inltex|\group_begin:|
+\item \inltex|\tl_put_right:Nn|
+\item \inltex|\tl_gput_right:Nx|
+\item \inltex|\__doc_do_something:Nnxx|
+\end{itemize}
+
+\begin{table}[htpb]
+\centering
+\small
+\setlength\extrarowheight{3pt}
+\begin{tabular}{>{\ttfamily\centering}cm{0.7\linewidth}}
+\toprule
+\multicolumn{1}{c}{\makecell{\texttt{arg-spec}\\ Letter}} & Description\\ \midrule
+n & A token list argument\\
+N & A single token argument\\
+V & An argument passed by value\\
+o & A token list argument expanded once\\
+x & A token list argument expanded recursively\\
+T & A true branch in conditional statements\\
+F & A false branch in conditional statements\\
+p & A parameter list\\
+c & A token list argument that is fully expanded and treated as a command name\\
+w & Weird arguments (the ones that do not fall in other categories)\\
+\bottomrule
+\end{tabular}
+%TODO: insert reference and delete Section
+\caption{Commonly used argument specification letters and their descriptions. More details are described in \refplaceholder.}
+\label{tbl:arg-spec-type}
+\end{table}
+
+%TODO: think about how to deal with token and token lists
+
+\subsection{The Use of \LTT{} Naming Conventions}
+
+The \LTT{} naming conventions are voluntary. 
+In general, \LTT{} does not check if the code follows \LTT{} naming conventions.
+However, it is recommended that every \LTT{} programmer strictly follow these conventions to improve the readability and compatibility their code.
+%TODO: insert reference and delete Section
+In Section \textcolor{red}{???}, it can also be seen that \LTT{}'s expansion control mechanism sometimes requires functions to be named after \LTT{} conventions.

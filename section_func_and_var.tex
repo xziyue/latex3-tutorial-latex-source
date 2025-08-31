@@ -1,0 +1,71 @@
+\section{Variables and Functions}
+
+In this section, we introduce the definition and usage of variables and functions in \LTT{}.
+
+\par\medskip\noindent\textbf{Variables.}
+Each \LTT{} type is associated with a set of dedicated functions for defining, modifying, and accessing variables.
+Most \LTT{} types provide the following functions for managing variables:
+\begin{itemize}
+    \item \verb|new| functions to define a new variable (e.g., \inltex|\tl_new:N|, \inltex|\int_new:N|)
+    \item \verb|set| functions to set a variable locally (e.g., \inltex|\tl_set:Nn|, \inltex|\int_set:Nn|)
+    \item \verb|gset| functions to set a variable globally (e.g., \inltex|\tl_gset:Nn|, \inltex|\int_gset:Nn|)
+    \item \verb|item| functions to extract an element from data containers by index or key (e.g., \inltex|\tl_item:Nn|, \inltex|\seq_item:Nn|, \inltex|\prop_item:Nn|)
+    \item \verb|get| functions to get a specific element from data containers by index (e.g., \inltex|\seq_get_left:N|, \inltex|\seq_get_right:N|)
+    \item \verb|use| functions to put the value of a variable into the document (e.g., \inltex|\tl_use:N|, \inltex|\seq_use:Nn|)
+    \item \verb|show| functions to output the value of a variable to the terminal for debug purposes (e.g., \inltex|\tl_show:N|, \inltex|\seq_show:N|)
+\end{itemize}
+Note that not all \LTT{} modules follow this convention. In general, to use a variable in \LTT{}, one should follow these steps:
+\begin{enumerate}
+    \item Determine the correct variable type and call the corresponding definition function
+    \item Determine the scope, visibility (private/public), and description of the variable and name it using \LTT{} naming conventions
+    \item Use functions in the variable's module to operate on the variable
+\end{enumerate}
+An example of using variables is shown in \cref{ex:var-example}.
+
+\begin{latexsample}[examplelabel={ex:var-example},exampletitle={Using Variables}]
+\ExplSyntaxOn
+% define a new integer varaible
+\int_new:N \l_my_integer_int
+% set the integer value to be the result of an integer expression
+\int_set:Nn \l_my_integer_int {2*(3+1)}
+% output the integer value
+The~integer~is~\int_use:N \l_my_integer_int
+\ExplSyntaxOff
+\end{latexsample}
+
+\par\medskip\noindent\textbf{Functions.}
+In \LTT{}, functions are generally defined using the \inltex|\cs_new:Npn| function.
+Although related functions such as \inltex|\cs_new_protected:Npn|, \inltex|\cs_new_nopar:Npn|, and \inltex|\cs_new_protected_nopar:Npn| exist, we only use \inltex|\cs_new:Npn| in this tutorial since it should be used in most scenarios. 
+Readers are encouraged to read the \LTT{} documentation for more information about the related functions.
+In general, to define a function, one should follow these steps:
+\begin{enumerate}
+    \item Determine the number of function arguments and the argument specification of each argument; in most cases, the argument specification is either \verb|N| or \verb|n|
+    \item Determine the scope, visibility (private/public), and description of the function and name it using \LTT{} naming conventions
+    \item Provide the function definition in the function body
+\end{enumerate}
+An example of using functions is shown in \cref{ex:func-example}.
+
+\begin{latexsample}[examplelabel={ex:func-example},exampletitle={Using Functions}]
+  \ExplSyntaxOn
+  % define a new function that accepts two n-type arguments
+  \cs_new:Npn \my_func:nn #1#2
+  {
+      [arg1=#1][arg2=#2]
+  }
+  % call the function with two arguments
+  \par\my_func:nn {first} {second}
+  % show the definition of the function
+  \par\cs_meaning:N \my_func:nn
+  % copy the definition of the new function
+  \cs_set_eq:NN \my_func_copy:nn \my_func:nn
+  % show the definition of the copied function
+  \par\cs_meaning:N \my_func_copy:nn
+  \ExplSyntaxOff
+\end{latexsample}
+
+
+\LTT{} also provides useful utility functions such as \inltex|\cs_new_eq:NN| for copying the definition of functions; and \inltex|\cs_meaning:N|, \inltex|\cs_show:N| for displaying the definition of functions, which can be helpful for debugging.
+
+% In the examples of this tutorial, we also use \inltex|\cs_set:Npn| to define new functions.
+% The difference is that \inltex|\cs_new:Npn| will define the function globally across group boundaries, and it will raise an error if the function is already defined; while \inltex|\cs_set:Npn| will only define the function locally within the group and overwrite the existing function definition without errors.
+% Therefore, \inltex|\cs_set:Npn| is also used in this tutorial to avoid compilation errors when redefining functions.

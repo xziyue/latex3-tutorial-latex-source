@@ -1,0 +1,97 @@
+\section{Understanding \LTT{} Documentation}
+
+Currently, most information about \LTT{} is in \cite{l3interface}. 
+It is essentially technical documentation on \LTT{} functions, scratch variables, and constants. 
+We briefly describe how these items are presented in \cite{l3interface}.
+\begin{itemize}
+\item \LTT{} functions: the majority of the contents in \cite{l3interface} are about \LTT{} functions.
+In \cite{l3interface}, each function is documented using a block similar to the one shown in  \cref{fig:l3-doc-func-example}.
+The colored background is added in the figure to help understand the block.
+The green part in \cref{fig:l3-doc-func-example} indicates the basic forms and the variants of the function. 
+The first and third line in the green part are the basic forms for local and global assignment, respectively.
+The second line shows the function variants for local assignment; the fourth line shows the function variants for global assignment.
+%TODO: insert reference and delete Section
+Function variants are used to control the expansion of macros. 
+More details about them will be introduced in \refplaceholder.
+The blue part in \cref{fig:l3-doc-func-example} shows the basic usage of the function, where the meaning of each function argument is shown.
+The red part in \cref{fig:l3-doc-func-example} shows the detailed description of the function.
+
+\item Scratch variables: variables in \LTT{} need to be defined before use. 
+\LTT{} has predefined a set of empty variables for convenience, which are known as scratch variables.
+In \LTT{}, each module will usually define several scratch variables.
+They are documented in specific sections, similar to the one demonstrated in \cref{fig:l3-scratch-var-example}.
+The left hand side of \cref{fig:l3-scratch-var-example} shows the predefined scratch variables; the right hand side shows the description of the variables.
+It is recommended to not use scratch variables (especially in large projects or generic packages), which can reduce the chances of variable collision.
+
+\item Constants: \LTT{} defines many constants such as the value of $\pi$, the value of $e$, special characters, etc. 
+They are documented in specific sections, similar to the one demonstrated in \cref{fig:l3-constant-example}.
+The left hand side of \cref{fig:l3-constant-example} shows the command name of the constant; the right hand side shows the description of the constant.
+
+\end{itemize}
+
+\begin{figure*}[tb]
+\centering
+\mdfdefinestyle{plainmdbox}{topline=false,leftline=false,rightline=false,bottomline=false}
+\begin{minipage}[t]{0.52\linewidth}
+\begin{mdframed}[backgroundcolor=green!30, style=plainmdbox]
+\begin{tabular}{l}
+\toprule
+\inlpl|\tl_set:Nn|\\
+{\color{gray}\verb|\tl_set|}\inlpl!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)! \\
+\inlpl|\tl_gset:Nn| \\
+{\color{gray}\verb|\tl_gset|}\inlpl!:(NV|Nv|No|Nf|Nx|cn|cV|cv|co|cf|cx)! \\ \bottomrule
+\end{tabular}
+\end{mdframed}
+\end{minipage}
+\begin{minipage}{0.4\linewidth}
+\vspace*{3em}
+\begin{mdframed}[backgroundcolor=blue!30, style=plainmdbox]
+\inlpl|\tl_set:Nn| {\ttfamily<\textsl{tl var}> \{<\textsl{tokens}>\}}
+\end{mdframed}
+\end{minipage}\\
+\begin{minipage}[t]{0.15\linewidth}
+\phantom{}
+\end{minipage}
+\begin{minipage}{0.82\linewidth}
+\begin{mdframed}[backgroundcolor=red!30, style=plainmdbox]
+Sets <\textit{tl var}> to contain <\textit{tokens}>, removing any previous content from the variable.
+\end{mdframed}
+\end{minipage}
+\caption{An example of function documentation excerpted from \LTT{} documentation. 
+Colored background is added in this figure to help understand the documentation.}
+\label{fig:l3-doc-func-example}
+\end{figure*}
+
+\begin{figure*}[tb]
+\centering
+\begin{minipage}[t]{0.15\linewidth}
+\begin{tabular}{l}
+\toprule
+\inlpl|\l_tmpa_tl|\\
+\inlpl|\l_tmpb_tl| \\ \bottomrule
+\end{tabular}
+\end{minipage}
+\begin{minipage}[t]{0.83\linewidth}
+\vspace*{-1em}
+Scratch token lists for local assignment.
+These are never used by the kernel code, and so are safe for use with any \liii--defined function.
+However, they may be overwritten by other non-kernel code and so should only be used for short-term storage.
+\end{minipage}
+\caption{An example of scratch variables excerpted from \LTT{} documentation.}
+\label{fig:l3-scratch-var-example}
+\end{figure*}
+
+\begin{figure*}[tb]
+\centering
+\begin{minipage}[t]{0.15\linewidth}
+\begin{tabular}{l}
+\toprule
+\inlpl|\c_pi_fp|\\ \bottomrule
+\end{tabular}
+\end{minipage}
+\begin{minipage}[t]{0.83\linewidth}
+The value of $\pi$. This can be input directly in a floating point expression as \texttt{pi}.
+\end{minipage}
+\caption{An example of constant variables excerpted from \LTT{} documentation.}
+\label{fig:l3-constant-example}
+\end{figure*}
