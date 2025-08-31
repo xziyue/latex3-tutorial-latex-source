@@ -63,6 +63,7 @@ See \cref{ex:mec-use-variant-x} for an example.
   % try to use pass the nested variable by value to capitalize its content
   % this will not work
   \my_mec_func:nV {abcdefg} \l_my_char_var_var_tl
+
   % to obtain the content of nested variables, we need to use 'x' argument type, which expands the argument recursively
   \cs_generate_variant:Nn \my_mec_func:nn {nx}
   % now the content of the nested variable is capitalized
@@ -102,6 +103,7 @@ In \cref{ex:mec-use-exp-args}, we demonstrate how to use \inltex|\exp_args:N| fu
   % the first argument is still `n' type
   % the second argument is passed by value
   \exp_args:NnV \my_mec_func:nn {abcdefg} \l_my_char_var_tl
+
   % the first argument is still `n' type
   % the second argument is expanded recursively
   \exp_args:Nnx \my_mec_func:nn {abcdefg} {\l_my_char_var_var_tl}
@@ -124,6 +126,29 @@ If that is the case, one can use the more complicated \inltex|\cs_generate_varia
 
 \subsection{Prevention of Expansion}
 
+In some cases, we would like to prevent the content of a variable or token list from being expanded.
+This can be achieved with \inltex|\exp_not:| functions.
 
-\subsection{Dealing with Starred Functions}
+\begin{latexsample}[examplelabel={ex:mec-prevention-expansion},exampletitle={Prevention of Expansion}]
+  \ExplSyntaxOn
+  \tl_new:N \l_my_test_tl
+  % recursively expand the nested variable
+  \tl_set:Nx \l_my_test_tl { \l_my_char_var_var_tl }
+  \par \cs_meaning:N \l_my_test_tl
 
+  % prevent expansion of a variable
+  \tl_set:Nx \l_my_test_tl { \exp_not:N \l_my_char_var_var_tl }
+  \par \cs_meaning:N \l_my_test_tl
+
+  % prevent expansion of a token list
+  \tl_set:Nx \l_my_test_tl { \exp_not:n {\alpha \beta} }
+  \par \cs_meaning:N \l_my_test_tl
+
+  % expand to the value of the variable and prevent further expansion
+  \tl_set:Nx \l_my_test_tl { \exp_not:V \l_my_char_var_var_tl }
+  \par \cs_meaning:N \l_my_test_tl
+
+  \tl_set:Nx \l_my_test_tl { {\exp_not:V \l_my_char_var_var_tl} }
+  \par \cs_meaning:N \l_my_test_tl
+  \ExplSyntaxOff
+\end{latexsample}
