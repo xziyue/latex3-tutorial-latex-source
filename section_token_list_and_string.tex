@@ -1,0 +1,52 @@
+\section{Token List and String}
+
+A token list is a sequence of tokens, which can be used to store data in \LaTeX{}.
+It is very easy to create a token list: simply enclose the data with braces \inlpl|{...}|, and a token list is formed.
+A string in \LTT{} is a special type of token list that contains only string tokens.
+In this section, we show examples of creating, manipulating, and using token lists and strings.
+
+In \cref{ex:tl-ops}, token lists are used as a container to store and access data.
+In the example, we build a simple student management system that allows one to obtain student names by their IDs.
+We also define a function that outputs all students stored.
+\begin{latexsample}[exampletitle={Token List Operations},examplelabel={ex:tl-ops}]
+  % declare functions in LaTeX3 mode
+  \ExplSyntaxOn
+  % create a token list to store students
+  \tl_new:N \l_student_db_tl
+  % create a temporary token list
+  \tl_new:N \l_student_tmp_tl
+  \newcommand{\AddStudent}[1]
+  {
+    % append data to the token list
+    \tl_put_right:Nn \l_student_db_tl {{#1}}
+  }
+  \newcommand{\GetStudentName}[1]
+  {
+    % get data by index
+    \tl_item:Nn \l_student_db_tl {#1}
+  }
+  \newcommand{\GetAllStudentName}
+  {
+    % clear temporary token list
+    \tl_clear:N \l_tmp_student_tl
+    % iterate over each item in the token list
+    % the content of each item will be stored in ##1 in loop body
+    \tl_map_inline:Nn \l_student_db_tl
+    {
+      \tl_put_right:Nn \l_tmp_student_tl {##1,}
+    }
+    % use the temporary token list in the document
+    \tl_use:N \l_tmp_student_tl
+  }
+  \ExplSyntaxOff
+
+  % use functions in normal mode
+  \AddStudent{Alice}
+  \AddStudent{Bob}
+  \par\GetStudentName{1}
+  \par\GetStudentName{2}
+  \par\GetAllStudentName
+  \AddStudent{Mary}
+  \AddStudent{John}
+  \par\GetAllStudentName
+\end{latexsample}
