@@ -78,3 +78,38 @@ This shows that the string assignment function will attempt to keep the content 
 \textbf{However, because of implementation details of \LaTeX{}, the values assignment to string variables may not be exactly the same as input.}
 For example, one can notice there is an extra space between X and ! in the output of \inltex|\l_my_b_tl|.
 
+In \LaTeX{}, extra care is needed when comparing token lists.
+For token lists to be equal, not only the character codes of each token need to be the same, but also the category codes of each token need to be the same.
+\begin{latexsample}[exampletitle={Comparison of Token Lists},examplelabel={ex:token-list-comparison}]
+\def\testVar{_}
+\ExplSyntaxOn
+\tl_new:N \l_my_test_tl
+\tl_set:Nn \l_my_test_tl {_}
+\par\tl_if_eq:NNTF \l_my_test_tl \testVar {Same} {Diff}
+\par\str_if_eq:NNTF \l_my_test_tl \testVar {Same} {Diff}
+\ExplSyntaxOff
+\end{latexsample}
+In \cref{ex:token-list-comparison}, we created two token lists: \inltex|\testVar| and \inltex|\l_my_test_tl|, both containing the underscore character.
+However, because \inltex|\testVar| is created in normal \LaTeX{} mode and \inltex|\l_my_test_tl| is created in \LTT{} mode, the category codes of the underscore character in the two token lists are different.
+When comparing the two token lists using token list comparison functions \inltex|\tl_if_eq:|, the two token lists are not the same. 
+That is because \inltex|\tl_if_eq:| functions compare both character codes and category codes of each token.
+When comparing the two token lists using string comparison functions \inltex|\str_if_eq:|, the two token lists are the same due to the fact that \inltex|\str_if_eq:| functions only compare the character codes of each token.
+
+In \cref{ex:text-in-squares}, we use \inlpl|map| functions to iterate through each character in a string and output each character inside a square box.
+\begin{latexsample}[exampletitle={Create Text in Squares},examplelabel={ex:text-in-squares}]
+\ExplSyntaxOn
+\tl_new:N \l_my_tmpa_str
+\cs_new:Npn \my_square_text:n #1
+{
+  % get the length of the string
+  \str_set:Nn \l_my_tmpa_str {#1}
+  \str_map_inline:Nn \l_my_tmpa_str
+  {
+    % output each character in a square box
+    \fbox{\makebox[1.5em][c]{\rule{0em}{1.5em} ##1}}
+  }
+}
+\par\my_square_text:n {Hello}
+\par\my_square_text:n {It's~Me!}
+\ExplSyntaxOff
+\end{latexsample}
