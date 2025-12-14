@@ -11,14 +11,21 @@ We also define a function that outputs all students stored.
 \begin{latexsample}[exampletitle={Token List Operations},examplelabel={ex:tl-ops}]
   % declare functions in LaTeX3 mode
   \ExplSyntaxOn
-  % create a token list to store students
+  % create a token list to access student by index
   \tl_new:N \l_student_db_tl
-  % create a temporary token list
-  \tl_new:N \l_student_tmp_tl
+  % create a token list to store all students
+  \tl_new:N \l_student_all_tl
   \newcommand{\AddStudent}[1]
   {
     % append data to the token list
     \tl_put_right:Nn \l_student_db_tl {{#1}}
+    \tl_if_empty:NTF \l_student_all_tl 
+    {
+      \tl_put_right:Nn \l_student_all_tl {#1}
+    }
+    {
+      \tl_put_right:Nn \l_student_all_tl {,~#1}
+    }
   }
   \newcommand{\GetStudentName}[1]
   {
@@ -27,16 +34,8 @@ We also define a function that outputs all students stored.
   }
   \newcommand{\GetAllStudentName}
   {
-    % clear temporary token list
-    \tl_clear:N \l_tmp_student_tl
-    % iterate over each item in the token list
-    % the content of each item will be stored in ##1 in loop body
-    \tl_map_inline:Nn \l_student_db_tl
-    {
-      \tl_put_right:Nn \l_tmp_student_tl {##1,}
-    }
-    % use the temporary token list in the document
-    \tl_use:N \l_tmp_student_tl
+    % output the token list
+    \tl_use:N \l_student_all_tl
   }
   \ExplSyntaxOff
 
@@ -50,3 +49,32 @@ We also define a function that outputs all students stored.
   \AddStudent{John}
   \par\GetAllStudentName
 \end{latexsample}
+
+In \cref{ex:tl-ops}, we store each student name twice in \inltex|\l_student_db_tl| and \inltex|\l_student_all_tl|. 
+\inltex|\l_student_db_tl| allows index access for student names.
+\inltex|\l_student_all_tl| stores the name of all students, joined by commas, which is used by \inltex|\GetAllStudentName|. 
+Every time \inltex|\AddStudent| is called, the new student name will be inserted into the two token lists.
+When inserting into \inltex|\l_student_all_tl|, there is no need to prepend comma for the first name.
+This behavior can be achieved by using the condition statement \inltex|\tl_if_empty:NTF|, where the first argument is the token list variable, the second argument is the code to execute if the token list is empty, and the third argument is the code to execute if the token list is not empty.
+Notice that the student name is surrounded with curly braces when inserting into \inltex|\l_student_db_tl|, which effectively encapsulates each student name inside a group. 
+When calling \inltex|\tl_item:Nn|, the entire group will be returned, which allows one to retrieve the entire student name.
+
+
+Strings are a special type of token lists that contain only string tokens.
+\begin{latexsample}[exampletitle={Difference Between Token List and String},examplelabel={ex:diff-tl-string}]
+\ExplSyntaxOn
+\tl_new:N \l_my_a_tl
+\tl_new:N \l_my_b_tl
+\tl_set:Nn \l_my_a_tl {Hello, \LaTeX!}
+\str_set:Nn \l_my_b_tl {Hello, \LaTeX!}
+\par\tl_use:N \l_my_a_tl
+\par\tl_use:N \l_my_b_tl
+\ExplSyntaxOff
+\end{latexsample}
+In \cref{ex:diff-tl-string}, we created two token list variables \inltex|\l_my_a_tl| and \inltex|\l_my_b_tl|, and assigned the same content to them.
+The difference is that values are assigned to \inltex|\l_my_a_tl| using token list assignment function \inltex|\tl_set:Nn|, while values are assigned to \inltex|\l_my_b_tl| using string assignment function \inltex|\str_set:Nn|.
+In the output, it can be seen that the comnand \inltex|\LaTeX{}| is expanded in \inltex|\l_my_a_tl|, but not expanded in \inltex|\l_my_b_tl|.
+This shows that the string assignment function will attempt to keep the content as is without any further processing.
+\textbf{However, because of implementation details of \LaTeX{}, the values assignment to string variables may not be exactly the same as input.}
+For example, one can notice there is an extra space between X and ! in the output of \inltex|\l_my_b_tl|.
+
