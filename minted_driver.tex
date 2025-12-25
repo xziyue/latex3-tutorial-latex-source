@@ -3,9 +3,12 @@
 \makeatletter
 
 % temporary fix to support custom lexer...
-\tl_set:Nx \minted@optlistcl@g
+\tl_if_exist:NT \minted@optlistcl@g
 {
-    \exp_not:V \minted@optlistcl@g \space -x \space 
+    \tl_set:Nx \minted@optlistcl@g
+    {
+        \exp_not:V \minted@optlistcl@g \space -x \space 
+    }
 }
 
 \bool_if:NTF \g_doc_overleaf_mode_bool

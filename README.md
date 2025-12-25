@@ -30,3 +30,17 @@ By default, the `latexsample` environment will generate an anonymous LaTeX examp
   - `silentexec`: execute the code but do not show results in document
   - `noexport`: do not export the example
   - `notitle`: anonymous example (turns off export automatically)
+
+
+## FAQ
+
+- Fixing minted error `minted v3+ executable is not installed...`: <https://tex.stackexchange.com/questions/732260/package-minted-error-minted-v3-executable-is-not-installed-is-not-added-totor>
+  - When using `latexminted`, custom lexers are not allowed by default due to security reasons. Follow the [documentation](https://pypi.org/project/latexminted/) to create `.latexminted_config` file in specified directories and set `enable_cwd_config` to true. An example is shown here:
+    ```json
+    {
+      "security":
+      {
+        "enable_cwd_config": true
+      }
+    }
+    ```
